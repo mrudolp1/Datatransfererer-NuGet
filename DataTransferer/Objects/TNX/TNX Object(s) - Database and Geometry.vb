@@ -1213,6 +1213,169 @@ Partial Public Class tnxAntennaRecord
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaKbraceOffsetNEX.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaKbraceOffsetPEY.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaKbraceOffsetPEX.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalMatlGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalMatlGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalMatlGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalMatlGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalMatlGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalMatlGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantSubHorizontalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantSubHorizontalMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantSubDiagonalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantSubDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantVerticalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantVerticalMatlGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipMatlGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipMatlGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipMatlGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalMatlGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalMatlGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalMatlGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalType.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalType2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalType3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalType4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagType2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagType3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagType4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipType2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipType3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipType4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalType2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalType3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalType4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltGrade1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltSize1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalNumBolts1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalUFactor1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltSize2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalNumBolts2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalUFactor2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltSize3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalNumBolts3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalUFactor3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltSize4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalNumBolts4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHorizontalUFactor4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltGrade1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltSize1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalNumBolts1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalUFactor1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltSize2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalNumBolts2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalUFactor2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltSize3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalNumBolts3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalUFactor3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltSize4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalNumBolts4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantDiagonalUFactor4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltGrade1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltSize1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipNumBolts1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipGageG1Distance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipUFactor1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltSize2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipNumBolts2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipGageG1Distance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipUFactor2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltSize3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipNumBolts3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipGageG1Distance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipUFactor3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltSize4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipNumBolts4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipGageG1Distance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipUFactor4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltGrade1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltSize1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalNumBolts1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalUFactor1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltSize2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalNumBolts2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalUFactor2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltSize3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalNumBolts3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalUFactor3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltSize4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalNumBolts4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.AntennaRedundantHipDiagonalUFactor4.NullableToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -1473,6 +1636,169 @@ Partial Public Class tnxAntennaRecord
         SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaKbraceOffsetNEX")
         SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaKbraceOffsetPEY")
         SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaKbraceOffsetPEX")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalMatlGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalMatlGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalMatlGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalMatlGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalMatlGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalMatlGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantSubHorizontalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantSubHorizontalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantSubDiagonalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantSubDiagonalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantVerticalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantVerticalMatlGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipMatlGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipMatlGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipMatlGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalMatlGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalMatlGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalMatlGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalType2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalType3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalType4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagType2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagType3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagType4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipType2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipType3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipType4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalType2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalType3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalType4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltGrade1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltSize1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalNumBolts1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltEdgeDistance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalGageG1Distance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalNetWidthDeduct1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalUFactor1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalNumBolts2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltEdgeDistance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalGageG1Distance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalNetWidthDeduct2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalUFactor2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalNumBolts3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltEdgeDistance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalGageG1Distance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalNetWidthDeduct3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalUFactor3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalNumBolts4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalBoltEdgeDistance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalGageG1Distance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalNetWidthDeduct4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHorizontalUFactor4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltGrade1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltSize1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalNumBolts1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltEdgeDistance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalGageG1Distance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalNetWidthDeduct1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalUFactor1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalNumBolts2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltEdgeDistance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalGageG1Distance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalNetWidthDeduct2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalUFactor2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalNumBolts3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltEdgeDistance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalGageG1Distance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalNetWidthDeduct3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalUFactor3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalNumBolts4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalBoltEdgeDistance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalGageG1Distance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalNetWidthDeduct4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantDiagonalUFactor4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltGrade1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltSize1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipNumBolts1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltEdgeDistance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipGageG1Distance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipNetWidthDeduct1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipUFactor1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipNumBolts2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltEdgeDistance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipGageG1Distance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipNetWidthDeduct2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipUFactor2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipNumBolts3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltEdgeDistance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipGageG1Distance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipNetWidthDeduct3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipUFactor3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipNumBolts4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipBoltEdgeDistance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipGageG1Distance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipNetWidthDeduct4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipUFactor4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltGrade1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltSize1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalNumBolts1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltEdgeDistance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalGageG1Distance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalNetWidthDeduct1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalUFactor1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalNumBolts2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltEdgeDistance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalGageG1Distance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalNetWidthDeduct2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalUFactor2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalNumBolts3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltEdgeDistance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalGageG1Distance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalNetWidthDeduct3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalUFactor3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalNumBolts4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalBoltEdgeDistance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalGageG1Distance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalNetWidthDeduct4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("AntennaRedundantHipDiagonalUFactor4")
 
         Return SQLInsertFields
     End Function
@@ -1732,6 +2058,169 @@ Partial Public Class tnxAntennaRecord
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaKbraceOffsetNEX = " & Me.AntennaKbraceOffsetNEX.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaKbraceOffsetPEY = " & Me.AntennaKbraceOffsetPEY.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaKbraceOffsetPEX = " & Me.AntennaKbraceOffsetPEX.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalGrade = " & Me.AntennaRedundantHorizontalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalMatlGrade = " & Me.AntennaRedundantHorizontalMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalGrade2 = " & Me.AntennaRedundantHorizontalGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalMatlGrade2 = " & Me.AntennaRedundantHorizontalMatlGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalGrade3 = " & Me.AntennaRedundantHorizontalGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalMatlGrade3 = " & Me.AntennaRedundantHorizontalMatlGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalGrade4 = " & Me.AntennaRedundantHorizontalGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalMatlGrade4 = " & Me.AntennaRedundantHorizontalMatlGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalGrade = " & Me.AntennaRedundantDiagonalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalMatlGrade = " & Me.AntennaRedundantDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalGrade2 = " & Me.AntennaRedundantDiagonalGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalMatlGrade2 = " & Me.AntennaRedundantDiagonalMatlGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalGrade3 = " & Me.AntennaRedundantDiagonalGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalMatlGrade3 = " & Me.AntennaRedundantDiagonalMatlGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalGrade4 = " & Me.AntennaRedundantDiagonalGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalMatlGrade4 = " & Me.AntennaRedundantDiagonalMatlGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantSubHorizontalGrade = " & Me.AntennaRedundantSubHorizontalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantSubHorizontalMatlGrade = " & Me.AntennaRedundantSubHorizontalMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantSubDiagonalGrade = " & Me.AntennaRedundantSubDiagonalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantSubDiagonalMatlGrade = " & Me.AntennaRedundantSubDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantVerticalGrade = " & Me.AntennaRedundantVerticalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantVerticalMatlGrade3 = " & Me.AntennaRedundantVerticalMatlGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipGrade = " & Me.AntennaRedundantHipGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipMatlGrade = " & Me.AntennaRedundantHipMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipGrade2 = " & Me.AntennaRedundantHipGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipMatlGrade2 = " & Me.AntennaRedundantHipMatlGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipGrade3 = " & Me.AntennaRedundantHipGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipMatlGrade3 = " & Me.AntennaRedundantHipMatlGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipGrade4 = " & Me.AntennaRedundantHipGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipMatlGrade4 = " & Me.AntennaRedundantHipMatlGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalGrade = " & Me.AntennaRedundantHipDiagonalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalMatlGrade = " & Me.AntennaRedundantHipDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalGrade2 = " & Me.AntennaRedundantHipDiagonalGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalMatlGrade2 = " & Me.AntennaRedundantHipDiagonalMatlGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalGrade3 = " & Me.AntennaRedundantHipDiagonalGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalMatlGrade3 = " & Me.AntennaRedundantHipDiagonalMatlGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalGrade4 = " & Me.AntennaRedundantHipDiagonalGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalMatlGrade4 = " & Me.AntennaRedundantHipDiagonalMatlGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalType = " & Me.AntennaRedundantHorizontalType.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalType2 = " & Me.AntennaRedundantHorizontalType2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalType3 = " & Me.AntennaRedundantHorizontalType3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalType4 = " & Me.AntennaRedundantHorizontalType4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagType2 = " & Me.AntennaRedundantDiagType2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagType3 = " & Me.AntennaRedundantDiagType3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagType4 = " & Me.AntennaRedundantDiagType4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipType2 = " & Me.AntennaRedundantHipType2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipType3 = " & Me.AntennaRedundantHipType3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipType4 = " & Me.AntennaRedundantHipType4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalType2 = " & Me.AntennaRedundantHipDiagonalType2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalType3 = " & Me.AntennaRedundantHipDiagonalType3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalType4 = " & Me.AntennaRedundantHipDiagonalType4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltGrade1 = " & Me.AntennaRedundantHorizontalBoltGrade1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltSize1 = " & Me.AntennaRedundantHorizontalBoltSize1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalNumBolts1 = " & Me.AntennaRedundantHorizontalNumBolts1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltEdgeDistance1 = " & Me.AntennaRedundantHorizontalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalGageG1Distance1 = " & Me.AntennaRedundantHorizontalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalNetWidthDeduct1 = " & Me.AntennaRedundantHorizontalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalUFactor1 = " & Me.AntennaRedundantHorizontalUFactor1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltGrade2 = " & Me.AntennaRedundantHorizontalBoltGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltSize2 = " & Me.AntennaRedundantHorizontalBoltSize2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalNumBolts2 = " & Me.AntennaRedundantHorizontalNumBolts2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltEdgeDistance2 = " & Me.AntennaRedundantHorizontalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalGageG1Distance2 = " & Me.AntennaRedundantHorizontalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalNetWidthDeduct2 = " & Me.AntennaRedundantHorizontalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalUFactor2 = " & Me.AntennaRedundantHorizontalUFactor2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltGrade3 = " & Me.AntennaRedundantHorizontalBoltGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltSize3 = " & Me.AntennaRedundantHorizontalBoltSize3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalNumBolts3 = " & Me.AntennaRedundantHorizontalNumBolts3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltEdgeDistance3 = " & Me.AntennaRedundantHorizontalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalGageG1Distance3 = " & Me.AntennaRedundantHorizontalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalNetWidthDeduct3 = " & Me.AntennaRedundantHorizontalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalUFactor3 = " & Me.AntennaRedundantHorizontalUFactor3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltGrade4 = " & Me.AntennaRedundantHorizontalBoltGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltSize4 = " & Me.AntennaRedundantHorizontalBoltSize4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalNumBolts4 = " & Me.AntennaRedundantHorizontalNumBolts4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalBoltEdgeDistance4 = " & Me.AntennaRedundantHorizontalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalGageG1Distance4 = " & Me.AntennaRedundantHorizontalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalNetWidthDeduct4 = " & Me.AntennaRedundantHorizontalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHorizontalUFactor4 = " & Me.AntennaRedundantHorizontalUFactor4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltGrade1 = " & Me.AntennaRedundantDiagonalBoltGrade1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltSize1 = " & Me.AntennaRedundantDiagonalBoltSize1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalNumBolts1 = " & Me.AntennaRedundantDiagonalNumBolts1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltEdgeDistance1 = " & Me.AntennaRedundantDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalGageG1Distance1 = " & Me.AntennaRedundantDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalNetWidthDeduct1 = " & Me.AntennaRedundantDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalUFactor1 = " & Me.AntennaRedundantDiagonalUFactor1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltGrade2 = " & Me.AntennaRedundantDiagonalBoltGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltSize2 = " & Me.AntennaRedundantDiagonalBoltSize2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalNumBolts2 = " & Me.AntennaRedundantDiagonalNumBolts2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltEdgeDistance2 = " & Me.AntennaRedundantDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalGageG1Distance2 = " & Me.AntennaRedundantDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalNetWidthDeduct2 = " & Me.AntennaRedundantDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalUFactor2 = " & Me.AntennaRedundantDiagonalUFactor2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltGrade3 = " & Me.AntennaRedundantDiagonalBoltGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltSize3 = " & Me.AntennaRedundantDiagonalBoltSize3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalNumBolts3 = " & Me.AntennaRedundantDiagonalNumBolts3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltEdgeDistance3 = " & Me.AntennaRedundantDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalGageG1Distance3 = " & Me.AntennaRedundantDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalNetWidthDeduct3 = " & Me.AntennaRedundantDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalUFactor3 = " & Me.AntennaRedundantDiagonalUFactor3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltGrade4 = " & Me.AntennaRedundantDiagonalBoltGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltSize4 = " & Me.AntennaRedundantDiagonalBoltSize4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalNumBolts4 = " & Me.AntennaRedundantDiagonalNumBolts4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalBoltEdgeDistance4 = " & Me.AntennaRedundantDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalGageG1Distance4 = " & Me.AntennaRedundantDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalNetWidthDeduct4 = " & Me.AntennaRedundantDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantDiagonalUFactor4 = " & Me.AntennaRedundantDiagonalUFactor4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltGrade1 = " & Me.AntennaRedundantHipBoltGrade1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltSize1 = " & Me.AntennaRedundantHipBoltSize1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipNumBolts1 = " & Me.AntennaRedundantHipNumBolts1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltEdgeDistance1 = " & Me.AntennaRedundantHipBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipGageG1Distance1 = " & Me.AntennaRedundantHipGageG1Distance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipNetWidthDeduct1 = " & Me.AntennaRedundantHipNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipUFactor1 = " & Me.AntennaRedundantHipUFactor1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltGrade2 = " & Me.AntennaRedundantHipBoltGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltSize2 = " & Me.AntennaRedundantHipBoltSize2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipNumBolts2 = " & Me.AntennaRedundantHipNumBolts2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltEdgeDistance2 = " & Me.AntennaRedundantHipBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipGageG1Distance2 = " & Me.AntennaRedundantHipGageG1Distance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipNetWidthDeduct2 = " & Me.AntennaRedundantHipNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipUFactor2 = " & Me.AntennaRedundantHipUFactor2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltGrade3 = " & Me.AntennaRedundantHipBoltGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltSize3 = " & Me.AntennaRedundantHipBoltSize3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipNumBolts3 = " & Me.AntennaRedundantHipNumBolts3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltEdgeDistance3 = " & Me.AntennaRedundantHipBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipGageG1Distance3 = " & Me.AntennaRedundantHipGageG1Distance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipNetWidthDeduct3 = " & Me.AntennaRedundantHipNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipUFactor3 = " & Me.AntennaRedundantHipUFactor3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltGrade4 = " & Me.AntennaRedundantHipBoltGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltSize4 = " & Me.AntennaRedundantHipBoltSize4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipNumBolts4 = " & Me.AntennaRedundantHipNumBolts4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipBoltEdgeDistance4 = " & Me.AntennaRedundantHipBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipGageG1Distance4 = " & Me.AntennaRedundantHipGageG1Distance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipNetWidthDeduct4 = " & Me.AntennaRedundantHipNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipUFactor4 = " & Me.AntennaRedundantHipUFactor4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltGrade1 = " & Me.AntennaRedundantHipDiagonalBoltGrade1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltSize1 = " & Me.AntennaRedundantHipDiagonalBoltSize1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalNumBolts1 = " & Me.AntennaRedundantHipDiagonalNumBolts1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltEdgeDistance1 = " & Me.AntennaRedundantHipDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalGageG1Distance1 = " & Me.AntennaRedundantHipDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalNetWidthDeduct1 = " & Me.AntennaRedundantHipDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalUFactor1 = " & Me.AntennaRedundantHipDiagonalUFactor1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltGrade2 = " & Me.AntennaRedundantHipDiagonalBoltGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltSize2 = " & Me.AntennaRedundantHipDiagonalBoltSize2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalNumBolts2 = " & Me.AntennaRedundantHipDiagonalNumBolts2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltEdgeDistance2 = " & Me.AntennaRedundantHipDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalGageG1Distance2 = " & Me.AntennaRedundantHipDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalNetWidthDeduct2 = " & Me.AntennaRedundantHipDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalUFactor2 = " & Me.AntennaRedundantHipDiagonalUFactor2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltGrade3 = " & Me.AntennaRedundantHipDiagonalBoltGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltSize3 = " & Me.AntennaRedundantHipDiagonalBoltSize3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalNumBolts3 = " & Me.AntennaRedundantHipDiagonalNumBolts3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltEdgeDistance3 = " & Me.AntennaRedundantHipDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalGageG1Distance3 = " & Me.AntennaRedundantHipDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalNetWidthDeduct3 = " & Me.AntennaRedundantHipDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalUFactor3 = " & Me.AntennaRedundantHipDiagonalUFactor3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltGrade4 = " & Me.AntennaRedundantHipDiagonalBoltGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltSize4 = " & Me.AntennaRedundantHipDiagonalBoltSize4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalNumBolts4 = " & Me.AntennaRedundantHipDiagonalNumBolts4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalBoltEdgeDistance4 = " & Me.AntennaRedundantHipDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalGageG1Distance4 = " & Me.AntennaRedundantHipDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalNetWidthDeduct4 = " & Me.AntennaRedundantHipDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("AntennaRedundantHipDiagonalUFactor4 = " & Me.AntennaRedundantHipDiagonalUFactor4.NullableToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -1990,6 +2479,169 @@ Partial Public Class tnxAntennaRecord
     Private _AntennaKbraceOffsetNEX As Double?
     Private _AntennaKbraceOffsetPEY As Double?
     Private _AntennaKbraceOffsetPEX As Double?
+    Private _AntennaRedundantHorizontalGrade As Double?
+    Private _AntennaRedundantHorizontalMatlGrade As String
+    Private _AntennaRedundantHorizontalGrade2 As Double?
+    Private _AntennaRedundantHorizontalMatlGrade2 As String
+    Private _AntennaRedundantHorizontalGrade3 As Double?
+    Private _AntennaRedundantHorizontalMatlGrade3 As String
+    Private _AntennaRedundantHorizontalGrade4 As Double?
+    Private _AntennaRedundantHorizontalMatlGrade4 As String
+    Private _AntennaRedundantDiagonalGrade As Double?
+    Private _AntennaRedundantDiagonalMatlGrade As String
+    Private _AntennaRedundantDiagonalGrade2 As Double?
+    Private _AntennaRedundantDiagonalMatlGrade2 As String
+    Private _AntennaRedundantDiagonalGrade3 As Double?
+    Private _AntennaRedundantDiagonalMatlGrade3 As String
+    Private _AntennaRedundantDiagonalGrade4 As Double?
+    Private _AntennaRedundantDiagonalMatlGrade4 As String
+    Private _AntennaRedundantSubHorizontalGrade As Double?
+    Private _AntennaRedundantSubHorizontalMatlGrade As String
+    Private _AntennaRedundantSubDiagonalGrade As Double?
+    Private _AntennaRedundantSubDiagonalMatlGrade As String
+    Private _AntennaRedundantVerticalGrade As Double?
+    Private _AntennaRedundantVerticalMatlGrade3 As String
+    Private _AntennaRedundantHipGrade As Double?
+    Private _AntennaRedundantHipMatlGrade As String
+    Private _AntennaRedundantHipGrade2 As Double?
+    Private _AntennaRedundantHipMatlGrade2 As String
+    Private _AntennaRedundantHipGrade3 As Double?
+    Private _AntennaRedundantHipMatlGrade3 As String
+    Private _AntennaRedundantHipGrade4 As Double?
+    Private _AntennaRedundantHipMatlGrade4 As String
+    Private _AntennaRedundantHipDiagonalGrade As Double?
+    Private _AntennaRedundantHipDiagonalMatlGrade As String
+    Private _AntennaRedundantHipDiagonalGrade2 As Double?
+    Private _AntennaRedundantHipDiagonalMatlGrade2 As String
+    Private _AntennaRedundantHipDiagonalGrade3 As Double?
+    Private _AntennaRedundantHipDiagonalMatlGrade3 As String
+    Private _AntennaRedundantHipDiagonalGrade4 As Double?
+    Private _AntennaRedundantHipDiagonalMatlGrade4 As String
+    Private _AntennaRedundantHorizontalType As String
+    Private _AntennaRedundantHorizontalType2 As String
+    Private _AntennaRedundantHorizontalType3 As String
+    Private _AntennaRedundantHorizontalType4 As String
+    Private _AntennaRedundantDiagType2 As String
+    Private _AntennaRedundantDiagType3 As String
+    Private _AntennaRedundantDiagType4 As String
+    Private _AntennaRedundantHipType2 As String
+    Private _AntennaRedundantHipType3 As String
+    Private _AntennaRedundantHipType4 As String
+    Private _AntennaRedundantHipDiagonalType2 As String
+    Private _AntennaRedundantHipDiagonalType3 As String
+    Private _AntennaRedundantHipDiagonalType4 As String
+    Private _AntennaRedundantHorizontalBoltGrade1 As String
+    Private _AntennaRedundantHorizontalBoltSize1 As Double?
+    Private _AntennaRedundantHorizontalNumBolts1 As Integer?
+    Private _AntennaRedundantHorizontalBoltEdgeDistance1 As Double?
+    Private _AntennaRedundantHorizontalGageG1Distance1 As Double?
+    Private _AntennaRedundantHorizontalNetWidthDeduct1 As Double?
+    Private _AntennaRedundantHorizontalUFactor1 As Double?
+    Private _AntennaRedundantHorizontalBoltGrade2 As String
+    Private _AntennaRedundantHorizontalBoltSize2 As Double?
+    Private _AntennaRedundantHorizontalNumBolts2 As Integer?
+    Private _AntennaRedundantHorizontalBoltEdgeDistance2 As Double?
+    Private _AntennaRedundantHorizontalGageG1Distance2 As Double?
+    Private _AntennaRedundantHorizontalNetWidthDeduct2 As Double?
+    Private _AntennaRedundantHorizontalUFactor2 As Double?
+    Private _AntennaRedundantHorizontalBoltGrade3 As String
+    Private _AntennaRedundantHorizontalBoltSize3 As Double?
+    Private _AntennaRedundantHorizontalNumBolts3 As Integer?
+    Private _AntennaRedundantHorizontalBoltEdgeDistance3 As Double?
+    Private _AntennaRedundantHorizontalGageG1Distance3 As Double?
+    Private _AntennaRedundantHorizontalNetWidthDeduct3 As Double?
+    Private _AntennaRedundantHorizontalUFactor3 As Double?
+    Private _AntennaRedundantHorizontalBoltGrade4 As String
+    Private _AntennaRedundantHorizontalBoltSize4 As Double?
+    Private _AntennaRedundantHorizontalNumBolts4 As Integer?
+    Private _AntennaRedundantHorizontalBoltEdgeDistance4 As Double?
+    Private _AntennaRedundantHorizontalGageG1Distance4 As Double?
+    Private _AntennaRedundantHorizontalNetWidthDeduct4 As Double?
+    Private _AntennaRedundantHorizontalUFactor4 As Double?
+    Private _AntennaRedundantDiagonalBoltGrade1 As String
+    Private _AntennaRedundantDiagonalBoltSize1 As Double?
+    Private _AntennaRedundantDiagonalNumBolts1 As Integer?
+    Private _AntennaRedundantDiagonalBoltEdgeDistance1 As Double?
+    Private _AntennaRedundantDiagonalGageG1Distance1 As Double?
+    Private _AntennaRedundantDiagonalNetWidthDeduct1 As Double?
+    Private _AntennaRedundantDiagonalUFactor1 As Double?
+    Private _AntennaRedundantDiagonalBoltGrade2 As String
+    Private _AntennaRedundantDiagonalBoltSize2 As Double?
+    Private _AntennaRedundantDiagonalNumBolts2 As Integer?
+    Private _AntennaRedundantDiagonalBoltEdgeDistance2 As Double?
+    Private _AntennaRedundantDiagonalGageG1Distance2 As Double?
+    Private _AntennaRedundantDiagonalNetWidthDeduct2 As Double?
+    Private _AntennaRedundantDiagonalUFactor2 As Double?
+    Private _AntennaRedundantDiagonalBoltGrade3 As String
+    Private _AntennaRedundantDiagonalBoltSize3 As Double?
+    Private _AntennaRedundantDiagonalNumBolts3 As Integer?
+    Private _AntennaRedundantDiagonalBoltEdgeDistance3 As Double?
+    Private _AntennaRedundantDiagonalGageG1Distance3 As Double?
+    Private _AntennaRedundantDiagonalNetWidthDeduct3 As Double?
+    Private _AntennaRedundantDiagonalUFactor3 As Double?
+    Private _AntennaRedundantDiagonalBoltGrade4 As String
+    Private _AntennaRedundantDiagonalBoltSize4 As Double?
+    Private _AntennaRedundantDiagonalNumBolts4 As Integer?
+    Private _AntennaRedundantDiagonalBoltEdgeDistance4 As Double?
+    Private _AntennaRedundantDiagonalGageG1Distance4 As Double?
+    Private _AntennaRedundantDiagonalNetWidthDeduct4 As Double?
+    Private _AntennaRedundantDiagonalUFactor4 As Double?
+    Private _AntennaRedundantHipBoltGrade1 As String
+    Private _AntennaRedundantHipBoltSize1 As Double?
+    Private _AntennaRedundantHipNumBolts1 As Integer?
+    Private _AntennaRedundantHipBoltEdgeDistance1 As Double?
+    Private _AntennaRedundantHipGageG1Distance1 As Double?
+    Private _AntennaRedundantHipNetWidthDeduct1 As Double?
+    Private _AntennaRedundantHipUFactor1 As Double?
+    Private _AntennaRedundantHipBoltGrade2 As String
+    Private _AntennaRedundantHipBoltSize2 As Double?
+    Private _AntennaRedundantHipNumBolts2 As Integer?
+    Private _AntennaRedundantHipBoltEdgeDistance2 As Double?
+    Private _AntennaRedundantHipGageG1Distance2 As Double?
+    Private _AntennaRedundantHipNetWidthDeduct2 As Double?
+    Private _AntennaRedundantHipUFactor2 As Double?
+    Private _AntennaRedundantHipBoltGrade3 As String
+    Private _AntennaRedundantHipBoltSize3 As Double?
+    Private _AntennaRedundantHipNumBolts3 As Integer?
+    Private _AntennaRedundantHipBoltEdgeDistance3 As Double?
+    Private _AntennaRedundantHipGageG1Distance3 As Double?
+    Private _AntennaRedundantHipNetWidthDeduct3 As Double?
+    Private _AntennaRedundantHipUFactor3 As Double?
+    Private _AntennaRedundantHipBoltGrade4 As String
+    Private _AntennaRedundantHipBoltSize4 As Double?
+    Private _AntennaRedundantHipNumBolts4 As Integer?
+    Private _AntennaRedundantHipBoltEdgeDistance4 As Double?
+    Private _AntennaRedundantHipGageG1Distance4 As Double?
+    Private _AntennaRedundantHipNetWidthDeduct4 As Double?
+    Private _AntennaRedundantHipUFactor4 As Double?
+    Private _AntennaRedundantHipDiagonalBoltGrade1 As String
+    Private _AntennaRedundantHipDiagonalBoltSize1 As Double?
+    Private _AntennaRedundantHipDiagonalNumBolts1 As Integer?
+    Private _AntennaRedundantHipDiagonalBoltEdgeDistance1 As Double?
+    Private _AntennaRedundantHipDiagonalGageG1Distance1 As Double?
+    Private _AntennaRedundantHipDiagonalNetWidthDeduct1 As Double?
+    Private _AntennaRedundantHipDiagonalUFactor1 As Double?
+    Private _AntennaRedundantHipDiagonalBoltGrade2 As String
+    Private _AntennaRedundantHipDiagonalBoltSize2 As Double?
+    Private _AntennaRedundantHipDiagonalNumBolts2 As Integer?
+    Private _AntennaRedundantHipDiagonalBoltEdgeDistance2 As Double?
+    Private _AntennaRedundantHipDiagonalGageG1Distance2 As Double?
+    Private _AntennaRedundantHipDiagonalNetWidthDeduct2 As Double?
+    Private _AntennaRedundantHipDiagonalUFactor2 As Double?
+    Private _AntennaRedundantHipDiagonalBoltGrade3 As String
+    Private _AntennaRedundantHipDiagonalBoltSize3 As Double?
+    Private _AntennaRedundantHipDiagonalNumBolts3 As Integer?
+    Private _AntennaRedundantHipDiagonalBoltEdgeDistance3 As Double?
+    Private _AntennaRedundantHipDiagonalGageG1Distance3 As Double?
+    Private _AntennaRedundantHipDiagonalNetWidthDeduct3 As Double?
+    Private _AntennaRedundantHipDiagonalUFactor3 As Double?
+    Private _AntennaRedundantHipDiagonalBoltGrade4 As String
+    Private _AntennaRedundantHipDiagonalBoltSize4 As Double?
+    Private _AntennaRedundantHipDiagonalNumBolts4 As Integer?
+    Private _AntennaRedundantHipDiagonalBoltEdgeDistance4 As Double?
+    Private _AntennaRedundantHipDiagonalGageG1Distance4 As Double?
+    Private _AntennaRedundantHipDiagonalNetWidthDeduct4 As Double?
+    Private _AntennaRedundantHipDiagonalUFactor4 As Double?
 
     '<Category("TNX Antenna Record"), Description(""), DisplayName("Antennarec")>
     ' <DataMember()> Public Property Rec() As Integer?
@@ -4259,6 +4911,1473 @@ Partial Public Class tnxAntennaRecord
             Me._AntennaKbraceOffsetPEX = Value
         End Set
     End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Grade")>
+    <DataMember()> Public Property AntennaRedundantHorizontalGrade() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalGrade
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Matl Grade")>
+    <DataMember()> Public Property AntennaRedundantHorizontalMatlGrade() As String
+        Get
+            Return Me._AntennaRedundantHorizontalMatlGrade
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Grade 2")>
+    <DataMember()> Public Property AntennaRedundantHorizontalGrade2() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalGrade2
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Matl Grade 2")>
+    <DataMember()> Public Property AntennaRedundantHorizontalMatlGrade2() As String
+        Get
+            Return Me._AntennaRedundantHorizontalMatlGrade2
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalMatlGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Grade 3")>
+    <DataMember()> Public Property AntennaRedundantHorizontalGrade3() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalGrade3
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Matl Grade 3")>
+    <DataMember()> Public Property AntennaRedundantHorizontalMatlGrade3() As String
+        Get
+            Return Me._AntennaRedundantHorizontalMatlGrade3
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalMatlGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Grade 4")>
+    <DataMember()> Public Property AntennaRedundantHorizontalGrade4() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalGrade4
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Matl Grade 4")>
+    <DataMember()> Public Property AntennaRedundantHorizontalMatlGrade4() As String
+        Get
+            Return Me._AntennaRedundantHorizontalMatlGrade4
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalMatlGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Grade")>
+    <DataMember()> Public Property AntennaRedundantDiagonalGrade() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalGrade
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Matl Grade")>
+    <DataMember()> Public Property AntennaRedundantDiagonalMatlGrade() As String
+        Get
+            Return Me._AntennaRedundantDiagonalMatlGrade
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Grade 2")>
+    <DataMember()> Public Property AntennaRedundantDiagonalGrade2() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalGrade2
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Matl Grade 2")>
+    <DataMember()> Public Property AntennaRedundantDiagonalMatlGrade2() As String
+        Get
+            Return Me._AntennaRedundantDiagonalMatlGrade2
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalMatlGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Grade 3")>
+    <DataMember()> Public Property AntennaRedundantDiagonalGrade3() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalGrade3
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Matl Grade 3")>
+    <DataMember()> Public Property AntennaRedundantDiagonalMatlGrade3() As String
+        Get
+            Return Me._AntennaRedundantDiagonalMatlGrade3
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalMatlGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Grade 4")>
+    <DataMember()> Public Property AntennaRedundantDiagonalGrade4() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalGrade4
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Matl Grade 4")>
+    <DataMember()> Public Property AntennaRedundantDiagonalMatlGrade4() As String
+        Get
+            Return Me._AntennaRedundantDiagonalMatlGrade4
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalMatlGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Sub Horizontal Grade")>
+    <DataMember()> Public Property AntennaRedundantSubHorizontalGrade() As Double?
+        Get
+            Return Me._AntennaRedundantSubHorizontalGrade
+        End Get
+        Set
+            Me._AntennaRedundantSubHorizontalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Sub Horizontal Matl Grade")>
+    <DataMember()> Public Property AntennaRedundantSubHorizontalMatlGrade() As String
+        Get
+            Return Me._AntennaRedundantSubHorizontalMatlGrade
+        End Get
+        Set
+            Me._AntennaRedundantSubHorizontalMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Sub Diagonal Grade")>
+    <DataMember()> Public Property AntennaRedundantSubDiagonalGrade() As Double?
+        Get
+            Return Me._AntennaRedundantSubDiagonalGrade
+        End Get
+        Set
+            Me._AntennaRedundantSubDiagonalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Sub Diagonal Matl Grade")>
+    <DataMember()> Public Property AntennaRedundantSubDiagonalMatlGrade() As String
+        Get
+            Return Me._AntennaRedundantSubDiagonalMatlGrade
+        End Get
+        Set
+            Me._AntennaRedundantSubDiagonalMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Vertical Grade")>
+    <DataMember()> Public Property AntennaRedundantVerticalGrade() As Double?
+        Get
+            Return Me._AntennaRedundantVerticalGrade
+        End Get
+        Set
+            Me._AntennaRedundantVerticalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Vertical Matl Grade 3")>
+    <DataMember()> Public Property AntennaRedundantVerticalMatlGrade3() As String
+        Get
+            Return Me._AntennaRedundantVerticalMatlGrade3
+        End Get
+        Set
+            Me._AntennaRedundantVerticalMatlGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Grade")>
+    <DataMember()> Public Property AntennaRedundantHipGrade() As Double?
+        Get
+            Return Me._AntennaRedundantHipGrade
+        End Get
+        Set
+            Me._AntennaRedundantHipGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Matl Grade")>
+    <DataMember()> Public Property AntennaRedundantHipMatlGrade() As String
+        Get
+            Return Me._AntennaRedundantHipMatlGrade
+        End Get
+        Set
+            Me._AntennaRedundantHipMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Grade 2")>
+    <DataMember()> Public Property AntennaRedundantHipGrade2() As Double?
+        Get
+            Return Me._AntennaRedundantHipGrade2
+        End Get
+        Set
+            Me._AntennaRedundantHipGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Matl Grade 2")>
+    <DataMember()> Public Property AntennaRedundantHipMatlGrade2() As String
+        Get
+            Return Me._AntennaRedundantHipMatlGrade2
+        End Get
+        Set
+            Me._AntennaRedundantHipMatlGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Grade 3")>
+    <DataMember()> Public Property AntennaRedundantHipGrade3() As Double?
+        Get
+            Return Me._AntennaRedundantHipGrade3
+        End Get
+        Set
+            Me._AntennaRedundantHipGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Matl Grade 3")>
+    <DataMember()> Public Property AntennaRedundantHipMatlGrade3() As String
+        Get
+            Return Me._AntennaRedundantHipMatlGrade3
+        End Get
+        Set
+            Me._AntennaRedundantHipMatlGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Grade 4")>
+    <DataMember()> Public Property AntennaRedundantHipGrade4() As Double?
+        Get
+            Return Me._AntennaRedundantHipGrade4
+        End Get
+        Set
+            Me._AntennaRedundantHipGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Matl Grade 4")>
+    <DataMember()> Public Property AntennaRedundantHipMatlGrade4() As String
+        Get
+            Return Me._AntennaRedundantHipMatlGrade4
+        End Get
+        Set
+            Me._AntennaRedundantHipMatlGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Grade")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalGrade() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalGrade
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Matl Grade")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalMatlGrade() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalMatlGrade
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Grade 2")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalGrade2() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalGrade2
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Matl Grade 2")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalMatlGrade2() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalMatlGrade2
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalMatlGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Grade 3")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalGrade3() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalGrade3
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Matl Grade 3")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalMatlGrade3() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalMatlGrade3
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalMatlGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Grade 4")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalGrade4() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalGrade4
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Matl Grade 4")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalMatlGrade4() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalMatlGrade4
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalMatlGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Type")>
+    <DataMember()> Public Property AntennaRedundantHorizontalType() As String
+        Get
+            Return Me._AntennaRedundantHorizontalType
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalType = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Type 2")>
+    <DataMember()> Public Property AntennaRedundantHorizontalType2() As String
+        Get
+            Return Me._AntennaRedundantHorizontalType2
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalType2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Type 3")>
+    <DataMember()> Public Property AntennaRedundantHorizontalType3() As String
+        Get
+            Return Me._AntennaRedundantHorizontalType3
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalType3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Type 4")>
+    <DataMember()> Public Property AntennaRedundantHorizontalType4() As String
+        Get
+            Return Me._AntennaRedundantHorizontalType4
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalType4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diag Type 2")>
+    <DataMember()> Public Property AntennaRedundantDiagType2() As String
+        Get
+            Return Me._AntennaRedundantDiagType2
+        End Get
+        Set
+            Me._AntennaRedundantDiagType2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diag Type 3")>
+    <DataMember()> Public Property AntennaRedundantDiagType3() As String
+        Get
+            Return Me._AntennaRedundantDiagType3
+        End Get
+        Set
+            Me._AntennaRedundantDiagType3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diag Type 4")>
+    <DataMember()> Public Property AntennaRedundantDiagType4() As String
+        Get
+            Return Me._AntennaRedundantDiagType4
+        End Get
+        Set
+            Me._AntennaRedundantDiagType4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Type 2")>
+    <DataMember()> Public Property AntennaRedundantHipType2() As String
+        Get
+            Return Me._AntennaRedundantHipType2
+        End Get
+        Set
+            Me._AntennaRedundantHipType2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Type 3")>
+    <DataMember()> Public Property AntennaRedundantHipType3() As String
+        Get
+            Return Me._AntennaRedundantHipType3
+        End Get
+        Set
+            Me._AntennaRedundantHipType3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Type 4")>
+    <DataMember()> Public Property AntennaRedundantHipType4() As String
+        Get
+            Return Me._AntennaRedundantHipType4
+        End Get
+        Set
+            Me._AntennaRedundantHipType4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Type 2")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalType2() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalType2
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalType2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Type 3")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalType3() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalType3
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalType3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Type 4")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalType4() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalType4
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalType4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Grade 1")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltGrade1() As String
+        Get
+            Return Me._AntennaRedundantHorizontalBoltGrade1
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltGrade1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Size 1")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltSize1() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalBoltSize1
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltSize1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Num Bolts 1")>
+    <DataMember()> Public Property AntennaRedundantHorizontalNumBolts1() As Integer?
+        Get
+            Return Me._AntennaRedundantHorizontalNumBolts1
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalNumBolts1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Edge Distance 1")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltEdgeDistance1() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalBoltEdgeDistance1
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltEdgeDistance1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Gage G 1 Distance 1")>
+    <DataMember()> Public Property AntennaRedundantHorizontalGageG1Distance1() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalGageG1Distance1
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalGageG1Distance1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Net Width Deduct 1")>
+    <DataMember()> Public Property AntennaRedundantHorizontalNetWidthDeduct1() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalNetWidthDeduct1
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalNetWidthDeduct1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal U Factor 1")>
+    <DataMember()> Public Property AntennaRedundantHorizontalUFactor1() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalUFactor1
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalUFactor1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Grade 2")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltGrade2() As String
+        Get
+            Return Me._AntennaRedundantHorizontalBoltGrade2
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Size 2")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltSize2() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalBoltSize2
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltSize2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Num Bolts 2")>
+    <DataMember()> Public Property AntennaRedundantHorizontalNumBolts2() As Integer?
+        Get
+            Return Me._AntennaRedundantHorizontalNumBolts2
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalNumBolts2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Edge Distance 2")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltEdgeDistance2() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalBoltEdgeDistance2
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltEdgeDistance2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Gage G 1 Distance 2")>
+    <DataMember()> Public Property AntennaRedundantHorizontalGageG1Distance2() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalGageG1Distance2
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalGageG1Distance2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Net Width Deduct 2")>
+    <DataMember()> Public Property AntennaRedundantHorizontalNetWidthDeduct2() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalNetWidthDeduct2
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalNetWidthDeduct2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal U Factor 2")>
+    <DataMember()> Public Property AntennaRedundantHorizontalUFactor2() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalUFactor2
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalUFactor2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Grade 3")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltGrade3() As String
+        Get
+            Return Me._AntennaRedundantHorizontalBoltGrade3
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Size 3")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltSize3() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalBoltSize3
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltSize3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Num Bolts 3")>
+    <DataMember()> Public Property AntennaRedundantHorizontalNumBolts3() As Integer?
+        Get
+            Return Me._AntennaRedundantHorizontalNumBolts3
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalNumBolts3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Edge Distance 3")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltEdgeDistance3() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalBoltEdgeDistance3
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltEdgeDistance3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Gage G 1 Distance 3")>
+    <DataMember()> Public Property AntennaRedundantHorizontalGageG1Distance3() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalGageG1Distance3
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalGageG1Distance3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Net Width Deduct 3")>
+    <DataMember()> Public Property AntennaRedundantHorizontalNetWidthDeduct3() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalNetWidthDeduct3
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalNetWidthDeduct3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal U Factor 3")>
+    <DataMember()> Public Property AntennaRedundantHorizontalUFactor3() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalUFactor3
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalUFactor3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Grade 4")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltGrade4() As String
+        Get
+            Return Me._AntennaRedundantHorizontalBoltGrade4
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Size 4")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltSize4() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalBoltSize4
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltSize4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Num Bolts 4")>
+    <DataMember()> Public Property AntennaRedundantHorizontalNumBolts4() As Integer?
+        Get
+            Return Me._AntennaRedundantHorizontalNumBolts4
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalNumBolts4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Bolt Edge Distance 4")>
+    <DataMember()> Public Property AntennaRedundantHorizontalBoltEdgeDistance4() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalBoltEdgeDistance4
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalBoltEdgeDistance4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Gage G 1 Distance 4")>
+    <DataMember()> Public Property AntennaRedundantHorizontalGageG1Distance4() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalGageG1Distance4
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalGageG1Distance4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal Net Width Deduct 4")>
+    <DataMember()> Public Property AntennaRedundantHorizontalNetWidthDeduct4() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalNetWidthDeduct4
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalNetWidthDeduct4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Horizontal U Factor 4")>
+    <DataMember()> Public Property AntennaRedundantHorizontalUFactor4() As Double?
+        Get
+            Return Me._AntennaRedundantHorizontalUFactor4
+        End Get
+        Set
+            Me._AntennaRedundantHorizontalUFactor4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Grade 1")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltGrade1() As String
+        Get
+            Return Me._AntennaRedundantDiagonalBoltGrade1
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltGrade1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Size 1")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltSize1() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalBoltSize1
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltSize1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Num Bolts 1")>
+    <DataMember()> Public Property AntennaRedundantDiagonalNumBolts1() As Integer?
+        Get
+            Return Me._AntennaRedundantDiagonalNumBolts1
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalNumBolts1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Edge Distance 1")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltEdgeDistance1() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalBoltEdgeDistance1
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltEdgeDistance1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Gage G 1 Distance 1")>
+    <DataMember()> Public Property AntennaRedundantDiagonalGageG1Distance1() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalGageG1Distance1
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalGageG1Distance1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Net Width Deduct 1")>
+    <DataMember()> Public Property AntennaRedundantDiagonalNetWidthDeduct1() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalNetWidthDeduct1
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalNetWidthDeduct1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal U Factor 1")>
+    <DataMember()> Public Property AntennaRedundantDiagonalUFactor1() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalUFactor1
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalUFactor1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Grade 2")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltGrade2() As String
+        Get
+            Return Me._AntennaRedundantDiagonalBoltGrade2
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Size 2")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltSize2() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalBoltSize2
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltSize2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Num Bolts 2")>
+    <DataMember()> Public Property AntennaRedundantDiagonalNumBolts2() As Integer?
+        Get
+            Return Me._AntennaRedundantDiagonalNumBolts2
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalNumBolts2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Edge Distance 2")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltEdgeDistance2() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalBoltEdgeDistance2
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltEdgeDistance2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Gage G 1 Distance 2")>
+    <DataMember()> Public Property AntennaRedundantDiagonalGageG1Distance2() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalGageG1Distance2
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalGageG1Distance2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Net Width Deduct 2")>
+    <DataMember()> Public Property AntennaRedundantDiagonalNetWidthDeduct2() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalNetWidthDeduct2
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalNetWidthDeduct2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal U Factor 2")>
+    <DataMember()> Public Property AntennaRedundantDiagonalUFactor2() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalUFactor2
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalUFactor2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Grade 3")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltGrade3() As String
+        Get
+            Return Me._AntennaRedundantDiagonalBoltGrade3
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Size 3")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltSize3() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalBoltSize3
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltSize3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Num Bolts 3")>
+    <DataMember()> Public Property AntennaRedundantDiagonalNumBolts3() As Integer?
+        Get
+            Return Me._AntennaRedundantDiagonalNumBolts3
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalNumBolts3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Edge Distance 3")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltEdgeDistance3() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalBoltEdgeDistance3
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltEdgeDistance3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Gage G 1 Distance 3")>
+    <DataMember()> Public Property AntennaRedundantDiagonalGageG1Distance3() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalGageG1Distance3
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalGageG1Distance3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Net Width Deduct 3")>
+    <DataMember()> Public Property AntennaRedundantDiagonalNetWidthDeduct3() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalNetWidthDeduct3
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalNetWidthDeduct3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal U Factor 3")>
+    <DataMember()> Public Property AntennaRedundantDiagonalUFactor3() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalUFactor3
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalUFactor3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Grade 4")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltGrade4() As String
+        Get
+            Return Me._AntennaRedundantDiagonalBoltGrade4
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Size 4")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltSize4() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalBoltSize4
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltSize4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Num Bolts 4")>
+    <DataMember()> Public Property AntennaRedundantDiagonalNumBolts4() As Integer?
+        Get
+            Return Me._AntennaRedundantDiagonalNumBolts4
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalNumBolts4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Bolt Edge Distance 4")>
+    <DataMember()> Public Property AntennaRedundantDiagonalBoltEdgeDistance4() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalBoltEdgeDistance4
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalBoltEdgeDistance4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Gage G 1 Distance 4")>
+    <DataMember()> Public Property AntennaRedundantDiagonalGageG1Distance4() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalGageG1Distance4
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalGageG1Distance4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal Net Width Deduct 4")>
+    <DataMember()> Public Property AntennaRedundantDiagonalNetWidthDeduct4() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalNetWidthDeduct4
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalNetWidthDeduct4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Diagonal U Factor 4")>
+    <DataMember()> Public Property AntennaRedundantDiagonalUFactor4() As Double?
+        Get
+            Return Me._AntennaRedundantDiagonalUFactor4
+        End Get
+        Set
+            Me._AntennaRedundantDiagonalUFactor4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Grade 1")>
+    <DataMember()> Public Property AntennaRedundantHipBoltGrade1() As String
+        Get
+            Return Me._AntennaRedundantHipBoltGrade1
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltGrade1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Size 1")>
+    <DataMember()> Public Property AntennaRedundantHipBoltSize1() As Double?
+        Get
+            Return Me._AntennaRedundantHipBoltSize1
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltSize1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Num Bolts 1")>
+    <DataMember()> Public Property AntennaRedundantHipNumBolts1() As Integer?
+        Get
+            Return Me._AntennaRedundantHipNumBolts1
+        End Get
+        Set
+            Me._AntennaRedundantHipNumBolts1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Edge Distance 1")>
+    <DataMember()> Public Property AntennaRedundantHipBoltEdgeDistance1() As Double?
+        Get
+            Return Me._AntennaRedundantHipBoltEdgeDistance1
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltEdgeDistance1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Gage G 1 Distance 1")>
+    <DataMember()> Public Property AntennaRedundantHipGageG1Distance1() As Double?
+        Get
+            Return Me._AntennaRedundantHipGageG1Distance1
+        End Get
+        Set
+            Me._AntennaRedundantHipGageG1Distance1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Net Width Deduct 1")>
+    <DataMember()> Public Property AntennaRedundantHipNetWidthDeduct1() As Double?
+        Get
+            Return Me._AntennaRedundantHipNetWidthDeduct1
+        End Get
+        Set
+            Me._AntennaRedundantHipNetWidthDeduct1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip U Factor 1")>
+    <DataMember()> Public Property AntennaRedundantHipUFactor1() As Double?
+        Get
+            Return Me._AntennaRedundantHipUFactor1
+        End Get
+        Set
+            Me._AntennaRedundantHipUFactor1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Grade 2")>
+    <DataMember()> Public Property AntennaRedundantHipBoltGrade2() As String
+        Get
+            Return Me._AntennaRedundantHipBoltGrade2
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Size 2")>
+    <DataMember()> Public Property AntennaRedundantHipBoltSize2() As Double?
+        Get
+            Return Me._AntennaRedundantHipBoltSize2
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltSize2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Num Bolts 2")>
+    <DataMember()> Public Property AntennaRedundantHipNumBolts2() As Integer?
+        Get
+            Return Me._AntennaRedundantHipNumBolts2
+        End Get
+        Set
+            Me._AntennaRedundantHipNumBolts2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Edge Distance 2")>
+    <DataMember()> Public Property AntennaRedundantHipBoltEdgeDistance2() As Double?
+        Get
+            Return Me._AntennaRedundantHipBoltEdgeDistance2
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltEdgeDistance2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Gage G 1 Distance 2")>
+    <DataMember()> Public Property AntennaRedundantHipGageG1Distance2() As Double?
+        Get
+            Return Me._AntennaRedundantHipGageG1Distance2
+        End Get
+        Set
+            Me._AntennaRedundantHipGageG1Distance2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Net Width Deduct 2")>
+    <DataMember()> Public Property AntennaRedundantHipNetWidthDeduct2() As Double?
+        Get
+            Return Me._AntennaRedundantHipNetWidthDeduct2
+        End Get
+        Set
+            Me._AntennaRedundantHipNetWidthDeduct2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip U Factor 2")>
+    <DataMember()> Public Property AntennaRedundantHipUFactor2() As Double?
+        Get
+            Return Me._AntennaRedundantHipUFactor2
+        End Get
+        Set
+            Me._AntennaRedundantHipUFactor2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Grade 3")>
+    <DataMember()> Public Property AntennaRedundantHipBoltGrade3() As String
+        Get
+            Return Me._AntennaRedundantHipBoltGrade3
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Size 3")>
+    <DataMember()> Public Property AntennaRedundantHipBoltSize3() As Double?
+        Get
+            Return Me._AntennaRedundantHipBoltSize3
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltSize3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Num Bolts 3")>
+    <DataMember()> Public Property AntennaRedundantHipNumBolts3() As Integer?
+        Get
+            Return Me._AntennaRedundantHipNumBolts3
+        End Get
+        Set
+            Me._AntennaRedundantHipNumBolts3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Edge Distance 3")>
+    <DataMember()> Public Property AntennaRedundantHipBoltEdgeDistance3() As Double?
+        Get
+            Return Me._AntennaRedundantHipBoltEdgeDistance3
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltEdgeDistance3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Gage G 1 Distance 3")>
+    <DataMember()> Public Property AntennaRedundantHipGageG1Distance3() As Double?
+        Get
+            Return Me._AntennaRedundantHipGageG1Distance3
+        End Get
+        Set
+            Me._AntennaRedundantHipGageG1Distance3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Net Width Deduct 3")>
+    <DataMember()> Public Property AntennaRedundantHipNetWidthDeduct3() As Double?
+        Get
+            Return Me._AntennaRedundantHipNetWidthDeduct3
+        End Get
+        Set
+            Me._AntennaRedundantHipNetWidthDeduct3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip U Factor 3")>
+    <DataMember()> Public Property AntennaRedundantHipUFactor3() As Double?
+        Get
+            Return Me._AntennaRedundantHipUFactor3
+        End Get
+        Set
+            Me._AntennaRedundantHipUFactor3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Grade 4")>
+    <DataMember()> Public Property AntennaRedundantHipBoltGrade4() As String
+        Get
+            Return Me._AntennaRedundantHipBoltGrade4
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Size 4")>
+    <DataMember()> Public Property AntennaRedundantHipBoltSize4() As Double?
+        Get
+            Return Me._AntennaRedundantHipBoltSize4
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltSize4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Num Bolts 4")>
+    <DataMember()> Public Property AntennaRedundantHipNumBolts4() As Integer?
+        Get
+            Return Me._AntennaRedundantHipNumBolts4
+        End Get
+        Set
+            Me._AntennaRedundantHipNumBolts4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Bolt Edge Distance 4")>
+    <DataMember()> Public Property AntennaRedundantHipBoltEdgeDistance4() As Double?
+        Get
+            Return Me._AntennaRedundantHipBoltEdgeDistance4
+        End Get
+        Set
+            Me._AntennaRedundantHipBoltEdgeDistance4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Gage G 1 Distance 4")>
+    <DataMember()> Public Property AntennaRedundantHipGageG1Distance4() As Double?
+        Get
+            Return Me._AntennaRedundantHipGageG1Distance4
+        End Get
+        Set
+            Me._AntennaRedundantHipGageG1Distance4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Net Width Deduct 4")>
+    <DataMember()> Public Property AntennaRedundantHipNetWidthDeduct4() As Double?
+        Get
+            Return Me._AntennaRedundantHipNetWidthDeduct4
+        End Get
+        Set
+            Me._AntennaRedundantHipNetWidthDeduct4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip U Factor 4")>
+    <DataMember()> Public Property AntennaRedundantHipUFactor4() As Double?
+        Get
+            Return Me._AntennaRedundantHipUFactor4
+        End Get
+        Set
+            Me._AntennaRedundantHipUFactor4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Grade 1")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltGrade1() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltGrade1
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltGrade1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Size 1")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltSize1() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltSize1
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltSize1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Num Bolts 1")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalNumBolts1() As Integer?
+        Get
+            Return Me._AntennaRedundantHipDiagonalNumBolts1
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalNumBolts1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Edge Distance 1")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltEdgeDistance1() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltEdgeDistance1
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltEdgeDistance1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Gage G 1 Distance 1")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalGageG1Distance1() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalGageG1Distance1
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalGageG1Distance1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Net Width Deduct 1")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalNetWidthDeduct1() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalNetWidthDeduct1
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalNetWidthDeduct1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal U Factor 1")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalUFactor1() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalUFactor1
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalUFactor1 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Grade 2")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltGrade2() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltGrade2
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Size 2")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltSize2() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltSize2
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltSize2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Num Bolts 2")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalNumBolts2() As Integer?
+        Get
+            Return Me._AntennaRedundantHipDiagonalNumBolts2
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalNumBolts2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Edge Distance 2")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltEdgeDistance2() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltEdgeDistance2
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltEdgeDistance2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Gage G 1 Distance 2")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalGageG1Distance2() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalGageG1Distance2
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalGageG1Distance2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Net Width Deduct 2")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalNetWidthDeduct2() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalNetWidthDeduct2
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalNetWidthDeduct2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal U Factor 2")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalUFactor2() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalUFactor2
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalUFactor2 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Grade 3")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltGrade3() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltGrade3
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Size 3")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltSize3() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltSize3
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltSize3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Num Bolts 3")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalNumBolts3() As Integer?
+        Get
+            Return Me._AntennaRedundantHipDiagonalNumBolts3
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalNumBolts3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Edge Distance 3")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltEdgeDistance3() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltEdgeDistance3
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltEdgeDistance3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Gage G 1 Distance 3")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalGageG1Distance3() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalGageG1Distance3
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalGageG1Distance3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Net Width Deduct 3")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalNetWidthDeduct3() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalNetWidthDeduct3
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalNetWidthDeduct3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal U Factor 3")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalUFactor3() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalUFactor3
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalUFactor3 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Grade 4")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltGrade4() As String
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltGrade4
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Size 4")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltSize4() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltSize4
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltSize4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Num Bolts 4")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalNumBolts4() As Integer?
+        Get
+            Return Me._AntennaRedundantHipDiagonalNumBolts4
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalNumBolts4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Bolt Edge Distance 4")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalBoltEdgeDistance4() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalBoltEdgeDistance4
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalBoltEdgeDistance4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Gage G 1 Distance 4")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalGageG1Distance4() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalGageG1Distance4
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalGageG1Distance4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal Net Width Deduct 4")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalNetWidthDeduct4() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalNetWidthDeduct4
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalNetWidthDeduct4 = Value
+        End Set
+    End Property
+    <Category("TNX Antenna Record"), Description(""), DisplayName("Antenna Redundant Hip Diagonal U Factor 4")>
+    <DataMember()> Public Property AntennaRedundantHipDiagonalUFactor4() As Double?
+        Get
+            Return Me._AntennaRedundantHipDiagonalUFactor4
+        End Get
+        Set
+            Me._AntennaRedundantHipDiagonalUFactor4 = Value
+        End Set
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -4523,7 +6642,169 @@ Partial Public Class tnxAntennaRecord
         Me.AntennaKbraceOffsetNEX = DBtoNullableDbl(data.Item("AntennaKbraceOffsetNEX"), 6)
         Me.AntennaKbraceOffsetPEY = DBtoNullableDbl(data.Item("AntennaKbraceOffsetPEY"), 6)
         Me.AntennaKbraceOffsetPEX = DBtoNullableDbl(data.Item("AntennaKbraceOffsetPEX"), 6)
-
+        Me.AntennaRedundantHorizontalGrade = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGrade"), 6)
+        Me.AntennaRedundantHorizontalMatlGrade = DBtoStr(data.Item("AntennaRedundantHorizontalMatlGrade"))
+        Me.AntennaRedundantHorizontalGrade2 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGrade2"), 6)
+        Me.AntennaRedundantHorizontalMatlGrade2 = DBtoStr(data.Item("AntennaRedundantHorizontalMatlGrade2"))
+        Me.AntennaRedundantHorizontalGrade3 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGrade3"), 6)
+        Me.AntennaRedundantHorizontalMatlGrade3 = DBtoStr(data.Item("AntennaRedundantHorizontalMatlGrade3"))
+        Me.AntennaRedundantHorizontalGrade4 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGrade4"), 6)
+        Me.AntennaRedundantHorizontalMatlGrade4 = DBtoStr(data.Item("AntennaRedundantHorizontalMatlGrade4"))
+        Me.AntennaRedundantDiagonalGrade = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGrade"), 6)
+        Me.AntennaRedundantDiagonalMatlGrade = DBtoStr(data.Item("AntennaRedundantDiagonalMatlGrade"))
+        Me.AntennaRedundantDiagonalGrade2 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGrade2"), 6)
+        Me.AntennaRedundantDiagonalMatlGrade2 = DBtoStr(data.Item("AntennaRedundantDiagonalMatlGrade2"))
+        Me.AntennaRedundantDiagonalGrade3 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGrade3"), 6)
+        Me.AntennaRedundantDiagonalMatlGrade3 = DBtoStr(data.Item("AntennaRedundantDiagonalMatlGrade3"))
+        Me.AntennaRedundantDiagonalGrade4 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGrade4"), 6)
+        Me.AntennaRedundantDiagonalMatlGrade4 = DBtoStr(data.Item("AntennaRedundantDiagonalMatlGrade4"))
+        Me.AntennaRedundantSubHorizontalGrade = DBtoNullableDbl(data.Item("AntennaRedundantSubHorizontalGrade"), 6)
+        Me.AntennaRedundantSubHorizontalMatlGrade = DBtoStr(data.Item("AntennaRedundantSubHorizontalMatlGrade"))
+        Me.AntennaRedundantSubDiagonalGrade = DBtoNullableDbl(data.Item("AntennaRedundantSubDiagonalGrade"), 6)
+        Me.AntennaRedundantSubDiagonalMatlGrade = DBtoStr(data.Item("AntennaRedundantSubDiagonalMatlGrade"))
+        Me.AntennaRedundantVerticalGrade = DBtoNullableDbl(data.Item("AntennaRedundantVerticalGrade"), 6)
+        Me.AntennaRedundantVerticalMatlGrade3 = DBtoStr(data.Item("AntennaRedundantVerticalMatlGrade3"))
+        Me.AntennaRedundantHipGrade = DBtoNullableDbl(data.Item("AntennaRedundantHipGrade"), 6)
+        Me.AntennaRedundantHipMatlGrade = DBtoStr(data.Item("AntennaRedundantHipMatlGrade"))
+        Me.AntennaRedundantHipGrade2 = DBtoNullableDbl(data.Item("AntennaRedundantHipGrade2"), 6)
+        Me.AntennaRedundantHipMatlGrade2 = DBtoStr(data.Item("AntennaRedundantHipMatlGrade2"))
+        Me.AntennaRedundantHipGrade3 = DBtoNullableDbl(data.Item("AntennaRedundantHipGrade3"), 6)
+        Me.AntennaRedundantHipMatlGrade3 = DBtoStr(data.Item("AntennaRedundantHipMatlGrade3"))
+        Me.AntennaRedundantHipGrade4 = DBtoNullableDbl(data.Item("AntennaRedundantHipGrade4"), 6)
+        Me.AntennaRedundantHipMatlGrade4 = DBtoStr(data.Item("AntennaRedundantHipMatlGrade4"))
+        Me.AntennaRedundantHipDiagonalGrade = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGrade"), 6)
+        Me.AntennaRedundantHipDiagonalMatlGrade = DBtoStr(data.Item("AntennaRedundantHipDiagonalMatlGrade"))
+        Me.AntennaRedundantHipDiagonalGrade2 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGrade2"), 6)
+        Me.AntennaRedundantHipDiagonalMatlGrade2 = DBtoStr(data.Item("AntennaRedundantHipDiagonalMatlGrade2"))
+        Me.AntennaRedundantHipDiagonalGrade3 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGrade3"), 6)
+        Me.AntennaRedundantHipDiagonalMatlGrade3 = DBtoStr(data.Item("AntennaRedundantHipDiagonalMatlGrade3"))
+        Me.AntennaRedundantHipDiagonalGrade4 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGrade4"), 6)
+        Me.AntennaRedundantHipDiagonalMatlGrade4 = DBtoStr(data.Item("AntennaRedundantHipDiagonalMatlGrade4"))
+        Me.AntennaRedundantHorizontalType = DBtoStr(data.Item("AntennaRedundantHorizontalType"))
+        Me.AntennaRedundantHorizontalType2 = DBtoStr(data.Item("AntennaRedundantHorizontalType2"))
+        Me.AntennaRedundantHorizontalType3 = DBtoStr(data.Item("AntennaRedundantHorizontalType3"))
+        Me.AntennaRedundantHorizontalType4 = DBtoStr(data.Item("AntennaRedundantHorizontalType4"))
+        Me.AntennaRedundantDiagType2 = DBtoStr(data.Item("AntennaRedundantDiagType2"))
+        Me.AntennaRedundantDiagType3 = DBtoStr(data.Item("AntennaRedundantDiagType3"))
+        Me.AntennaRedundantDiagType4 = DBtoStr(data.Item("AntennaRedundantDiagType4"))
+        Me.AntennaRedundantHipType2 = DBtoStr(data.Item("AntennaRedundantHipType2"))
+        Me.AntennaRedundantHipType3 = DBtoStr(data.Item("AntennaRedundantHipType3"))
+        Me.AntennaRedundantHipType4 = DBtoStr(data.Item("AntennaRedundantHipType4"))
+        Me.AntennaRedundantHipDiagonalType2 = DBtoStr(data.Item("AntennaRedundantHipDiagonalType2"))
+        Me.AntennaRedundantHipDiagonalType3 = DBtoStr(data.Item("AntennaRedundantHipDiagonalType3"))
+        Me.AntennaRedundantHipDiagonalType4 = DBtoStr(data.Item("AntennaRedundantHipDiagonalType4"))
+        Me.AntennaRedundantHorizontalBoltGrade1 = DBtoStr(data.Item("AntennaRedundantHorizontalBoltGrade1"))
+        Me.AntennaRedundantHorizontalBoltSize1 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltSize1"), 6)
+        Me.AntennaRedundantHorizontalNumBolts1 = DBtoNullableInt(data.Item("AntennaRedundantHorizontalNumBolts1"))
+        Me.AntennaRedundantHorizontalBoltEdgeDistance1 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltEdgeDistance1"), 6)
+        Me.AntennaRedundantHorizontalGageG1Distance1 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGageG1Distance1"), 6)
+        Me.AntennaRedundantHorizontalNetWidthDeduct1 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalNetWidthDeduct1"), 6)
+        Me.AntennaRedundantHorizontalUFactor1 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalUFactor1"), 6)
+        Me.AntennaRedundantHorizontalBoltGrade2 = DBtoStr(data.Item("AntennaRedundantHorizontalBoltGrade2"))
+        Me.AntennaRedundantHorizontalBoltSize2 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltSize2"), 6)
+        Me.AntennaRedundantHorizontalNumBolts2 = DBtoNullableInt(data.Item("AntennaRedundantHorizontalNumBolts2"))
+        Me.AntennaRedundantHorizontalBoltEdgeDistance2 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltEdgeDistance2"), 6)
+        Me.AntennaRedundantHorizontalGageG1Distance2 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGageG1Distance2"), 6)
+        Me.AntennaRedundantHorizontalNetWidthDeduct2 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalNetWidthDeduct2"), 6)
+        Me.AntennaRedundantHorizontalUFactor2 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalUFactor2"), 6)
+        Me.AntennaRedundantHorizontalBoltGrade3 = DBtoStr(data.Item("AntennaRedundantHorizontalBoltGrade3"))
+        Me.AntennaRedundantHorizontalBoltSize3 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltSize3"), 6)
+        Me.AntennaRedundantHorizontalNumBolts3 = DBtoNullableInt(data.Item("AntennaRedundantHorizontalNumBolts3"))
+        Me.AntennaRedundantHorizontalBoltEdgeDistance3 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltEdgeDistance3"), 6)
+        Me.AntennaRedundantHorizontalGageG1Distance3 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGageG1Distance3"), 6)
+        Me.AntennaRedundantHorizontalNetWidthDeduct3 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalNetWidthDeduct3"), 6)
+        Me.AntennaRedundantHorizontalUFactor3 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalUFactor3"), 6)
+        Me.AntennaRedundantHorizontalBoltGrade4 = DBtoStr(data.Item("AntennaRedundantHorizontalBoltGrade4"))
+        Me.AntennaRedundantHorizontalBoltSize4 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltSize4"), 6)
+        Me.AntennaRedundantHorizontalNumBolts4 = DBtoNullableInt(data.Item("AntennaRedundantHorizontalNumBolts4"))
+        Me.AntennaRedundantHorizontalBoltEdgeDistance4 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalBoltEdgeDistance4"), 6)
+        Me.AntennaRedundantHorizontalGageG1Distance4 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalGageG1Distance4"), 6)
+        Me.AntennaRedundantHorizontalNetWidthDeduct4 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalNetWidthDeduct4"), 6)
+        Me.AntennaRedundantHorizontalUFactor4 = DBtoNullableDbl(data.Item("AntennaRedundantHorizontalUFactor4"), 6)
+        Me.AntennaRedundantDiagonalBoltGrade1 = DBtoStr(data.Item("AntennaRedundantDiagonalBoltGrade1"))
+        Me.AntennaRedundantDiagonalBoltSize1 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltSize1"), 6)
+        Me.AntennaRedundantDiagonalNumBolts1 = DBtoNullableInt(data.Item("AntennaRedundantDiagonalNumBolts1"))
+        Me.AntennaRedundantDiagonalBoltEdgeDistance1 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltEdgeDistance1"), 6)
+        Me.AntennaRedundantDiagonalGageG1Distance1 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGageG1Distance1"), 6)
+        Me.AntennaRedundantDiagonalNetWidthDeduct1 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalNetWidthDeduct1"), 6)
+        Me.AntennaRedundantDiagonalUFactor1 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalUFactor1"), 6)
+        Me.AntennaRedundantDiagonalBoltGrade2 = DBtoStr(data.Item("AntennaRedundantDiagonalBoltGrade2"))
+        Me.AntennaRedundantDiagonalBoltSize2 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltSize2"), 6)
+        Me.AntennaRedundantDiagonalNumBolts2 = DBtoNullableInt(data.Item("AntennaRedundantDiagonalNumBolts2"))
+        Me.AntennaRedundantDiagonalBoltEdgeDistance2 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltEdgeDistance2"), 6)
+        Me.AntennaRedundantDiagonalGageG1Distance2 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGageG1Distance2"), 6)
+        Me.AntennaRedundantDiagonalNetWidthDeduct2 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalNetWidthDeduct2"), 6)
+        Me.AntennaRedundantDiagonalUFactor2 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalUFactor2"), 6)
+        Me.AntennaRedundantDiagonalBoltGrade3 = DBtoStr(data.Item("AntennaRedundantDiagonalBoltGrade3"))
+        Me.AntennaRedundantDiagonalBoltSize3 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltSize3"), 6)
+        Me.AntennaRedundantDiagonalNumBolts3 = DBtoNullableInt(data.Item("AntennaRedundantDiagonalNumBolts3"))
+        Me.AntennaRedundantDiagonalBoltEdgeDistance3 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltEdgeDistance3"), 6)
+        Me.AntennaRedundantDiagonalGageG1Distance3 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGageG1Distance3"), 6)
+        Me.AntennaRedundantDiagonalNetWidthDeduct3 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalNetWidthDeduct3"), 6)
+        Me.AntennaRedundantDiagonalUFactor3 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalUFactor3"), 6)
+        Me.AntennaRedundantDiagonalBoltGrade4 = DBtoStr(data.Item("AntennaRedundantDiagonalBoltGrade4"))
+        Me.AntennaRedundantDiagonalBoltSize4 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltSize4"), 6)
+        Me.AntennaRedundantDiagonalNumBolts4 = DBtoNullableInt(data.Item("AntennaRedundantDiagonalNumBolts4"))
+        Me.AntennaRedundantDiagonalBoltEdgeDistance4 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalBoltEdgeDistance4"), 6)
+        Me.AntennaRedundantDiagonalGageG1Distance4 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalGageG1Distance4"), 6)
+        Me.AntennaRedundantDiagonalNetWidthDeduct4 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalNetWidthDeduct4"), 6)
+        Me.AntennaRedundantDiagonalUFactor4 = DBtoNullableDbl(data.Item("AntennaRedundantDiagonalUFactor4"), 6)
+        Me.AntennaRedundantHipBoltGrade1 = DBtoStr(data.Item("AntennaRedundantHipBoltGrade1"))
+        Me.AntennaRedundantHipBoltSize1 = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltSize1"), 6)
+        Me.AntennaRedundantHipNumBolts1 = DBtoNullableInt(data.Item("AntennaRedundantHipNumBolts1"))
+        Me.AntennaRedundantHipBoltEdgeDistance1 = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltEdgeDistance1"), 6)
+        Me.AntennaRedundantHipGageG1Distance1 = DBtoNullableDbl(data.Item("AntennaRedundantHipGageG1Distance1"), 6)
+        Me.AntennaRedundantHipNetWidthDeduct1 = DBtoNullableDbl(data.Item("AntennaRedundantHipNetWidthDeduct1"), 6)
+        Me.AntennaRedundantHipUFactor1 = DBtoNullableDbl(data.Item("AntennaRedundantHipUFactor1"), 6)
+        Me.AntennaRedundantHipBoltGrade2 = DBtoStr(data.Item("AntennaRedundantHipBoltGrade2"))
+        Me.AntennaRedundantHipBoltSize2 = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltSize2"), 6)
+        Me.AntennaRedundantHipNumBolts2 = DBtoNullableInt(data.Item("AntennaRedundantHipNumBolts2"))
+        Me.AntennaRedundantHipBoltEdgeDistance2 = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltEdgeDistance2"), 6)
+        Me.AntennaRedundantHipGageG1Distance2 = DBtoNullableDbl(data.Item("AntennaRedundantHipGageG1Distance2"), 6)
+        Me.AntennaRedundantHipNetWidthDeduct2 = DBtoNullableDbl(data.Item("AntennaRedundantHipNetWidthDeduct2"), 6)
+        Me.AntennaRedundantHipUFactor2 = DBtoNullableDbl(data.Item("AntennaRedundantHipUFactor2"), 6)
+        Me.AntennaRedundantHipBoltGrade3 = DBtoStr(data.Item("AntennaRedundantHipBoltGrade3"))
+        Me.AntennaRedundantHipBoltSize3 = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltSize3"), 6)
+        Me.AntennaRedundantHipNumBolts3 = DBtoNullableInt(data.Item("AntennaRedundantHipNumBolts3"))
+        Me.AntennaRedundantHipBoltEdgeDistance3 = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltEdgeDistance3"), 6)
+        Me.AntennaRedundantHipGageG1Distance3 = DBtoNullableDbl(data.Item("AntennaRedundantHipGageG1Distance3"), 6)
+        Me.AntennaRedundantHipNetWidthDeduct3 = DBtoNullableDbl(data.Item("AntennaRedundantHipNetWidthDeduct3"), 6)
+        Me.AntennaRedundantHipUFactor3 = DBtoNullableDbl(data.Item("AntennaRedundantHipUFactor3"), 6)
+        Me.AntennaRedundantHipBoltGrade4 = DBtoStr(data.Item("AntennaRedundantHipBoltGrade4"))
+        Me.AntennaRedundantHipBoltSize4 = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltSize4"), 6)
+        Me.AntennaRedundantHipNumBolts4 = DBtoNullableInt(data.Item("AntennaRedundantHipNumBolts4"))
+        Me.AntennaRedundantHipBoltEdgeDistance4 = DBtoNullableDbl(data.Item("AntennaRedundantHipBoltEdgeDistance4"), 6)
+        Me.AntennaRedundantHipGageG1Distance4 = DBtoNullableDbl(data.Item("AntennaRedundantHipGageG1Distance4"), 6)
+        Me.AntennaRedundantHipNetWidthDeduct4 = DBtoNullableDbl(data.Item("AntennaRedundantHipNetWidthDeduct4"), 6)
+        Me.AntennaRedundantHipUFactor4 = DBtoNullableDbl(data.Item("AntennaRedundantHipUFactor4"), 6)
+        Me.AntennaRedundantHipDiagonalBoltGrade1 = DBtoStr(data.Item("AntennaRedundantHipDiagonalBoltGrade1"))
+        Me.AntennaRedundantHipDiagonalBoltSize1 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltSize1"), 6)
+        Me.AntennaRedundantHipDiagonalNumBolts1 = DBtoNullableInt(data.Item("AntennaRedundantHipDiagonalNumBolts1"))
+        Me.AntennaRedundantHipDiagonalBoltEdgeDistance1 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltEdgeDistance1"), 6)
+        Me.AntennaRedundantHipDiagonalGageG1Distance1 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGageG1Distance1"), 6)
+        Me.AntennaRedundantHipDiagonalNetWidthDeduct1 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalNetWidthDeduct1"), 6)
+        Me.AntennaRedundantHipDiagonalUFactor1 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalUFactor1"), 6)
+        Me.AntennaRedundantHipDiagonalBoltGrade2 = DBtoStr(data.Item("AntennaRedundantHipDiagonalBoltGrade2"))
+        Me.AntennaRedundantHipDiagonalBoltSize2 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltSize2"), 6)
+        Me.AntennaRedundantHipDiagonalNumBolts2 = DBtoNullableInt(data.Item("AntennaRedundantHipDiagonalNumBolts2"))
+        Me.AntennaRedundantHipDiagonalBoltEdgeDistance2 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltEdgeDistance2"), 6)
+        Me.AntennaRedundantHipDiagonalGageG1Distance2 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGageG1Distance2"), 6)
+        Me.AntennaRedundantHipDiagonalNetWidthDeduct2 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalNetWidthDeduct2"), 6)
+        Me.AntennaRedundantHipDiagonalUFactor2 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalUFactor2"), 6)
+        Me.AntennaRedundantHipDiagonalBoltGrade3 = DBtoStr(data.Item("AntennaRedundantHipDiagonalBoltGrade3"))
+        Me.AntennaRedundantHipDiagonalBoltSize3 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltSize3"), 6)
+        Me.AntennaRedundantHipDiagonalNumBolts3 = DBtoNullableInt(data.Item("AntennaRedundantHipDiagonalNumBolts3"))
+        Me.AntennaRedundantHipDiagonalBoltEdgeDistance3 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltEdgeDistance3"), 6)
+        Me.AntennaRedundantHipDiagonalGageG1Distance3 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGageG1Distance3"), 6)
+        Me.AntennaRedundantHipDiagonalNetWidthDeduct3 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalNetWidthDeduct3"), 6)
+        Me.AntennaRedundantHipDiagonalUFactor3 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalUFactor3"), 6)
+        Me.AntennaRedundantHipDiagonalBoltGrade4 = DBtoStr(data.Item("AntennaRedundantHipDiagonalBoltGrade4"))
+        Me.AntennaRedundantHipDiagonalBoltSize4 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltSize4"), 6)
+        Me.AntennaRedundantHipDiagonalNumBolts4 = DBtoNullableInt(data.Item("AntennaRedundantHipDiagonalNumBolts4"))
+        Me.AntennaRedundantHipDiagonalBoltEdgeDistance4 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalBoltEdgeDistance4"), 6)
+        Me.AntennaRedundantHipDiagonalGageG1Distance4 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalGageG1Distance4"), 6)
+        Me.AntennaRedundantHipDiagonalNetWidthDeduct4 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalNetWidthDeduct4"), 6)
+        Me.AntennaRedundantHipDiagonalUFactor4 = DBtoNullableDbl(data.Item("AntennaRedundantHipDiagonalUFactor4"), 6)
     End Sub
 #End Region
 
@@ -4782,6 +7063,169 @@ Partial Public Class tnxAntennaRecord
         insertString = insertString.AddtoDBString(Me.AntennaKbraceOffsetNEX.ToString)
         insertString = insertString.AddtoDBString(Me.AntennaKbraceOffsetPEY.ToString)
         insertString = insertString.AddtoDBString(Me.AntennaKbraceOffsetPEX.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalMatlGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalMatlGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalMatlGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalMatlGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalMatlGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalMatlGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubHorizontalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantSubDiagonalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantVerticalMatlGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipMatlGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipMatlGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipMatlGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalMatlGrade.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalMatlGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalMatlGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalMatlGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalType.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalType2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalType3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalType4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagType2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagType3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagType4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipType2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipType3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipType4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalType2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalType3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalType4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltGrade1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltSize1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalNumBolts1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltEdgeDistance1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalGageG1Distance1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalNetWidthDeduct1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalUFactor1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalNumBolts2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltEdgeDistance2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalGageG1Distance2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalNetWidthDeduct2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalUFactor2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalNumBolts3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltEdgeDistance3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalGageG1Distance3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalNetWidthDeduct3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalUFactor3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalNumBolts4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalBoltEdgeDistance4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalGageG1Distance4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalNetWidthDeduct4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHorizontalUFactor4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltGrade1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltSize1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalNumBolts1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltEdgeDistance1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalGageG1Distance1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalNetWidthDeduct1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalUFactor1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalNumBolts2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltEdgeDistance2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalGageG1Distance2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalNetWidthDeduct2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalUFactor2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalNumBolts3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltEdgeDistance3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalGageG1Distance3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalNetWidthDeduct3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalUFactor3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalNumBolts4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalBoltEdgeDistance4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalGageG1Distance4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalNetWidthDeduct4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantDiagonalUFactor4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltGrade1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltSize1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipNumBolts1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltEdgeDistance1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipGageG1Distance1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipNetWidthDeduct1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipUFactor1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipNumBolts2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltEdgeDistance2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipGageG1Distance2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipNetWidthDeduct2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipUFactor2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipNumBolts3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltEdgeDistance3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipGageG1Distance3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipNetWidthDeduct3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipUFactor3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipNumBolts4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipBoltEdgeDistance4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipGageG1Distance4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipNetWidthDeduct4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipUFactor4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltGrade1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltSize1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalNumBolts1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltEdgeDistance1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalGageG1Distance1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalNetWidthDeduct1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalUFactor1.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltGrade2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltSize2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalNumBolts2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltEdgeDistance2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalGageG1Distance2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalNetWidthDeduct2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalUFactor2.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltGrade3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltSize3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalNumBolts3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltEdgeDistance3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalGageG1Distance3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalNetWidthDeduct3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalUFactor3.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltGrade4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltSize4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalNumBolts4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalBoltEdgeDistance4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalGageG1Distance4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalNetWidthDeduct4.ToString)
+        insertString = insertString.AddtoDBString(Me.AntennaRedundantHipDiagonalUFactor4.ToString)
 
         Return insertString
     End Function
@@ -5048,7 +7492,169 @@ Partial Public Class tnxAntennaRecord
         Equals = If(Me.AntennaKbraceOffsetNEX.CheckChange(otherToCompare.AntennaKbraceOffsetNEX, changes, categoryName, "Antenna K brace Offset NEX"), Equals, False)
         Equals = If(Me.AntennaKbraceOffsetPEY.CheckChange(otherToCompare.AntennaKbraceOffsetPEY, changes, categoryName, "Antenna K brace Offset PEY"), Equals, False)
         Equals = If(Me.AntennaKbraceOffsetPEX.CheckChange(otherToCompare.AntennaKbraceOffsetPEX, changes, categoryName, "Antenna K brace Offset PEX"), Equals, False)
-
+        Equals = If(Me.AntennaRedundantHorizontalGrade.CheckChange(otherToCompare.AntennaRedundantHorizontalGrade, changes, categoryName, "Antenna Redundant Horizontal Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalMatlGrade.CheckChange(otherToCompare.AntennaRedundantHorizontalMatlGrade, changes, categoryName, "Antenna Redundant Horizontal Matl Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalGrade2.CheckChange(otherToCompare.AntennaRedundantHorizontalGrade2, changes, categoryName, "Antenna Redundant Horizontal Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalMatlGrade2.CheckChange(otherToCompare.AntennaRedundantHorizontalMatlGrade2, changes, categoryName, "Antenna Redundant Horizontal Matl Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalGrade3.CheckChange(otherToCompare.AntennaRedundantHorizontalGrade3, changes, categoryName, "Antenna Redundant Horizontal Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalMatlGrade3.CheckChange(otherToCompare.AntennaRedundantHorizontalMatlGrade3, changes, categoryName, "Antenna Redundant Horizontal Matl Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalGrade4.CheckChange(otherToCompare.AntennaRedundantHorizontalGrade4, changes, categoryName, "Antenna Redundant Horizontal Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalMatlGrade4.CheckChange(otherToCompare.AntennaRedundantHorizontalMatlGrade4, changes, categoryName, "Antenna Redundant Horizontal Matl Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalGrade.CheckChange(otherToCompare.AntennaRedundantDiagonalGrade, changes, categoryName, "Antenna Redundant Diagonal Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalMatlGrade.CheckChange(otherToCompare.AntennaRedundantDiagonalMatlGrade, changes, categoryName, "Antenna Redundant Diagonal Matl Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalGrade2.CheckChange(otherToCompare.AntennaRedundantDiagonalGrade2, changes, categoryName, "Antenna Redundant Diagonal Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalMatlGrade2.CheckChange(otherToCompare.AntennaRedundantDiagonalMatlGrade2, changes, categoryName, "Antenna Redundant Diagonal Matl Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalGrade3.CheckChange(otherToCompare.AntennaRedundantDiagonalGrade3, changes, categoryName, "Antenna Redundant Diagonal Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalMatlGrade3.CheckChange(otherToCompare.AntennaRedundantDiagonalMatlGrade3, changes, categoryName, "Antenna Redundant Diagonal Matl Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalGrade4.CheckChange(otherToCompare.AntennaRedundantDiagonalGrade4, changes, categoryName, "Antenna Redundant Diagonal Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalMatlGrade4.CheckChange(otherToCompare.AntennaRedundantDiagonalMatlGrade4, changes, categoryName, "Antenna Redundant Diagonal Matl Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantSubHorizontalGrade.CheckChange(otherToCompare.AntennaRedundantSubHorizontalGrade, changes, categoryName, "Antenna Redundant Sub Horizontal Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantSubHorizontalMatlGrade.CheckChange(otherToCompare.AntennaRedundantSubHorizontalMatlGrade, changes, categoryName, "Antenna Redundant Sub Horizontal Matl Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantSubDiagonalGrade.CheckChange(otherToCompare.AntennaRedundantSubDiagonalGrade, changes, categoryName, "Antenna Redundant Sub Diagonal Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantSubDiagonalMatlGrade.CheckChange(otherToCompare.AntennaRedundantSubDiagonalMatlGrade, changes, categoryName, "Antenna Redundant Sub Diagonal Matl Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantVerticalGrade.CheckChange(otherToCompare.AntennaRedundantVerticalGrade, changes, categoryName, "Antenna Redundant Vertical Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantVerticalMatlGrade3.CheckChange(otherToCompare.AntennaRedundantVerticalMatlGrade3, changes, categoryName, "Antenna Redundant Vertical Matl Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipGrade.CheckChange(otherToCompare.AntennaRedundantHipGrade, changes, categoryName, "Antenna Redundant Hip Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipMatlGrade.CheckChange(otherToCompare.AntennaRedundantHipMatlGrade, changes, categoryName, "Antenna Redundant Hip Matl Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipGrade2.CheckChange(otherToCompare.AntennaRedundantHipGrade2, changes, categoryName, "Antenna Redundant Hip Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipMatlGrade2.CheckChange(otherToCompare.AntennaRedundantHipMatlGrade2, changes, categoryName, "Antenna Redundant Hip Matl Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipGrade3.CheckChange(otherToCompare.AntennaRedundantHipGrade3, changes, categoryName, "Antenna Redundant Hip Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipMatlGrade3.CheckChange(otherToCompare.AntennaRedundantHipMatlGrade3, changes, categoryName, "Antenna Redundant Hip Matl Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipGrade4.CheckChange(otherToCompare.AntennaRedundantHipGrade4, changes, categoryName, "Antenna Redundant Hip Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipMatlGrade4.CheckChange(otherToCompare.AntennaRedundantHipMatlGrade4, changes, categoryName, "Antenna Redundant Hip Matl Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalGrade.CheckChange(otherToCompare.AntennaRedundantHipDiagonalGrade, changes, categoryName, "Antenna Redundant Hip Diagonal Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalMatlGrade.CheckChange(otherToCompare.AntennaRedundantHipDiagonalMatlGrade, changes, categoryName, "Antenna Redundant Hip Diagonal Matl Grade"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalGrade2.CheckChange(otherToCompare.AntennaRedundantHipDiagonalGrade2, changes, categoryName, "Antenna Redundant Hip Diagonal Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalMatlGrade2.CheckChange(otherToCompare.AntennaRedundantHipDiagonalMatlGrade2, changes, categoryName, "Antenna Redundant Hip Diagonal Matl Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalGrade3.CheckChange(otherToCompare.AntennaRedundantHipDiagonalGrade3, changes, categoryName, "Antenna Redundant Hip Diagonal Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalMatlGrade3.CheckChange(otherToCompare.AntennaRedundantHipDiagonalMatlGrade3, changes, categoryName, "Antenna Redundant Hip Diagonal Matl Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalGrade4.CheckChange(otherToCompare.AntennaRedundantHipDiagonalGrade4, changes, categoryName, "Antenna Redundant Hip Diagonal Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalMatlGrade4.CheckChange(otherToCompare.AntennaRedundantHipDiagonalMatlGrade4, changes, categoryName, "Antenna Redundant Hip Diagonal Matl Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalType.CheckChange(otherToCompare.AntennaRedundantHorizontalType, changes, categoryName, "Antenna Redundant Horizontal Type"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalType2.CheckChange(otherToCompare.AntennaRedundantHorizontalType2, changes, categoryName, "Antenna Redundant Horizontal Type 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalType3.CheckChange(otherToCompare.AntennaRedundantHorizontalType3, changes, categoryName, "Antenna Redundant Horizontal Type 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalType4.CheckChange(otherToCompare.AntennaRedundantHorizontalType4, changes, categoryName, "Antenna Redundant Horizontal Type 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagType2.CheckChange(otherToCompare.AntennaRedundantDiagType2, changes, categoryName, "Antenna Redundant Diag Type 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagType3.CheckChange(otherToCompare.AntennaRedundantDiagType3, changes, categoryName, "Antenna Redundant Diag Type 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagType4.CheckChange(otherToCompare.AntennaRedundantDiagType4, changes, categoryName, "Antenna Redundant Diag Type 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipType2.CheckChange(otherToCompare.AntennaRedundantHipType2, changes, categoryName, "Antenna Redundant Hip Type 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipType3.CheckChange(otherToCompare.AntennaRedundantHipType3, changes, categoryName, "Antenna Redundant Hip Type 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipType4.CheckChange(otherToCompare.AntennaRedundantHipType4, changes, categoryName, "Antenna Redundant Hip Type 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalType2.CheckChange(otherToCompare.AntennaRedundantHipDiagonalType2, changes, categoryName, "Antenna Redundant Hip Diagonal Type 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalType3.CheckChange(otherToCompare.AntennaRedundantHipDiagonalType3, changes, categoryName, "Antenna Redundant Hip Diagonal Type 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalType4.CheckChange(otherToCompare.AntennaRedundantHipDiagonalType4, changes, categoryName, "Antenna Redundant Hip Diagonal Type 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltGrade1.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltGrade1, changes, categoryName, "Antenna Redundant Horizontal Bolt Grade 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltSize1.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltSize1, changes, categoryName, "Antenna Redundant Horizontal Bolt Size 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalNumBolts1.CheckChange(otherToCompare.AntennaRedundantHorizontalNumBolts1, changes, categoryName, "Antenna Redundant Horizontal Num Bolts 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltEdgeDistance1.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltEdgeDistance1, changes, categoryName, "Antenna Redundant Horizontal Bolt Edge Distance 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalGageG1Distance1.CheckChange(otherToCompare.AntennaRedundantHorizontalGageG1Distance1, changes, categoryName, "Antenna Redundant Horizontal Gage G 1 Distance 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalNetWidthDeduct1.CheckChange(otherToCompare.AntennaRedundantHorizontalNetWidthDeduct1, changes, categoryName, "Antenna Redundant Horizontal Net Width Deduct 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalUFactor1.CheckChange(otherToCompare.AntennaRedundantHorizontalUFactor1, changes, categoryName, "Antenna Redundant Horizontal U Factor 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltGrade2.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltGrade2, changes, categoryName, "Antenna Redundant Horizontal Bolt Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltSize2.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltSize2, changes, categoryName, "Antenna Redundant Horizontal Bolt Size 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalNumBolts2.CheckChange(otherToCompare.AntennaRedundantHorizontalNumBolts2, changes, categoryName, "Antenna Redundant Horizontal Num Bolts 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltEdgeDistance2.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltEdgeDistance2, changes, categoryName, "Antenna Redundant Horizontal Bolt Edge Distance 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalGageG1Distance2.CheckChange(otherToCompare.AntennaRedundantHorizontalGageG1Distance2, changes, categoryName, "Antenna Redundant Horizontal Gage G 1 Distance 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalNetWidthDeduct2.CheckChange(otherToCompare.AntennaRedundantHorizontalNetWidthDeduct2, changes, categoryName, "Antenna Redundant Horizontal Net Width Deduct 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalUFactor2.CheckChange(otherToCompare.AntennaRedundantHorizontalUFactor2, changes, categoryName, "Antenna Redundant Horizontal U Factor 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltGrade3.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltGrade3, changes, categoryName, "Antenna Redundant Horizontal Bolt Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltSize3.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltSize3, changes, categoryName, "Antenna Redundant Horizontal Bolt Size 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalNumBolts3.CheckChange(otherToCompare.AntennaRedundantHorizontalNumBolts3, changes, categoryName, "Antenna Redundant Horizontal Num Bolts 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltEdgeDistance3.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltEdgeDistance3, changes, categoryName, "Antenna Redundant Horizontal Bolt Edge Distance 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalGageG1Distance3.CheckChange(otherToCompare.AntennaRedundantHorizontalGageG1Distance3, changes, categoryName, "Antenna Redundant Horizontal Gage G 1 Distance 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalNetWidthDeduct3.CheckChange(otherToCompare.AntennaRedundantHorizontalNetWidthDeduct3, changes, categoryName, "Antenna Redundant Horizontal Net Width Deduct 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalUFactor3.CheckChange(otherToCompare.AntennaRedundantHorizontalUFactor3, changes, categoryName, "Antenna Redundant Horizontal U Factor 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltGrade4.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltGrade4, changes, categoryName, "Antenna Redundant Horizontal Bolt Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltSize4.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltSize4, changes, categoryName, "Antenna Redundant Horizontal Bolt Size 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalNumBolts4.CheckChange(otherToCompare.AntennaRedundantHorizontalNumBolts4, changes, categoryName, "Antenna Redundant Horizontal Num Bolts 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalBoltEdgeDistance4.CheckChange(otherToCompare.AntennaRedundantHorizontalBoltEdgeDistance4, changes, categoryName, "Antenna Redundant Horizontal Bolt Edge Distance 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalGageG1Distance4.CheckChange(otherToCompare.AntennaRedundantHorizontalGageG1Distance4, changes, categoryName, "Antenna Redundant Horizontal Gage G 1 Distance 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalNetWidthDeduct4.CheckChange(otherToCompare.AntennaRedundantHorizontalNetWidthDeduct4, changes, categoryName, "Antenna Redundant Horizontal Net Width Deduct 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHorizontalUFactor4.CheckChange(otherToCompare.AntennaRedundantHorizontalUFactor4, changes, categoryName, "Antenna Redundant Horizontal U Factor 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltGrade1.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltGrade1, changes, categoryName, "Antenna Redundant Diagonal Bolt Grade 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltSize1.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltSize1, changes, categoryName, "Antenna Redundant Diagonal Bolt Size 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalNumBolts1.CheckChange(otherToCompare.AntennaRedundantDiagonalNumBolts1, changes, categoryName, "Antenna Redundant Diagonal Num Bolts 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltEdgeDistance1.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltEdgeDistance1, changes, categoryName, "Antenna Redundant Diagonal Bolt Edge Distance 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalGageG1Distance1.CheckChange(otherToCompare.AntennaRedundantDiagonalGageG1Distance1, changes, categoryName, "Antenna Redundant Diagonal Gage G 1 Distance 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalNetWidthDeduct1.CheckChange(otherToCompare.AntennaRedundantDiagonalNetWidthDeduct1, changes, categoryName, "Antenna Redundant Diagonal Net Width Deduct 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalUFactor1.CheckChange(otherToCompare.AntennaRedundantDiagonalUFactor1, changes, categoryName, "Antenna Redundant Diagonal U Factor 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltGrade2.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltGrade2, changes, categoryName, "Antenna Redundant Diagonal Bolt Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltSize2.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltSize2, changes, categoryName, "Antenna Redundant Diagonal Bolt Size 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalNumBolts2.CheckChange(otherToCompare.AntennaRedundantDiagonalNumBolts2, changes, categoryName, "Antenna Redundant Diagonal Num Bolts 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltEdgeDistance2.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltEdgeDistance2, changes, categoryName, "Antenna Redundant Diagonal Bolt Edge Distance 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalGageG1Distance2.CheckChange(otherToCompare.AntennaRedundantDiagonalGageG1Distance2, changes, categoryName, "Antenna Redundant Diagonal Gage G 1 Distance 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalNetWidthDeduct2.CheckChange(otherToCompare.AntennaRedundantDiagonalNetWidthDeduct2, changes, categoryName, "Antenna Redundant Diagonal Net Width Deduct 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalUFactor2.CheckChange(otherToCompare.AntennaRedundantDiagonalUFactor2, changes, categoryName, "Antenna Redundant Diagonal U Factor 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltGrade3.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltGrade3, changes, categoryName, "Antenna Redundant Diagonal Bolt Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltSize3.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltSize3, changes, categoryName, "Antenna Redundant Diagonal Bolt Size 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalNumBolts3.CheckChange(otherToCompare.AntennaRedundantDiagonalNumBolts3, changes, categoryName, "Antenna Redundant Diagonal Num Bolts 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltEdgeDistance3.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltEdgeDistance3, changes, categoryName, "Antenna Redundant Diagonal Bolt Edge Distance 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalGageG1Distance3.CheckChange(otherToCompare.AntennaRedundantDiagonalGageG1Distance3, changes, categoryName, "Antenna Redundant Diagonal Gage G 1 Distance 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalNetWidthDeduct3.CheckChange(otherToCompare.AntennaRedundantDiagonalNetWidthDeduct3, changes, categoryName, "Antenna Redundant Diagonal Net Width Deduct 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalUFactor3.CheckChange(otherToCompare.AntennaRedundantDiagonalUFactor3, changes, categoryName, "Antenna Redundant Diagonal U Factor 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltGrade4.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltGrade4, changes, categoryName, "Antenna Redundant Diagonal Bolt Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltSize4.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltSize4, changes, categoryName, "Antenna Redundant Diagonal Bolt Size 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalNumBolts4.CheckChange(otherToCompare.AntennaRedundantDiagonalNumBolts4, changes, categoryName, "Antenna Redundant Diagonal Num Bolts 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalBoltEdgeDistance4.CheckChange(otherToCompare.AntennaRedundantDiagonalBoltEdgeDistance4, changes, categoryName, "Antenna Redundant Diagonal Bolt Edge Distance 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalGageG1Distance4.CheckChange(otherToCompare.AntennaRedundantDiagonalGageG1Distance4, changes, categoryName, "Antenna Redundant Diagonal Gage G 1 Distance 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalNetWidthDeduct4.CheckChange(otherToCompare.AntennaRedundantDiagonalNetWidthDeduct4, changes, categoryName, "Antenna Redundant Diagonal Net Width Deduct 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantDiagonalUFactor4.CheckChange(otherToCompare.AntennaRedundantDiagonalUFactor4, changes, categoryName, "Antenna Redundant Diagonal U Factor 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltGrade1.CheckChange(otherToCompare.AntennaRedundantHipBoltGrade1, changes, categoryName, "Antenna Redundant Hip Bolt Grade 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltSize1.CheckChange(otherToCompare.AntennaRedundantHipBoltSize1, changes, categoryName, "Antenna Redundant Hip Bolt Size 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipNumBolts1.CheckChange(otherToCompare.AntennaRedundantHipNumBolts1, changes, categoryName, "Antenna Redundant Hip Num Bolts 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltEdgeDistance1.CheckChange(otherToCompare.AntennaRedundantHipBoltEdgeDistance1, changes, categoryName, "Antenna Redundant Hip Bolt Edge Distance 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipGageG1Distance1.CheckChange(otherToCompare.AntennaRedundantHipGageG1Distance1, changes, categoryName, "Antenna Redundant Hip Gage G 1 Distance 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipNetWidthDeduct1.CheckChange(otherToCompare.AntennaRedundantHipNetWidthDeduct1, changes, categoryName, "Antenna Redundant Hip Net Width Deduct 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipUFactor1.CheckChange(otherToCompare.AntennaRedundantHipUFactor1, changes, categoryName, "Antenna Redundant Hip U Factor 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltGrade2.CheckChange(otherToCompare.AntennaRedundantHipBoltGrade2, changes, categoryName, "Antenna Redundant Hip Bolt Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltSize2.CheckChange(otherToCompare.AntennaRedundantHipBoltSize2, changes, categoryName, "Antenna Redundant Hip Bolt Size 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipNumBolts2.CheckChange(otherToCompare.AntennaRedundantHipNumBolts2, changes, categoryName, "Antenna Redundant Hip Num Bolts 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltEdgeDistance2.CheckChange(otherToCompare.AntennaRedundantHipBoltEdgeDistance2, changes, categoryName, "Antenna Redundant Hip Bolt Edge Distance 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipGageG1Distance2.CheckChange(otherToCompare.AntennaRedundantHipGageG1Distance2, changes, categoryName, "Antenna Redundant Hip Gage G 1 Distance 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipNetWidthDeduct2.CheckChange(otherToCompare.AntennaRedundantHipNetWidthDeduct2, changes, categoryName, "Antenna Redundant Hip Net Width Deduct 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipUFactor2.CheckChange(otherToCompare.AntennaRedundantHipUFactor2, changes, categoryName, "Antenna Redundant Hip U Factor 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltGrade3.CheckChange(otherToCompare.AntennaRedundantHipBoltGrade3, changes, categoryName, "Antenna Redundant Hip Bolt Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltSize3.CheckChange(otherToCompare.AntennaRedundantHipBoltSize3, changes, categoryName, "Antenna Redundant Hip Bolt Size 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipNumBolts3.CheckChange(otherToCompare.AntennaRedundantHipNumBolts3, changes, categoryName, "Antenna Redundant Hip Num Bolts 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltEdgeDistance3.CheckChange(otherToCompare.AntennaRedundantHipBoltEdgeDistance3, changes, categoryName, "Antenna Redundant Hip Bolt Edge Distance 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipGageG1Distance3.CheckChange(otherToCompare.AntennaRedundantHipGageG1Distance3, changes, categoryName, "Antenna Redundant Hip Gage G 1 Distance 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipNetWidthDeduct3.CheckChange(otherToCompare.AntennaRedundantHipNetWidthDeduct3, changes, categoryName, "Antenna Redundant Hip Net Width Deduct 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipUFactor3.CheckChange(otherToCompare.AntennaRedundantHipUFactor3, changes, categoryName, "Antenna Redundant Hip U Factor 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltGrade4.CheckChange(otherToCompare.AntennaRedundantHipBoltGrade4, changes, categoryName, "Antenna Redundant Hip Bolt Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltSize4.CheckChange(otherToCompare.AntennaRedundantHipBoltSize4, changes, categoryName, "Antenna Redundant Hip Bolt Size 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipNumBolts4.CheckChange(otherToCompare.AntennaRedundantHipNumBolts4, changes, categoryName, "Antenna Redundant Hip Num Bolts 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipBoltEdgeDistance4.CheckChange(otherToCompare.AntennaRedundantHipBoltEdgeDistance4, changes, categoryName, "Antenna Redundant Hip Bolt Edge Distance 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipGageG1Distance4.CheckChange(otherToCompare.AntennaRedundantHipGageG1Distance4, changes, categoryName, "Antenna Redundant Hip Gage G 1 Distance 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipNetWidthDeduct4.CheckChange(otherToCompare.AntennaRedundantHipNetWidthDeduct4, changes, categoryName, "Antenna Redundant Hip Net Width Deduct 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipUFactor4.CheckChange(otherToCompare.AntennaRedundantHipUFactor4, changes, categoryName, "Antenna Redundant Hip U Factor 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltGrade1.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltGrade1, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Grade 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltSize1.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltSize1, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Size 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalNumBolts1.CheckChange(otherToCompare.AntennaRedundantHipDiagonalNumBolts1, changes, categoryName, "Antenna Redundant Hip Diagonal Num Bolts 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltEdgeDistance1.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltEdgeDistance1, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Edge Distance 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalGageG1Distance1.CheckChange(otherToCompare.AntennaRedundantHipDiagonalGageG1Distance1, changes, categoryName, "Antenna Redundant Hip Diagonal Gage G 1 Distance 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalNetWidthDeduct1.CheckChange(otherToCompare.AntennaRedundantHipDiagonalNetWidthDeduct1, changes, categoryName, "Antenna Redundant Hip Diagonal Net Width Deduct 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalUFactor1.CheckChange(otherToCompare.AntennaRedundantHipDiagonalUFactor1, changes, categoryName, "Antenna Redundant Hip Diagonal U Factor 1"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltGrade2.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltGrade2, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Grade 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltSize2.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltSize2, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Size 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalNumBolts2.CheckChange(otherToCompare.AntennaRedundantHipDiagonalNumBolts2, changes, categoryName, "Antenna Redundant Hip Diagonal Num Bolts 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltEdgeDistance2.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltEdgeDistance2, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Edge Distance 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalGageG1Distance2.CheckChange(otherToCompare.AntennaRedundantHipDiagonalGageG1Distance2, changes, categoryName, "Antenna Redundant Hip Diagonal Gage G 1 Distance 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalNetWidthDeduct2.CheckChange(otherToCompare.AntennaRedundantHipDiagonalNetWidthDeduct2, changes, categoryName, "Antenna Redundant Hip Diagonal Net Width Deduct 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalUFactor2.CheckChange(otherToCompare.AntennaRedundantHipDiagonalUFactor2, changes, categoryName, "Antenna Redundant Hip Diagonal U Factor 2"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltGrade3.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltGrade3, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Grade 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltSize3.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltSize3, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Size 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalNumBolts3.CheckChange(otherToCompare.AntennaRedundantHipDiagonalNumBolts3, changes, categoryName, "Antenna Redundant Hip Diagonal Num Bolts 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltEdgeDistance3.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltEdgeDistance3, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Edge Distance 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalGageG1Distance3.CheckChange(otherToCompare.AntennaRedundantHipDiagonalGageG1Distance3, changes, categoryName, "Antenna Redundant Hip Diagonal Gage G 1 Distance 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalNetWidthDeduct3.CheckChange(otherToCompare.AntennaRedundantHipDiagonalNetWidthDeduct3, changes, categoryName, "Antenna Redundant Hip Diagonal Net Width Deduct 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalUFactor3.CheckChange(otherToCompare.AntennaRedundantHipDiagonalUFactor3, changes, categoryName, "Antenna Redundant Hip Diagonal U Factor 3"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltGrade4.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltGrade4, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Grade 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltSize4.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltSize4, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Size 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalNumBolts4.CheckChange(otherToCompare.AntennaRedundantHipDiagonalNumBolts4, changes, categoryName, "Antenna Redundant Hip Diagonal Num Bolts 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalBoltEdgeDistance4.CheckChange(otherToCompare.AntennaRedundantHipDiagonalBoltEdgeDistance4, changes, categoryName, "Antenna Redundant Hip Diagonal Bolt Edge Distance 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalGageG1Distance4.CheckChange(otherToCompare.AntennaRedundantHipDiagonalGageG1Distance4, changes, categoryName, "Antenna Redundant Hip Diagonal Gage G 1 Distance 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalNetWidthDeduct4.CheckChange(otherToCompare.AntennaRedundantHipDiagonalNetWidthDeduct4, changes, categoryName, "Antenna Redundant Hip Diagonal Net Width Deduct 4"), Equals, False)
+        Equals = If(Me.AntennaRedundantHipDiagonalUFactor4.CheckChange(otherToCompare.AntennaRedundantHipDiagonalUFactor4, changes, categoryName, "Antenna Redundant Hip Diagonal U Factor 4"), Equals, False)
         Return Equals
     End Function
 
@@ -5326,6 +7932,169 @@ Partial Public Class tnxTowerRecord
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKbraceOffsetNEX.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKbraceOffsetPEY.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerKbraceOffsetPEX.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubHorizontalMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantSubDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantVerticalMatlGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipMatlGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipMatlGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipMatlGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalType.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalType2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalType3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalType4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagType2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagType3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagType4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipType2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipType3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipType4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalType2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalType3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalType4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltGrade1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltSize1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNumBolts1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalUFactor1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltSize2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNumBolts2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalUFactor2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltSize3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNumBolts3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalUFactor3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltSize4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNumBolts4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHorizontalUFactor4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltGrade1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltSize1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNumBolts1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalUFactor1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltSize2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNumBolts2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalUFactor2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltSize3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNumBolts3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalUFactor3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltSize4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNumBolts4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalUFactor4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltGrade1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltSize1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNumBolts1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGageG1Distance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipUFactor1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltSize2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNumBolts2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGageG1Distance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipUFactor2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltSize3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNumBolts3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGageG1Distance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipUFactor3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltSize4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNumBolts4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipGageG1Distance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipUFactor4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltGrade1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltSize1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNumBolts1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor1.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltGrade2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltSize2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNumBolts2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor2.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltGrade3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltSize3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNumBolts3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor3.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltGrade4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltSize4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNumBolts4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor4.NullableToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -5579,6 +8348,207 @@ Partial Public Class tnxTowerRecord
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKbraceOffsetNEX")
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKbraceOffsetPEY")
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerKbraceOffsetPEX")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalMatlGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalType")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalType2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalType3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalType4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagType2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagType3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagType4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipType2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipType3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipType4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalType2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalType3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalType4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltGrade1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltSize1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNumBolts1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGageG1Distance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalUFactor1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNumBolts2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGageG1Distance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalUFactor2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNumBolts3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGageG1Distance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalUFactor3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNumBolts4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGageG1Distance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalUFactor4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltGrade1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltSize1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNumBolts1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGageG1Distance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalUFactor1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNumBolts2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGageG1Distance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalUFactor2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNumBolts3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGageG1Distance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalUFactor3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNumBolts4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGageG1Distance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalUFactor4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltGrade1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltSize1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNumBolts1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltEdgeDistance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGageG1Distance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNetWidthDeduct1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipUFactor1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNumBolts2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltEdgeDistance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGageG1Distance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNetWidthDeduct2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipUFactor2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNumBolts3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltEdgeDistance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGageG1Distance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNetWidthDeduct3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipUFactor3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNumBolts4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipBoltEdgeDistance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGageG1Distance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipNetWidthDeduct4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipUFactor4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltGrade1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltSize1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNumBolts1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalUFactor1")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltGrade2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltSize2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNumBolts2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalUFactor2")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltGrade3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltSize3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNumBolts3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalUFactor3")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltGrade4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltSize4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNumBolts4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalUFactor4")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade2Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade2Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade3Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade3Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade4Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade4Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade2Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade2Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade3Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade3Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade4Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade4Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalMatlGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalMatlGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalMatlGrade3Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade2Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade2Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade3Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade3Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade4Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade4Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGradeOverwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade2Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade3Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade4Overwrite")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4Overwrite")
 
         Return SQLInsertFields
     End Function
@@ -5831,6 +8801,207 @@ Partial Public Class tnxTowerRecord
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerKbraceOffsetNEX = " & Me.TowerKbraceOffsetNEX.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerKbraceOffsetPEY = " & Me.TowerKbraceOffsetPEY.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerKbraceOffsetPEX = " & Me.TowerKbraceOffsetPEX.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade = " & Me.TowerRedundantHorizontalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade = " & Me.TowerRedundantHorizontalMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade2 = " & Me.TowerRedundantHorizontalGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade2 = " & Me.TowerRedundantHorizontalMatlGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade3 = " & Me.TowerRedundantHorizontalGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade3 = " & Me.TowerRedundantHorizontalMatlGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade4 = " & Me.TowerRedundantHorizontalGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade4 = " & Me.TowerRedundantHorizontalMatlGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade = " & Me.TowerRedundantDiagonalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade = " & Me.TowerRedundantDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade2 = " & Me.TowerRedundantDiagonalGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade2 = " & Me.TowerRedundantDiagonalMatlGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade3 = " & Me.TowerRedundantDiagonalGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade3 = " & Me.TowerRedundantDiagonalMatlGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade4 = " & Me.TowerRedundantDiagonalGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade4 = " & Me.TowerRedundantDiagonalMatlGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalGrade = " & Me.TowerRedundantSubHorizontalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalMatlGrade = " & Me.TowerRedundantSubHorizontalMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalGrade = " & Me.TowerRedundantSubDiagonalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalMatlGrade = " & Me.TowerRedundantSubDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalGrade = " & Me.TowerRedundantVerticalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalMatlGrade3 = " & Me.TowerRedundantVerticalMatlGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade = " & Me.TowerRedundantHipGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade = " & Me.TowerRedundantHipMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade2 = " & Me.TowerRedundantHipGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade2 = " & Me.TowerRedundantHipMatlGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade3 = " & Me.TowerRedundantHipGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade3 = " & Me.TowerRedundantHipMatlGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade4 = " & Me.TowerRedundantHipGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade4 = " & Me.TowerRedundantHipMatlGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade = " & Me.TowerRedundantHipDiagonalGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade = " & Me.TowerRedundantHipDiagonalMatlGrade.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade2 = " & Me.TowerRedundantHipDiagonalGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2 = " & Me.TowerRedundantHipDiagonalMatlGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade3 = " & Me.TowerRedundantHipDiagonalGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3 = " & Me.TowerRedundantHipDiagonalMatlGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade4 = " & Me.TowerRedundantHipDiagonalGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4 = " & Me.TowerRedundantHipDiagonalMatlGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType = " & Me.TowerRedundantHorizontalType.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType2 = " & Me.TowerRedundantHorizontalType2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType3 = " & Me.TowerRedundantHorizontalType3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType4 = " & Me.TowerRedundantHorizontalType4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType2 = " & Me.TowerRedundantDiagType2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType3 = " & Me.TowerRedundantDiagType3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType4 = " & Me.TowerRedundantDiagType4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType2 = " & Me.TowerRedundantHipType2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType3 = " & Me.TowerRedundantHipType3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType4 = " & Me.TowerRedundantHipType4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType2 = " & Me.TowerRedundantHipDiagonalType2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType3 = " & Me.TowerRedundantHipDiagonalType3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType4 = " & Me.TowerRedundantHipDiagonalType4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade1 = " & Me.TowerRedundantHorizontalBoltGrade1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize1 = " & Me.TowerRedundantHorizontalBoltSize1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts1 = " & Me.TowerRedundantHorizontalNumBolts1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance1 = " & Me.TowerRedundantHorizontalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance1 = " & Me.TowerRedundantHorizontalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct1 = " & Me.TowerRedundantHorizontalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor1 = " & Me.TowerRedundantHorizontalUFactor1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade2 = " & Me.TowerRedundantHorizontalBoltGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize2 = " & Me.TowerRedundantHorizontalBoltSize2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts2 = " & Me.TowerRedundantHorizontalNumBolts2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance2 = " & Me.TowerRedundantHorizontalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance2 = " & Me.TowerRedundantHorizontalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct2 = " & Me.TowerRedundantHorizontalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor2 = " & Me.TowerRedundantHorizontalUFactor2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade3 = " & Me.TowerRedundantHorizontalBoltGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize3 = " & Me.TowerRedundantHorizontalBoltSize3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts3 = " & Me.TowerRedundantHorizontalNumBolts3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance3 = " & Me.TowerRedundantHorizontalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance3 = " & Me.TowerRedundantHorizontalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct3 = " & Me.TowerRedundantHorizontalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor3 = " & Me.TowerRedundantHorizontalUFactor3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade4 = " & Me.TowerRedundantHorizontalBoltGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize4 = " & Me.TowerRedundantHorizontalBoltSize4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts4 = " & Me.TowerRedundantHorizontalNumBolts4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance4 = " & Me.TowerRedundantHorizontalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance4 = " & Me.TowerRedundantHorizontalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct4 = " & Me.TowerRedundantHorizontalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor4 = " & Me.TowerRedundantHorizontalUFactor4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade1 = " & Me.TowerRedundantDiagonalBoltGrade1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize1 = " & Me.TowerRedundantDiagonalBoltSize1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts1 = " & Me.TowerRedundantDiagonalNumBolts1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance1 = " & Me.TowerRedundantDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance1 = " & Me.TowerRedundantDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct1 = " & Me.TowerRedundantDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor1 = " & Me.TowerRedundantDiagonalUFactor1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade2 = " & Me.TowerRedundantDiagonalBoltGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize2 = " & Me.TowerRedundantDiagonalBoltSize2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts2 = " & Me.TowerRedundantDiagonalNumBolts2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance2 = " & Me.TowerRedundantDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance2 = " & Me.TowerRedundantDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct2 = " & Me.TowerRedundantDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor2 = " & Me.TowerRedundantDiagonalUFactor2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade3 = " & Me.TowerRedundantDiagonalBoltGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize3 = " & Me.TowerRedundantDiagonalBoltSize3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts3 = " & Me.TowerRedundantDiagonalNumBolts3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance3 = " & Me.TowerRedundantDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance3 = " & Me.TowerRedundantDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct3 = " & Me.TowerRedundantDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor3 = " & Me.TowerRedundantDiagonalUFactor3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade4 = " & Me.TowerRedundantDiagonalBoltGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize4 = " & Me.TowerRedundantDiagonalBoltSize4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts4 = " & Me.TowerRedundantDiagonalNumBolts4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance4 = " & Me.TowerRedundantDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance4 = " & Me.TowerRedundantDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct4 = " & Me.TowerRedundantDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor4 = " & Me.TowerRedundantDiagonalUFactor4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade1 = " & Me.TowerRedundantHipBoltGrade1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize1 = " & Me.TowerRedundantHipBoltSize1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts1 = " & Me.TowerRedundantHipNumBolts1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance1 = " & Me.TowerRedundantHipBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance1 = " & Me.TowerRedundantHipGageG1Distance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct1 = " & Me.TowerRedundantHipNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor1 = " & Me.TowerRedundantHipUFactor1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade2 = " & Me.TowerRedundantHipBoltGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize2 = " & Me.TowerRedundantHipBoltSize2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts2 = " & Me.TowerRedundantHipNumBolts2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance2 = " & Me.TowerRedundantHipBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance2 = " & Me.TowerRedundantHipGageG1Distance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct2 = " & Me.TowerRedundantHipNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor2 = " & Me.TowerRedundantHipUFactor2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade3 = " & Me.TowerRedundantHipBoltGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize3 = " & Me.TowerRedundantHipBoltSize3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts3 = " & Me.TowerRedundantHipNumBolts3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance3 = " & Me.TowerRedundantHipBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance3 = " & Me.TowerRedundantHipGageG1Distance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct3 = " & Me.TowerRedundantHipNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor3 = " & Me.TowerRedundantHipUFactor3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade4 = " & Me.TowerRedundantHipBoltGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize4 = " & Me.TowerRedundantHipBoltSize4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts4 = " & Me.TowerRedundantHipNumBolts4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance4 = " & Me.TowerRedundantHipBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance4 = " & Me.TowerRedundantHipGageG1Distance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct4 = " & Me.TowerRedundantHipNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor4 = " & Me.TowerRedundantHipUFactor4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade1 = " & Me.TowerRedundantHipDiagonalBoltGrade1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize1 = " & Me.TowerRedundantHipDiagonalBoltSize1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts1 = " & Me.TowerRedundantHipDiagonalNumBolts1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance1 = " & Me.TowerRedundantHipDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance1 = " & Me.TowerRedundantHipDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct1 = " & Me.TowerRedundantHipDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor1 = " & Me.TowerRedundantHipDiagonalUFactor1.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade2 = " & Me.TowerRedundantHipDiagonalBoltGrade2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize2 = " & Me.TowerRedundantHipDiagonalBoltSize2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts2 = " & Me.TowerRedundantHipDiagonalNumBolts2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance2 = " & Me.TowerRedundantHipDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance2 = " & Me.TowerRedundantHipDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct2 = " & Me.TowerRedundantHipDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor2 = " & Me.TowerRedundantHipDiagonalUFactor2.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade3 = " & Me.TowerRedundantHipDiagonalBoltGrade3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize3 = " & Me.TowerRedundantHipDiagonalBoltSize3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts3 = " & Me.TowerRedundantHipDiagonalNumBolts3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance3 = " & Me.TowerRedundantHipDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance3 = " & Me.TowerRedundantHipDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct3 = " & Me.TowerRedundantHipDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor3 = " & Me.TowerRedundantHipDiagonalUFactor3.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade4 = " & Me.TowerRedundantHipDiagonalBoltGrade4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize4 = " & Me.TowerRedundantHipDiagonalBoltSize4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts4 = " & Me.TowerRedundantHipDiagonalNumBolts4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance4 = " & Me.TowerRedundantHipDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance4 = " & Me.TowerRedundantHipDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct4 = " & Me.TowerRedundantHipDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor4 = " & Me.TowerRedundantHipDiagonalUFactor4.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGradeOverwrite = " & Me.TowerRedundantHorizontalGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGradeOverwrite = " & Me.TowerRedundantHorizontalMatlGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade2Overwrite = " & Me.TowerRedundantHorizontalGrade2Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade2Overwrite = " & Me.TowerRedundantHorizontalMatlGrade2Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade3Overwrite = " & Me.TowerRedundantHorizontalGrade3Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade3Overwrite = " & Me.TowerRedundantHorizontalMatlGrade3Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade4Overwrite = " & Me.TowerRedundantHorizontalGrade4Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade4Overwrite = " & Me.TowerRedundantHorizontalMatlGrade4Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGradeOverwrite = " & Me.TowerRedundantDiagonalGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGradeOverwrite = " & Me.TowerRedundantDiagonalMatlGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade2Overwrite = " & Me.TowerRedundantDiagonalGrade2Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade2Overwrite = " & Me.TowerRedundantDiagonalMatlGrade2Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade3Overwrite = " & Me.TowerRedundantDiagonalGrade3Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade3Overwrite = " & Me.TowerRedundantDiagonalMatlGrade3Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade4Overwrite = " & Me.TowerRedundantDiagonalGrade4Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade4Overwrite = " & Me.TowerRedundantDiagonalMatlGrade4Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalGradeOverwrite = " & Me.TowerRedundantSubHorizontalGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalMatlGradeOverwrite = " & Me.TowerRedundantSubHorizontalMatlGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalGradeOverwrite = " & Me.TowerRedundantSubDiagonalGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalMatlGradeOverwrite = " & Me.TowerRedundantSubDiagonalMatlGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalGradeOverwrite = " & Me.TowerRedundantVerticalGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalMatlGrade3Overwrite = " & Me.TowerRedundantVerticalMatlGrade3Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGradeOverwrite = " & Me.TowerRedundantHipGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGradeOverwrite = " & Me.TowerRedundantHipMatlGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade2Overwrite = " & Me.TowerRedundantHipGrade2Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade2Overwrite = " & Me.TowerRedundantHipMatlGrade2Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade3Overwrite = " & Me.TowerRedundantHipGrade3Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade3Overwrite = " & Me.TowerRedundantHipMatlGrade3Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade4Overwrite = " & Me.TowerRedundantHipGrade4Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade4Overwrite = " & Me.TowerRedundantHipMatlGrade4Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGradeOverwrite = " & Me.TowerRedundantHipDiagonalGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGradeOverwrite = " & Me.TowerRedundantHipDiagonalMatlGradeOverwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade2Overwrite = " & Me.TowerRedundantHipDiagonalGrade2Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2Overwrite = " & Me.TowerRedundantHipDiagonalMatlGrade2Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade3Overwrite = " & Me.TowerRedundantHipDiagonalGrade3Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3Overwrite = " & Me.TowerRedundantHipDiagonalMatlGrade3Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade4Overwrite = " & Me.TowerRedundantHipDiagonalGrade4Overwrite.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4Overwrite = " & Me.TowerRedundantHipDiagonalMatlGrade4Overwrite.NullableToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -6083,6 +9254,207 @@ Partial Public Class tnxTowerRecord
     Private _TowerKbraceOffsetNEX As Double?
     Private _TowerKbraceOffsetPEY As Double?
     Private _TowerKbraceOffsetPEX As Double?
+    Private _TowerRedundantHorizontalGrade As Double?
+    Private _TowerRedundantHorizontalMatlGrade As String
+    Private _TowerRedundantHorizontalGrade2 As Double?
+    Private _TowerRedundantHorizontalMatlGrade2 As String
+    Private _TowerRedundantHorizontalGrade3 As Double?
+    Private _TowerRedundantHorizontalMatlGrade3 As String
+    Private _TowerRedundantHorizontalGrade4 As Double?
+    Private _TowerRedundantHorizontalMatlGrade4 As String
+    Private _TowerRedundantDiagonalGrade As Double?
+    Private _TowerRedundantDiagonalMatlGrade As String
+    Private _TowerRedundantDiagonalGrade2 As Double?
+    Private _TowerRedundantDiagonalMatlGrade2 As String
+    Private _TowerRedundantDiagonalGrade3 As Double?
+    Private _TowerRedundantDiagonalMatlGrade3 As String
+    Private _TowerRedundantDiagonalGrade4 As Double?
+    Private _TowerRedundantDiagonalMatlGrade4 As String
+    Private _TowerRedundantSubHorizontalGrade As Double?
+    Private _TowerRedundantSubHorizontalMatlGrade As String
+    Private _TowerRedundantSubDiagonalGrade As Double?
+    Private _TowerRedundantSubDiagonalMatlGrade As String
+    Private _TowerRedundantVerticalGrade As Double?
+    Private _TowerRedundantVerticalMatlGrade3 As String
+    Private _TowerRedundantHipGrade As Double?
+    Private _TowerRedundantHipMatlGrade As String
+    Private _TowerRedundantHipGrade2 As Double?
+    Private _TowerRedundantHipMatlGrade2 As String
+    Private _TowerRedundantHipGrade3 As Double?
+    Private _TowerRedundantHipMatlGrade3 As String
+    Private _TowerRedundantHipGrade4 As Double?
+    Private _TowerRedundantHipMatlGrade4 As String
+    Private _TowerRedundantHipDiagonalGrade As Double?
+    Private _TowerRedundantHipDiagonalMatlGrade As String
+    Private _TowerRedundantHipDiagonalGrade2 As Double?
+    Private _TowerRedundantHipDiagonalMatlGrade2 As String
+    Private _TowerRedundantHipDiagonalGrade3 As Double?
+    Private _TowerRedundantHipDiagonalMatlGrade3 As String
+    Private _TowerRedundantHipDiagonalGrade4 As Double?
+    Private _TowerRedundantHipDiagonalMatlGrade4 As String
+    Private _TowerRedundantHorizontalType As String
+    Private _TowerRedundantHorizontalType2 As String
+    Private _TowerRedundantHorizontalType3 As String
+    Private _TowerRedundantHorizontalType4 As String
+    Private _TowerRedundantDiagType2 As String
+    Private _TowerRedundantDiagType3 As String
+    Private _TowerRedundantDiagType4 As String
+    Private _TowerRedundantHipType2 As String
+    Private _TowerRedundantHipType3 As String
+    Private _TowerRedundantHipType4 As String
+    Private _TowerRedundantHipDiagonalType2 As String
+    Private _TowerRedundantHipDiagonalType3 As String
+    Private _TowerRedundantHipDiagonalType4 As String
+    Private _TowerRedundantHorizontalBoltGrade1 As String
+    Private _TowerRedundantHorizontalBoltSize1 As Double?
+    Private _TowerRedundantHorizontalNumBolts1 As Integer?
+    Private _TowerRedundantHorizontalBoltEdgeDistance1 As Double?
+    Private _TowerRedundantHorizontalGageG1Distance1 As Double?
+    Private _TowerRedundantHorizontalNetWidthDeduct1 As Double?
+    Private _TowerRedundantHorizontalUFactor1 As Double?
+    Private _TowerRedundantHorizontalBoltGrade2 As String
+    Private _TowerRedundantHorizontalBoltSize2 As Double?
+    Private _TowerRedundantHorizontalNumBolts2 As Integer?
+    Private _TowerRedundantHorizontalBoltEdgeDistance2 As Double?
+    Private _TowerRedundantHorizontalGageG1Distance2 As Double?
+    Private _TowerRedundantHorizontalNetWidthDeduct2 As Double?
+    Private _TowerRedundantHorizontalUFactor2 As Double?
+    Private _TowerRedundantHorizontalBoltGrade3 As String
+    Private _TowerRedundantHorizontalBoltSize3 As Double?
+    Private _TowerRedundantHorizontalNumBolts3 As Integer?
+    Private _TowerRedundantHorizontalBoltEdgeDistance3 As Double?
+    Private _TowerRedundantHorizontalGageG1Distance3 As Double?
+    Private _TowerRedundantHorizontalNetWidthDeduct3 As Double?
+    Private _TowerRedundantHorizontalUFactor3 As Double?
+    Private _TowerRedundantHorizontalBoltGrade4 As String
+    Private _TowerRedundantHorizontalBoltSize4 As Double?
+    Private _TowerRedundantHorizontalNumBolts4 As Integer?
+    Private _TowerRedundantHorizontalBoltEdgeDistance4 As Double?
+    Private _TowerRedundantHorizontalGageG1Distance4 As Double?
+    Private _TowerRedundantHorizontalNetWidthDeduct4 As Double?
+    Private _TowerRedundantHorizontalUFactor4 As Double?
+    Private _TowerRedundantDiagonalBoltGrade1 As String
+    Private _TowerRedundantDiagonalBoltSize1 As Double?
+    Private _TowerRedundantDiagonalNumBolts1 As Integer?
+    Private _TowerRedundantDiagonalBoltEdgeDistance1 As Double?
+    Private _TowerRedundantDiagonalGageG1Distance1 As Double?
+    Private _TowerRedundantDiagonalNetWidthDeduct1 As Double?
+    Private _TowerRedundantDiagonalUFactor1 As Double?
+    Private _TowerRedundantDiagonalBoltGrade2 As String
+    Private _TowerRedundantDiagonalBoltSize2 As Double?
+    Private _TowerRedundantDiagonalNumBolts2 As Integer?
+    Private _TowerRedundantDiagonalBoltEdgeDistance2 As Double?
+    Private _TowerRedundantDiagonalGageG1Distance2 As Double?
+    Private _TowerRedundantDiagonalNetWidthDeduct2 As Double?
+    Private _TowerRedundantDiagonalUFactor2 As Double?
+    Private _TowerRedundantDiagonalBoltGrade3 As String
+    Private _TowerRedundantDiagonalBoltSize3 As Double?
+    Private _TowerRedundantDiagonalNumBolts3 As Integer?
+    Private _TowerRedundantDiagonalBoltEdgeDistance3 As Double?
+    Private _TowerRedundantDiagonalGageG1Distance3 As Double?
+    Private _TowerRedundantDiagonalNetWidthDeduct3 As Double?
+    Private _TowerRedundantDiagonalUFactor3 As Double?
+    Private _TowerRedundantDiagonalBoltGrade4 As String
+    Private _TowerRedundantDiagonalBoltSize4 As Double?
+    Private _TowerRedundantDiagonalNumBolts4 As Integer?
+    Private _TowerRedundantDiagonalBoltEdgeDistance4 As Double?
+    Private _TowerRedundantDiagonalGageG1Distance4 As Double?
+    Private _TowerRedundantDiagonalNetWidthDeduct4 As Double?
+    Private _TowerRedundantDiagonalUFactor4 As Double?
+    Private _TowerRedundantHipBoltGrade1 As String
+    Private _TowerRedundantHipBoltSize1 As Double?
+    Private _TowerRedundantHipNumBolts1 As Integer?
+    Private _TowerRedundantHipBoltEdgeDistance1 As Double?
+    Private _TowerRedundantHipGageG1Distance1 As Double?
+    Private _TowerRedundantHipNetWidthDeduct1 As Double?
+    Private _TowerRedundantHipUFactor1 As Double?
+    Private _TowerRedundantHipBoltGrade2 As String
+    Private _TowerRedundantHipBoltSize2 As Double?
+    Private _TowerRedundantHipNumBolts2 As Integer?
+    Private _TowerRedundantHipBoltEdgeDistance2 As Double?
+    Private _TowerRedundantHipGageG1Distance2 As Double?
+    Private _TowerRedundantHipNetWidthDeduct2 As Double?
+    Private _TowerRedundantHipUFactor2 As Double?
+    Private _TowerRedundantHipBoltGrade3 As String
+    Private _TowerRedundantHipBoltSize3 As Double?
+    Private _TowerRedundantHipNumBolts3 As Integer?
+    Private _TowerRedundantHipBoltEdgeDistance3 As Double?
+    Private _TowerRedundantHipGageG1Distance3 As Double?
+    Private _TowerRedundantHipNetWidthDeduct3 As Double?
+    Private _TowerRedundantHipUFactor3 As Double?
+    Private _TowerRedundantHipBoltGrade4 As String
+    Private _TowerRedundantHipBoltSize4 As Double?
+    Private _TowerRedundantHipNumBolts4 As Integer?
+    Private _TowerRedundantHipBoltEdgeDistance4 As Double?
+    Private _TowerRedundantHipGageG1Distance4 As Double?
+    Private _TowerRedundantHipNetWidthDeduct4 As Double?
+    Private _TowerRedundantHipUFactor4 As Double?
+    Private _TowerRedundantHipDiagonalBoltGrade1 As String
+    Private _TowerRedundantHipDiagonalBoltSize1 As Double?
+    Private _TowerRedundantHipDiagonalNumBolts1 As Integer?
+    Private _TowerRedundantHipDiagonalBoltEdgeDistance1 As Double?
+    Private _TowerRedundantHipDiagonalGageG1Distance1 As Double?
+    Private _TowerRedundantHipDiagonalNetWidthDeduct1 As Double?
+    Private _TowerRedundantHipDiagonalUFactor1 As Double?
+    Private _TowerRedundantHipDiagonalBoltGrade2 As String
+    Private _TowerRedundantHipDiagonalBoltSize2 As Double?
+    Private _TowerRedundantHipDiagonalNumBolts2 As Integer?
+    Private _TowerRedundantHipDiagonalBoltEdgeDistance2 As Double?
+    Private _TowerRedundantHipDiagonalGageG1Distance2 As Double?
+    Private _TowerRedundantHipDiagonalNetWidthDeduct2 As Double?
+    Private _TowerRedundantHipDiagonalUFactor2 As Double?
+    Private _TowerRedundantHipDiagonalBoltGrade3 As String
+    Private _TowerRedundantHipDiagonalBoltSize3 As Double?
+    Private _TowerRedundantHipDiagonalNumBolts3 As Integer?
+    Private _TowerRedundantHipDiagonalBoltEdgeDistance3 As Double?
+    Private _TowerRedundantHipDiagonalGageG1Distance3 As Double?
+    Private _TowerRedundantHipDiagonalNetWidthDeduct3 As Double?
+    Private _TowerRedundantHipDiagonalUFactor3 As Double?
+    Private _TowerRedundantHipDiagonalBoltGrade4 As String
+    Private _TowerRedundantHipDiagonalBoltSize4 As Double?
+    Private _TowerRedundantHipDiagonalNumBolts4 As Integer?
+    Private _TowerRedundantHipDiagonalBoltEdgeDistance4 As Double?
+    Private _TowerRedundantHipDiagonalGageG1Distance4 As Double?
+    Private _TowerRedundantHipDiagonalNetWidthDeduct4 As Double?
+    Private _TowerRedundantHipDiagonalUFactor4 As Double?
+    Private _TowerRedundantHorizontalGradeOverwrite As Double?
+    Private _TowerRedundantHorizontalMatlGradeOverwrite As String
+    Private _TowerRedundantHorizontalGrade2Overwrite As Double?
+    Private _TowerRedundantHorizontalMatlGrade2Overwrite As String
+    Private _TowerRedundantHorizontalGrade3Overwrite As Double?
+    Private _TowerRedundantHorizontalMatlGrade3Overwrite As String
+    Private _TowerRedundantHorizontalGrade4Overwrite As Double?
+    Private _TowerRedundantHorizontalMatlGrade4Overwrite As String
+    Private _TowerRedundantDiagonalGradeOverwrite As Double?
+    Private _TowerRedundantDiagonalMatlGradeOverwrite As String
+    Private _TowerRedundantDiagonalGrade2Overwrite As Double?
+    Private _TowerRedundantDiagonalMatlGrade2Overwrite As String
+    Private _TowerRedundantDiagonalGrade3Overwrite As Double?
+    Private _TowerRedundantDiagonalMatlGrade3Overwrite As String
+    Private _TowerRedundantDiagonalGrade4Overwrite As Double?
+    Private _TowerRedundantDiagonalMatlGrade4Overwrite As String
+    Private _TowerRedundantSubHorizontalGradeOverwrite As Double?
+    Private _TowerRedundantSubHorizontalMatlGradeOverwrite As String
+    Private _TowerRedundantSubDiagonalGradeOverwrite As Double?
+    Private _TowerRedundantSubDiagonalMatlGradeOverwrite As String
+    Private _TowerRedundantVerticalGradeOverwrite As Double?
+    Private _TowerRedundantVerticalMatlGrade3Overwrite As String
+    Private _TowerRedundantHipGradeOverwrite As Double?
+    Private _TowerRedundantHipMatlGradeOverwrite As String
+    Private _TowerRedundantHipGrade2Overwrite As Double?
+    Private _TowerRedundantHipMatlGrade2Overwrite As String
+    Private _TowerRedundantHipGrade3Overwrite As Double?
+    Private _TowerRedundantHipMatlGrade3Overwrite As String
+    Private _TowerRedundantHipGrade4Overwrite As Double?
+    Private _TowerRedundantHipMatlGrade4Overwrite As String
+    Private _TowerRedundantHipDiagonalGradeOverwrite As Double?
+    Private _TowerRedundantHipDiagonalMatlGradeOverwrite As String
+    Private _TowerRedundantHipDiagonalGrade2Overwrite As Double?
+    Private _TowerRedundantHipDiagonalMatlGrade2Overwrite As String
+    Private _TowerRedundantHipDiagonalGrade3Overwrite As Double?
+    Private _TowerRedundantHipDiagonalMatlGrade3Overwrite As String
+    Private _TowerRedundantHipDiagonalGrade4Overwrite As Double?
+    Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
 
     '<Category("TNX Tower Record"), Description(""), DisplayName("Towerrec")>
     ' <DataMember()> Public Property Rec() As Integer?
@@ -8289,6 +11661,1815 @@ Partial Public Class tnxTowerRecord
             Me._TowerKbraceOffsetPEX = Value
         End Set
     End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade")>
+    <DataMember()> Public Property TowerRedundantHorizontalGrade() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGrade
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade")>
+    <DataMember()> Public Property TowerRedundantHorizontalMatlGrade() As String
+        Get
+            Return Me._TowerRedundantHorizontalMatlGrade
+        End Get
+        Set
+            Me._TowerRedundantHorizontalMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 2")>
+    <DataMember()> Public Property TowerRedundantHorizontalGrade2() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGrade2
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade 2")>
+    <DataMember()> Public Property TowerRedundantHorizontalMatlGrade2() As String
+        Get
+            Return Me._TowerRedundantHorizontalMatlGrade2
+        End Get
+        Set
+            Me._TowerRedundantHorizontalMatlGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 3")>
+    <DataMember()> Public Property TowerRedundantHorizontalGrade3() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGrade3
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade 3")>
+    <DataMember()> Public Property TowerRedundantHorizontalMatlGrade3() As String
+        Get
+            Return Me._TowerRedundantHorizontalMatlGrade3
+        End Get
+        Set
+            Me._TowerRedundantHorizontalMatlGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 4")>
+    <DataMember()> Public Property TowerRedundantHorizontalGrade4() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGrade4
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade 4")>
+    <DataMember()> Public Property TowerRedundantHorizontalMatlGrade4() As String
+        Get
+            Return Me._TowerRedundantHorizontalMatlGrade4
+        End Get
+        Set
+            Me._TowerRedundantHorizontalMatlGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade")>
+    <DataMember()> Public Property TowerRedundantDiagonalGrade() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGrade
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade")>
+    <DataMember()> Public Property TowerRedundantDiagonalMatlGrade() As String
+        Get
+            Return Me._TowerRedundantDiagonalMatlGrade
+        End Get
+        Set
+            Me._TowerRedundantDiagonalMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 2")>
+    <DataMember()> Public Property TowerRedundantDiagonalGrade2() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGrade2
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade 2")>
+    <DataMember()> Public Property TowerRedundantDiagonalMatlGrade2() As String
+        Get
+            Return Me._TowerRedundantDiagonalMatlGrade2
+        End Get
+        Set
+            Me._TowerRedundantDiagonalMatlGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 3")>
+    <DataMember()> Public Property TowerRedundantDiagonalGrade3() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGrade3
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade 3")>
+    <DataMember()> Public Property TowerRedundantDiagonalMatlGrade3() As String
+        Get
+            Return Me._TowerRedundantDiagonalMatlGrade3
+        End Get
+        Set
+            Me._TowerRedundantDiagonalMatlGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 4")>
+    <DataMember()> Public Property TowerRedundantDiagonalGrade4() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGrade4
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade 4")>
+    <DataMember()> Public Property TowerRedundantDiagonalMatlGrade4() As String
+        Get
+            Return Me._TowerRedundantDiagonalMatlGrade4
+        End Get
+        Set
+            Me._TowerRedundantDiagonalMatlGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Horizontal Grade")>
+    <DataMember()> Public Property TowerRedundantSubHorizontalGrade() As Double?
+        Get
+            Return Me._TowerRedundantSubHorizontalGrade
+        End Get
+        Set
+            Me._TowerRedundantSubHorizontalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Horizontal Matl Grade")>
+    <DataMember()> Public Property TowerRedundantSubHorizontalMatlGrade() As String
+        Get
+            Return Me._TowerRedundantSubHorizontalMatlGrade
+        End Get
+        Set
+            Me._TowerRedundantSubHorizontalMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Diagonal Grade")>
+    <DataMember()> Public Property TowerRedundantSubDiagonalGrade() As Double?
+        Get
+            Return Me._TowerRedundantSubDiagonalGrade
+        End Get
+        Set
+            Me._TowerRedundantSubDiagonalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Diagonal Matl Grade")>
+    <DataMember()> Public Property TowerRedundantSubDiagonalMatlGrade() As String
+        Get
+            Return Me._TowerRedundantSubDiagonalMatlGrade
+        End Get
+        Set
+            Me._TowerRedundantSubDiagonalMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Vertical Grade")>
+    <DataMember()> Public Property TowerRedundantVerticalGrade() As Double?
+        Get
+            Return Me._TowerRedundantVerticalGrade
+        End Get
+        Set
+            Me._TowerRedundantVerticalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Vertical Matl Grade 3")>
+    <DataMember()> Public Property TowerRedundantVerticalMatlGrade3() As String
+        Get
+            Return Me._TowerRedundantVerticalMatlGrade3
+        End Get
+        Set
+            Me._TowerRedundantVerticalMatlGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade")>
+    <DataMember()> Public Property TowerRedundantHipGrade() As Double?
+        Get
+            Return Me._TowerRedundantHipGrade
+        End Get
+        Set
+            Me._TowerRedundantHipGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade")>
+    <DataMember()> Public Property TowerRedundantHipMatlGrade() As String
+        Get
+            Return Me._TowerRedundantHipMatlGrade
+        End Get
+        Set
+            Me._TowerRedundantHipMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 2")>
+    <DataMember()> Public Property TowerRedundantHipGrade2() As Double?
+        Get
+            Return Me._TowerRedundantHipGrade2
+        End Get
+        Set
+            Me._TowerRedundantHipGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade 2")>
+    <DataMember()> Public Property TowerRedundantHipMatlGrade2() As String
+        Get
+            Return Me._TowerRedundantHipMatlGrade2
+        End Get
+        Set
+            Me._TowerRedundantHipMatlGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 3")>
+    <DataMember()> Public Property TowerRedundantHipGrade3() As Double?
+        Get
+            Return Me._TowerRedundantHipGrade3
+        End Get
+        Set
+            Me._TowerRedundantHipGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade 3")>
+    <DataMember()> Public Property TowerRedundantHipMatlGrade3() As String
+        Get
+            Return Me._TowerRedundantHipMatlGrade3
+        End Get
+        Set
+            Me._TowerRedundantHipMatlGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 4")>
+    <DataMember()> Public Property TowerRedundantHipGrade4() As Double?
+        Get
+            Return Me._TowerRedundantHipGrade4
+        End Get
+        Set
+            Me._TowerRedundantHipGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade 4")>
+    <DataMember()> Public Property TowerRedundantHipMatlGrade4() As String
+        Get
+            Return Me._TowerRedundantHipMatlGrade4
+        End Get
+        Set
+            Me._TowerRedundantHipMatlGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGrade() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGrade
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalMatlGrade() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalMatlGrade
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalMatlGrade = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 2")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGrade2() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGrade2
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade 2")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalMatlGrade2() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalMatlGrade2
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalMatlGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 3")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGrade3() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGrade3
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade 3")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalMatlGrade3() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalMatlGrade3
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalMatlGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 4")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGrade4() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGrade4
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade 4")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalMatlGrade4() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalMatlGrade4
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalMatlGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Type")>
+    <DataMember()> Public Property TowerRedundantHorizontalType() As String
+        Get
+            Return Me._TowerRedundantHorizontalType
+        End Get
+        Set
+            Me._TowerRedundantHorizontalType = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Type 2")>
+    <DataMember()> Public Property TowerRedundantHorizontalType2() As String
+        Get
+            Return Me._TowerRedundantHorizontalType2
+        End Get
+        Set
+            Me._TowerRedundantHorizontalType2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Type 3")>
+    <DataMember()> Public Property TowerRedundantHorizontalType3() As String
+        Get
+            Return Me._TowerRedundantHorizontalType3
+        End Get
+        Set
+            Me._TowerRedundantHorizontalType3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Type 4")>
+    <DataMember()> Public Property TowerRedundantHorizontalType4() As String
+        Get
+            Return Me._TowerRedundantHorizontalType4
+        End Get
+        Set
+            Me._TowerRedundantHorizontalType4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diag Type 2")>
+    <DataMember()> Public Property TowerRedundantDiagType2() As String
+        Get
+            Return Me._TowerRedundantDiagType2
+        End Get
+        Set
+            Me._TowerRedundantDiagType2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diag Type 3")>
+    <DataMember()> Public Property TowerRedundantDiagType3() As String
+        Get
+            Return Me._TowerRedundantDiagType3
+        End Get
+        Set
+            Me._TowerRedundantDiagType3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diag Type 4")>
+    <DataMember()> Public Property TowerRedundantDiagType4() As String
+        Get
+            Return Me._TowerRedundantDiagType4
+        End Get
+        Set
+            Me._TowerRedundantDiagType4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Type 2")>
+    <DataMember()> Public Property TowerRedundantHipType2() As String
+        Get
+            Return Me._TowerRedundantHipType2
+        End Get
+        Set
+            Me._TowerRedundantHipType2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Type 3")>
+    <DataMember()> Public Property TowerRedundantHipType3() As String
+        Get
+            Return Me._TowerRedundantHipType3
+        End Get
+        Set
+            Me._TowerRedundantHipType3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Type 4")>
+    <DataMember()> Public Property TowerRedundantHipType4() As String
+        Get
+            Return Me._TowerRedundantHipType4
+        End Get
+        Set
+            Me._TowerRedundantHipType4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Type 2")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalType2() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalType2
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalType2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Type 3")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalType3() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalType3
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalType3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Type 4")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalType4() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalType4
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalType4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Grade 1")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltGrade1() As String
+        Get
+            Return Me._TowerRedundantHorizontalBoltGrade1
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltGrade1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Size 1")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltSize1() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalBoltSize1
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltSize1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Num Bolts 1")>
+    <DataMember()> Public Property TowerRedundantHorizontalNumBolts1() As Integer?
+        Get
+            Return Me._TowerRedundantHorizontalNumBolts1
+        End Get
+        Set
+            Me._TowerRedundantHorizontalNumBolts1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Edge Distance 1")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance1() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalBoltEdgeDistance1
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltEdgeDistance1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Gage G 1 Distance 1")>
+    <DataMember()> Public Property TowerRedundantHorizontalGageG1Distance1() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGageG1Distance1
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGageG1Distance1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Net Width Deduct 1")>
+    <DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct1() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalNetWidthDeduct1
+        End Get
+        Set
+            Me._TowerRedundantHorizontalNetWidthDeduct1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal U Factor 1")>
+    <DataMember()> Public Property TowerRedundantHorizontalUFactor1() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalUFactor1
+        End Get
+        Set
+            Me._TowerRedundantHorizontalUFactor1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Grade 2")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltGrade2() As String
+        Get
+            Return Me._TowerRedundantHorizontalBoltGrade2
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Size 2")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltSize2() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalBoltSize2
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltSize2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Num Bolts 2")>
+    <DataMember()> Public Property TowerRedundantHorizontalNumBolts2() As Integer?
+        Get
+            Return Me._TowerRedundantHorizontalNumBolts2
+        End Get
+        Set
+            Me._TowerRedundantHorizontalNumBolts2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Edge Distance 2")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance2() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalBoltEdgeDistance2
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltEdgeDistance2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Gage G 1 Distance 2")>
+    <DataMember()> Public Property TowerRedundantHorizontalGageG1Distance2() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGageG1Distance2
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGageG1Distance2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Net Width Deduct 2")>
+    <DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct2() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalNetWidthDeduct2
+        End Get
+        Set
+            Me._TowerRedundantHorizontalNetWidthDeduct2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal U Factor 2")>
+    <DataMember()> Public Property TowerRedundantHorizontalUFactor2() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalUFactor2
+        End Get
+        Set
+            Me._TowerRedundantHorizontalUFactor2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Grade 3")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltGrade3() As String
+        Get
+            Return Me._TowerRedundantHorizontalBoltGrade3
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Size 3")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltSize3() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalBoltSize3
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltSize3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Num Bolts 3")>
+    <DataMember()> Public Property TowerRedundantHorizontalNumBolts3() As Integer?
+        Get
+            Return Me._TowerRedundantHorizontalNumBolts3
+        End Get
+        Set
+            Me._TowerRedundantHorizontalNumBolts3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Edge Distance 3")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance3() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalBoltEdgeDistance3
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltEdgeDistance3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Gage G 1 Distance 3")>
+    <DataMember()> Public Property TowerRedundantHorizontalGageG1Distance3() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGageG1Distance3
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGageG1Distance3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Net Width Deduct 3")>
+    <DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct3() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalNetWidthDeduct3
+        End Get
+        Set
+            Me._TowerRedundantHorizontalNetWidthDeduct3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal U Factor 3")>
+    <DataMember()> Public Property TowerRedundantHorizontalUFactor3() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalUFactor3
+        End Get
+        Set
+            Me._TowerRedundantHorizontalUFactor3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Grade 4")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltGrade4() As String
+        Get
+            Return Me._TowerRedundantHorizontalBoltGrade4
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Size 4")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltSize4() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalBoltSize4
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltSize4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Num Bolts 4")>
+    <DataMember()> Public Property TowerRedundantHorizontalNumBolts4() As Integer?
+        Get
+            Return Me._TowerRedundantHorizontalNumBolts4
+        End Get
+        Set
+            Me._TowerRedundantHorizontalNumBolts4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Bolt Edge Distance 4")>
+    <DataMember()> Public Property TowerRedundantHorizontalBoltEdgeDistance4() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalBoltEdgeDistance4
+        End Get
+        Set
+            Me._TowerRedundantHorizontalBoltEdgeDistance4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Gage G 1 Distance 4")>
+    <DataMember()> Public Property TowerRedundantHorizontalGageG1Distance4() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGageG1Distance4
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGageG1Distance4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Net Width Deduct 4")>
+    <DataMember()> Public Property TowerRedundantHorizontalNetWidthDeduct4() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalNetWidthDeduct4
+        End Get
+        Set
+            Me._TowerRedundantHorizontalNetWidthDeduct4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal U Factor 4")>
+    <DataMember()> Public Property TowerRedundantHorizontalUFactor4() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalUFactor4
+        End Get
+        Set
+            Me._TowerRedundantHorizontalUFactor4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Grade 1")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltGrade1() As String
+        Get
+            Return Me._TowerRedundantDiagonalBoltGrade1
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltGrade1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Size 1")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltSize1() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalBoltSize1
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltSize1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Num Bolts 1")>
+    <DataMember()> Public Property TowerRedundantDiagonalNumBolts1() As Integer?
+        Get
+            Return Me._TowerRedundantDiagonalNumBolts1
+        End Get
+        Set
+            Me._TowerRedundantDiagonalNumBolts1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Edge Distance 1")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance1() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalBoltEdgeDistance1
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltEdgeDistance1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Gage G 1 Distance 1")>
+    <DataMember()> Public Property TowerRedundantDiagonalGageG1Distance1() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGageG1Distance1
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGageG1Distance1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Net Width Deduct 1")>
+    <DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct1() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalNetWidthDeduct1
+        End Get
+        Set
+            Me._TowerRedundantDiagonalNetWidthDeduct1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal U Factor 1")>
+    <DataMember()> Public Property TowerRedundantDiagonalUFactor1() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalUFactor1
+        End Get
+        Set
+            Me._TowerRedundantDiagonalUFactor1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Grade 2")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltGrade2() As String
+        Get
+            Return Me._TowerRedundantDiagonalBoltGrade2
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Size 2")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltSize2() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalBoltSize2
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltSize2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Num Bolts 2")>
+    <DataMember()> Public Property TowerRedundantDiagonalNumBolts2() As Integer?
+        Get
+            Return Me._TowerRedundantDiagonalNumBolts2
+        End Get
+        Set
+            Me._TowerRedundantDiagonalNumBolts2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Edge Distance 2")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance2() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalBoltEdgeDistance2
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltEdgeDistance2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Gage G 1 Distance 2")>
+    <DataMember()> Public Property TowerRedundantDiagonalGageG1Distance2() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGageG1Distance2
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGageG1Distance2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Net Width Deduct 2")>
+    <DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct2() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalNetWidthDeduct2
+        End Get
+        Set
+            Me._TowerRedundantDiagonalNetWidthDeduct2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal U Factor 2")>
+    <DataMember()> Public Property TowerRedundantDiagonalUFactor2() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalUFactor2
+        End Get
+        Set
+            Me._TowerRedundantDiagonalUFactor2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Grade 3")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltGrade3() As String
+        Get
+            Return Me._TowerRedundantDiagonalBoltGrade3
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Size 3")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltSize3() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalBoltSize3
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltSize3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Num Bolts 3")>
+    <DataMember()> Public Property TowerRedundantDiagonalNumBolts3() As Integer?
+        Get
+            Return Me._TowerRedundantDiagonalNumBolts3
+        End Get
+        Set
+            Me._TowerRedundantDiagonalNumBolts3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Edge Distance 3")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance3() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalBoltEdgeDistance3
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltEdgeDistance3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Gage G 1 Distance 3")>
+    <DataMember()> Public Property TowerRedundantDiagonalGageG1Distance3() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGageG1Distance3
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGageG1Distance3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Net Width Deduct 3")>
+    <DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct3() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalNetWidthDeduct3
+        End Get
+        Set
+            Me._TowerRedundantDiagonalNetWidthDeduct3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal U Factor 3")>
+    <DataMember()> Public Property TowerRedundantDiagonalUFactor3() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalUFactor3
+        End Get
+        Set
+            Me._TowerRedundantDiagonalUFactor3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Grade 4")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltGrade4() As String
+        Get
+            Return Me._TowerRedundantDiagonalBoltGrade4
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Size 4")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltSize4() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalBoltSize4
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltSize4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Num Bolts 4")>
+    <DataMember()> Public Property TowerRedundantDiagonalNumBolts4() As Integer?
+        Get
+            Return Me._TowerRedundantDiagonalNumBolts4
+        End Get
+        Set
+            Me._TowerRedundantDiagonalNumBolts4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Bolt Edge Distance 4")>
+    <DataMember()> Public Property TowerRedundantDiagonalBoltEdgeDistance4() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalBoltEdgeDistance4
+        End Get
+        Set
+            Me._TowerRedundantDiagonalBoltEdgeDistance4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Gage G 1 Distance 4")>
+    <DataMember()> Public Property TowerRedundantDiagonalGageG1Distance4() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGageG1Distance4
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGageG1Distance4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Net Width Deduct 4")>
+    <DataMember()> Public Property TowerRedundantDiagonalNetWidthDeduct4() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalNetWidthDeduct4
+        End Get
+        Set
+            Me._TowerRedundantDiagonalNetWidthDeduct4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal U Factor 4")>
+    <DataMember()> Public Property TowerRedundantDiagonalUFactor4() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalUFactor4
+        End Get
+        Set
+            Me._TowerRedundantDiagonalUFactor4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Grade 1")>
+    <DataMember()> Public Property TowerRedundantHipBoltGrade1() As String
+        Get
+            Return Me._TowerRedundantHipBoltGrade1
+        End Get
+        Set
+            Me._TowerRedundantHipBoltGrade1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Size 1")>
+    <DataMember()> Public Property TowerRedundantHipBoltSize1() As Double?
+        Get
+            Return Me._TowerRedundantHipBoltSize1
+        End Get
+        Set
+            Me._TowerRedundantHipBoltSize1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Num Bolts 1")>
+    <DataMember()> Public Property TowerRedundantHipNumBolts1() As Integer?
+        Get
+            Return Me._TowerRedundantHipNumBolts1
+        End Get
+        Set
+            Me._TowerRedundantHipNumBolts1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Edge Distance 1")>
+    <DataMember()> Public Property TowerRedundantHipBoltEdgeDistance1() As Double?
+        Get
+            Return Me._TowerRedundantHipBoltEdgeDistance1
+        End Get
+        Set
+            Me._TowerRedundantHipBoltEdgeDistance1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Gage G 1 Distance 1")>
+    <DataMember()> Public Property TowerRedundantHipGageG1Distance1() As Double?
+        Get
+            Return Me._TowerRedundantHipGageG1Distance1
+        End Get
+        Set
+            Me._TowerRedundantHipGageG1Distance1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Net Width Deduct 1")>
+    <DataMember()> Public Property TowerRedundantHipNetWidthDeduct1() As Double?
+        Get
+            Return Me._TowerRedundantHipNetWidthDeduct1
+        End Get
+        Set
+            Me._TowerRedundantHipNetWidthDeduct1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip U Factor 1")>
+    <DataMember()> Public Property TowerRedundantHipUFactor1() As Double?
+        Get
+            Return Me._TowerRedundantHipUFactor1
+        End Get
+        Set
+            Me._TowerRedundantHipUFactor1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Grade 2")>
+    <DataMember()> Public Property TowerRedundantHipBoltGrade2() As String
+        Get
+            Return Me._TowerRedundantHipBoltGrade2
+        End Get
+        Set
+            Me._TowerRedundantHipBoltGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Size 2")>
+    <DataMember()> Public Property TowerRedundantHipBoltSize2() As Double?
+        Get
+            Return Me._TowerRedundantHipBoltSize2
+        End Get
+        Set
+            Me._TowerRedundantHipBoltSize2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Num Bolts 2")>
+    <DataMember()> Public Property TowerRedundantHipNumBolts2() As Integer?
+        Get
+            Return Me._TowerRedundantHipNumBolts2
+        End Get
+        Set
+            Me._TowerRedundantHipNumBolts2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Edge Distance 2")>
+    <DataMember()> Public Property TowerRedundantHipBoltEdgeDistance2() As Double?
+        Get
+            Return Me._TowerRedundantHipBoltEdgeDistance2
+        End Get
+        Set
+            Me._TowerRedundantHipBoltEdgeDistance2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Gage G 1 Distance 2")>
+    <DataMember()> Public Property TowerRedundantHipGageG1Distance2() As Double?
+        Get
+            Return Me._TowerRedundantHipGageG1Distance2
+        End Get
+        Set
+            Me._TowerRedundantHipGageG1Distance2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Net Width Deduct 2")>
+    <DataMember()> Public Property TowerRedundantHipNetWidthDeduct2() As Double?
+        Get
+            Return Me._TowerRedundantHipNetWidthDeduct2
+        End Get
+        Set
+            Me._TowerRedundantHipNetWidthDeduct2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip U Factor 2")>
+    <DataMember()> Public Property TowerRedundantHipUFactor2() As Double?
+        Get
+            Return Me._TowerRedundantHipUFactor2
+        End Get
+        Set
+            Me._TowerRedundantHipUFactor2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Grade 3")>
+    <DataMember()> Public Property TowerRedundantHipBoltGrade3() As String
+        Get
+            Return Me._TowerRedundantHipBoltGrade3
+        End Get
+        Set
+            Me._TowerRedundantHipBoltGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Size 3")>
+    <DataMember()> Public Property TowerRedundantHipBoltSize3() As Double?
+        Get
+            Return Me._TowerRedundantHipBoltSize3
+        End Get
+        Set
+            Me._TowerRedundantHipBoltSize3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Num Bolts 3")>
+    <DataMember()> Public Property TowerRedundantHipNumBolts3() As Integer?
+        Get
+            Return Me._TowerRedundantHipNumBolts3
+        End Get
+        Set
+            Me._TowerRedundantHipNumBolts3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Edge Distance 3")>
+    <DataMember()> Public Property TowerRedundantHipBoltEdgeDistance3() As Double?
+        Get
+            Return Me._TowerRedundantHipBoltEdgeDistance3
+        End Get
+        Set
+            Me._TowerRedundantHipBoltEdgeDistance3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Gage G 1 Distance 3")>
+    <DataMember()> Public Property TowerRedundantHipGageG1Distance3() As Double?
+        Get
+            Return Me._TowerRedundantHipGageG1Distance3
+        End Get
+        Set
+            Me._TowerRedundantHipGageG1Distance3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Net Width Deduct 3")>
+    <DataMember()> Public Property TowerRedundantHipNetWidthDeduct3() As Double?
+        Get
+            Return Me._TowerRedundantHipNetWidthDeduct3
+        End Get
+        Set
+            Me._TowerRedundantHipNetWidthDeduct3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip U Factor 3")>
+    <DataMember()> Public Property TowerRedundantHipUFactor3() As Double?
+        Get
+            Return Me._TowerRedundantHipUFactor3
+        End Get
+        Set
+            Me._TowerRedundantHipUFactor3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Grade 4")>
+    <DataMember()> Public Property TowerRedundantHipBoltGrade4() As String
+        Get
+            Return Me._TowerRedundantHipBoltGrade4
+        End Get
+        Set
+            Me._TowerRedundantHipBoltGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Size 4")>
+    <DataMember()> Public Property TowerRedundantHipBoltSize4() As Double?
+        Get
+            Return Me._TowerRedundantHipBoltSize4
+        End Get
+        Set
+            Me._TowerRedundantHipBoltSize4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Num Bolts 4")>
+    <DataMember()> Public Property TowerRedundantHipNumBolts4() As Integer?
+        Get
+            Return Me._TowerRedundantHipNumBolts4
+        End Get
+        Set
+            Me._TowerRedundantHipNumBolts4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Bolt Edge Distance 4")>
+    <DataMember()> Public Property TowerRedundantHipBoltEdgeDistance4() As Double?
+        Get
+            Return Me._TowerRedundantHipBoltEdgeDistance4
+        End Get
+        Set
+            Me._TowerRedundantHipBoltEdgeDistance4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Gage G 1 Distance 4")>
+    <DataMember()> Public Property TowerRedundantHipGageG1Distance4() As Double?
+        Get
+            Return Me._TowerRedundantHipGageG1Distance4
+        End Get
+        Set
+            Me._TowerRedundantHipGageG1Distance4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Net Width Deduct 4")>
+    <DataMember()> Public Property TowerRedundantHipNetWidthDeduct4() As Double?
+        Get
+            Return Me._TowerRedundantHipNetWidthDeduct4
+        End Get
+        Set
+            Me._TowerRedundantHipNetWidthDeduct4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip U Factor 4")>
+    <DataMember()> Public Property TowerRedundantHipUFactor4() As Double?
+        Get
+            Return Me._TowerRedundantHipUFactor4
+        End Get
+        Set
+            Me._TowerRedundantHipUFactor4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Grade 1")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltGrade1() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltGrade1
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltGrade1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Size 1")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltSize1() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltSize1
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltSize1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Num Bolts 1")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalNumBolts1() As Integer?
+        Get
+            Return Me._TowerRedundantHipDiagonalNumBolts1
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalNumBolts1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Edge Distance 1")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance1() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltEdgeDistance1
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltEdgeDistance1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Gage G 1 Distance 1")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance1() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGageG1Distance1
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGageG1Distance1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Net Width Deduct 1")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct1() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalNetWidthDeduct1
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalNetWidthDeduct1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal U Factor 1")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalUFactor1() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalUFactor1
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalUFactor1 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Grade 2")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltGrade2() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltGrade2
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltGrade2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Size 2")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltSize2() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltSize2
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltSize2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Num Bolts 2")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalNumBolts2() As Integer?
+        Get
+            Return Me._TowerRedundantHipDiagonalNumBolts2
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalNumBolts2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Edge Distance 2")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance2() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltEdgeDistance2
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltEdgeDistance2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Gage G 1 Distance 2")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance2() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGageG1Distance2
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGageG1Distance2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Net Width Deduct 2")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct2() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalNetWidthDeduct2
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalNetWidthDeduct2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal U Factor 2")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalUFactor2() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalUFactor2
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalUFactor2 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Grade 3")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltGrade3() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltGrade3
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltGrade3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Size 3")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltSize3() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltSize3
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltSize3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Num Bolts 3")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalNumBolts3() As Integer?
+        Get
+            Return Me._TowerRedundantHipDiagonalNumBolts3
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalNumBolts3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Edge Distance 3")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance3() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltEdgeDistance3
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltEdgeDistance3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Gage G 1 Distance 3")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance3() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGageG1Distance3
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGageG1Distance3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Net Width Deduct 3")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct3() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalNetWidthDeduct3
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalNetWidthDeduct3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal U Factor 3")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalUFactor3() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalUFactor3
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalUFactor3 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Grade 4")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltGrade4() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltGrade4
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltGrade4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Size 4")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltSize4() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltSize4
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltSize4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Num Bolts 4")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalNumBolts4() As Integer?
+        Get
+            Return Me._TowerRedundantHipDiagonalNumBolts4
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalNumBolts4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Bolt Edge Distance 4")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalBoltEdgeDistance4() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalBoltEdgeDistance4
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalBoltEdgeDistance4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Gage G 1 Distance 4")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGageG1Distance4() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGageG1Distance4
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGageG1Distance4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Net Width Deduct 4")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalNetWidthDeduct4() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalNetWidthDeduct4
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalNetWidthDeduct4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal U Factor 4")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalUFactor4() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalUFactor4
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalUFactor4 = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantHorizontalGradeOverwrite() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantHorizontalMatlGradeOverwrite() As String
+        Get
+            Return Me._TowerRedundantHorizontalMatlGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantHorizontalMatlGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 2 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHorizontalGrade2Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGrade2Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGrade2Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade 2 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHorizontalMatlGrade2Overwrite() As String
+        Get
+            Return Me._TowerRedundantHorizontalMatlGrade2Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHorizontalMatlGrade2Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 3 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHorizontalGrade3Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGrade3Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGrade3Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade 3 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHorizontalMatlGrade3Overwrite() As String
+        Get
+            Return Me._TowerRedundantHorizontalMatlGrade3Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHorizontalMatlGrade3Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 4 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHorizontalGrade4Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantHorizontalGrade4Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHorizontalGrade4Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade 4 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHorizontalMatlGrade4Overwrite() As String
+        Get
+            Return Me._TowerRedundantHorizontalMatlGrade4Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHorizontalMatlGrade4Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantDiagonalGradeOverwrite() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantDiagonalMatlGradeOverwrite() As String
+        Get
+            Return Me._TowerRedundantDiagonalMatlGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantDiagonalMatlGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 2 Overwrite")>
+    <DataMember()> Public Property TowerRedundantDiagonalGrade2Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGrade2Overwrite
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGrade2Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade 2 Overwrite")>
+    <DataMember()> Public Property TowerRedundantDiagonalMatlGrade2Overwrite() As String
+        Get
+            Return Me._TowerRedundantDiagonalMatlGrade2Overwrite
+        End Get
+        Set
+            Me._TowerRedundantDiagonalMatlGrade2Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 3 Overwrite")>
+    <DataMember()> Public Property TowerRedundantDiagonalGrade3Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGrade3Overwrite
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGrade3Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade 3 Overwrite")>
+    <DataMember()> Public Property TowerRedundantDiagonalMatlGrade3Overwrite() As String
+        Get
+            Return Me._TowerRedundantDiagonalMatlGrade3Overwrite
+        End Get
+        Set
+            Me._TowerRedundantDiagonalMatlGrade3Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 4 Overwrite")>
+    <DataMember()> Public Property TowerRedundantDiagonalGrade4Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantDiagonalGrade4Overwrite
+        End Get
+        Set
+            Me._TowerRedundantDiagonalGrade4Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade 4 Overwrite")>
+    <DataMember()> Public Property TowerRedundantDiagonalMatlGrade4Overwrite() As String
+        Get
+            Return Me._TowerRedundantDiagonalMatlGrade4Overwrite
+        End Get
+        Set
+            Me._TowerRedundantDiagonalMatlGrade4Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Horizontal Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantSubHorizontalGradeOverwrite() As Double?
+        Get
+            Return Me._TowerRedundantSubHorizontalGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantSubHorizontalGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Horizontal Matl Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantSubHorizontalMatlGradeOverwrite() As String
+        Get
+            Return Me._TowerRedundantSubHorizontalMatlGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantSubHorizontalMatlGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Diagonal Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantSubDiagonalGradeOverwrite() As Double?
+        Get
+            Return Me._TowerRedundantSubDiagonalGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantSubDiagonalGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Diagonal Matl Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantSubDiagonalMatlGradeOverwrite() As String
+        Get
+            Return Me._TowerRedundantSubDiagonalMatlGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantSubDiagonalMatlGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Vertical Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantVerticalGradeOverwrite() As Double?
+        Get
+            Return Me._TowerRedundantVerticalGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantVerticalGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Vertical Matl Grade 3 Overwrite")>
+    <DataMember()> Public Property TowerRedundantVerticalMatlGrade3Overwrite() As String
+        Get
+            Return Me._TowerRedundantVerticalMatlGrade3Overwrite
+        End Get
+        Set
+            Me._TowerRedundantVerticalMatlGrade3Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipGradeOverwrite() As Double?
+        Get
+            Return Me._TowerRedundantHipGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantHipGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipMatlGradeOverwrite() As String
+        Get
+            Return Me._TowerRedundantHipMatlGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantHipMatlGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 2 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipGrade2Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantHipGrade2Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipGrade2Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade 2 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipMatlGrade2Overwrite() As String
+        Get
+            Return Me._TowerRedundantHipMatlGrade2Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipMatlGrade2Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 3 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipGrade3Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantHipGrade3Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipGrade3Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade 3 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipMatlGrade3Overwrite() As String
+        Get
+            Return Me._TowerRedundantHipMatlGrade3Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipMatlGrade3Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 4 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipGrade4Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantHipGrade4Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipGrade4Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade 4 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipMatlGrade4Overwrite() As String
+        Get
+            Return Me._TowerRedundantHipMatlGrade4Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipMatlGrade4Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGradeOverwrite() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalMatlGradeOverwrite() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalMatlGradeOverwrite
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalMatlGradeOverwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 2 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGrade2Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGrade2Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGrade2Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade 2 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalMatlGrade2Overwrite() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalMatlGrade2Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalMatlGrade2Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 3 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGrade3Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGrade3Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGrade3Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade 3 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalMatlGrade3Overwrite() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalMatlGrade3Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalMatlGrade3Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 4 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalGrade4Overwrite() As Double?
+        Get
+            Return Me._TowerRedundantHipDiagonalGrade4Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalGrade4Overwrite = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade 4 Overwrite")>
+    <DataMember()> Public Property TowerRedundantHipDiagonalMatlGrade4Overwrite() As String
+        Get
+            Return Me._TowerRedundantHipDiagonalMatlGrade4Overwrite
+        End Get
+        Set
+            Me._TowerRedundantHipDiagonalMatlGrade4Overwrite = Value
+        End Set
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -8546,6 +13727,207 @@ Partial Public Class tnxTowerRecord
         Me.TowerKbraceOffsetNEX = DBtoNullableDbl(data.Item("TowerKbraceOffsetNEX"), 6)
         Me.TowerKbraceOffsetPEY = DBtoNullableDbl(data.Item("TowerKbraceOffsetPEY"), 6)
         Me.TowerKbraceOffsetPEX = DBtoNullableDbl(data.Item("TowerKbraceOffsetPEX"), 6)
+        Me.TowerRedundantHorizontalGrade = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGrade"), 6)
+        Me.TowerRedundantHorizontalMatlGrade = DBtoStr(data.Item("TowerRedundantHorizontalMatlGrade"))
+        Me.TowerRedundantHorizontalGrade2 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGrade2"), 6)
+        Me.TowerRedundantHorizontalMatlGrade2 = DBtoStr(data.Item("TowerRedundantHorizontalMatlGrade2"))
+        Me.TowerRedundantHorizontalGrade3 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGrade3"), 6)
+        Me.TowerRedundantHorizontalMatlGrade3 = DBtoStr(data.Item("TowerRedundantHorizontalMatlGrade3"))
+        Me.TowerRedundantHorizontalGrade4 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGrade4"), 6)
+        Me.TowerRedundantHorizontalMatlGrade4 = DBtoStr(data.Item("TowerRedundantHorizontalMatlGrade4"))
+        Me.TowerRedundantDiagonalGrade = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGrade"), 6)
+        Me.TowerRedundantDiagonalMatlGrade = DBtoStr(data.Item("TowerRedundantDiagonalMatlGrade"))
+        Me.TowerRedundantDiagonalGrade2 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGrade2"), 6)
+        Me.TowerRedundantDiagonalMatlGrade2 = DBtoStr(data.Item("TowerRedundantDiagonalMatlGrade2"))
+        Me.TowerRedundantDiagonalGrade3 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGrade3"), 6)
+        Me.TowerRedundantDiagonalMatlGrade3 = DBtoStr(data.Item("TowerRedundantDiagonalMatlGrade3"))
+        Me.TowerRedundantDiagonalGrade4 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGrade4"), 6)
+        Me.TowerRedundantDiagonalMatlGrade4 = DBtoStr(data.Item("TowerRedundantDiagonalMatlGrade4"))
+        Me.TowerRedundantSubHorizontalGrade = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalGrade"), 6)
+        Me.TowerRedundantSubHorizontalMatlGrade = DBtoStr(data.Item("TowerRedundantSubHorizontalMatlGrade"))
+        Me.TowerRedundantSubDiagonalGrade = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalGrade"), 6)
+        Me.TowerRedundantSubDiagonalMatlGrade = DBtoStr(data.Item("TowerRedundantSubDiagonalMatlGrade"))
+        Me.TowerRedundantVerticalGrade = DBtoNullableDbl(data.Item("TowerRedundantVerticalGrade"), 6)
+        Me.TowerRedundantVerticalMatlGrade3 = DBtoStr(data.Item("TowerRedundantVerticalMatlGrade3"))
+        Me.TowerRedundantHipGrade = DBtoNullableDbl(data.Item("TowerRedundantHipGrade"), 6)
+        Me.TowerRedundantHipMatlGrade = DBtoStr(data.Item("TowerRedundantHipMatlGrade"))
+        Me.TowerRedundantHipGrade2 = DBtoNullableDbl(data.Item("TowerRedundantHipGrade2"), 6)
+        Me.TowerRedundantHipMatlGrade2 = DBtoStr(data.Item("TowerRedundantHipMatlGrade2"))
+        Me.TowerRedundantHipGrade3 = DBtoNullableDbl(data.Item("TowerRedundantHipGrade3"), 6)
+        Me.TowerRedundantHipMatlGrade3 = DBtoStr(data.Item("TowerRedundantHipMatlGrade3"))
+        Me.TowerRedundantHipGrade4 = DBtoNullableDbl(data.Item("TowerRedundantHipGrade4"), 6)
+        Me.TowerRedundantHipMatlGrade4 = DBtoStr(data.Item("TowerRedundantHipMatlGrade4"))
+        Me.TowerRedundantHipDiagonalGrade = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGrade"), 6)
+        Me.TowerRedundantHipDiagonalMatlGrade = DBtoStr(data.Item("TowerRedundantHipDiagonalMatlGrade"))
+        Me.TowerRedundantHipDiagonalGrade2 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGrade2"), 6)
+        Me.TowerRedundantHipDiagonalMatlGrade2 = DBtoStr(data.Item("TowerRedundantHipDiagonalMatlGrade2"))
+        Me.TowerRedundantHipDiagonalGrade3 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGrade3"), 6)
+        Me.TowerRedundantHipDiagonalMatlGrade3 = DBtoStr(data.Item("TowerRedundantHipDiagonalMatlGrade3"))
+        Me.TowerRedundantHipDiagonalGrade4 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGrade4"), 6)
+        Me.TowerRedundantHipDiagonalMatlGrade4 = DBtoStr(data.Item("TowerRedundantHipDiagonalMatlGrade4"))
+        Me.TowerRedundantHorizontalType = DBtoStr(data.Item("TowerRedundantHorizontalType"))
+        Me.TowerRedundantHorizontalType2 = DBtoStr(data.Item("TowerRedundantHorizontalType2"))
+        Me.TowerRedundantHorizontalType3 = DBtoStr(data.Item("TowerRedundantHorizontalType3"))
+        Me.TowerRedundantHorizontalType4 = DBtoStr(data.Item("TowerRedundantHorizontalType4"))
+        Me.TowerRedundantDiagType2 = DBtoStr(data.Item("TowerRedundantDiagType2"))
+        Me.TowerRedundantDiagType3 = DBtoStr(data.Item("TowerRedundantDiagType3"))
+        Me.TowerRedundantDiagType4 = DBtoStr(data.Item("TowerRedundantDiagType4"))
+        Me.TowerRedundantHipType2 = DBtoStr(data.Item("TowerRedundantHipType2"))
+        Me.TowerRedundantHipType3 = DBtoStr(data.Item("TowerRedundantHipType3"))
+        Me.TowerRedundantHipType4 = DBtoStr(data.Item("TowerRedundantHipType4"))
+        Me.TowerRedundantHipDiagonalType2 = DBtoStr(data.Item("TowerRedundantHipDiagonalType2"))
+        Me.TowerRedundantHipDiagonalType3 = DBtoStr(data.Item("TowerRedundantHipDiagonalType3"))
+        Me.TowerRedundantHipDiagonalType4 = DBtoStr(data.Item("TowerRedundantHipDiagonalType4"))
+        Me.TowerRedundantHorizontalBoltGrade1 = DBtoStr(data.Item("TowerRedundantHorizontalBoltGrade1"))
+        Me.TowerRedundantHorizontalBoltSize1 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltSize1"), 6)
+        Me.TowerRedundantHorizontalNumBolts1 = DBtoNullableInt(data.Item("TowerRedundantHorizontalNumBolts1"))
+        Me.TowerRedundantHorizontalBoltEdgeDistance1 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltEdgeDistance1"), 6)
+        Me.TowerRedundantHorizontalGageG1Distance1 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGageG1Distance1"), 6)
+        Me.TowerRedundantHorizontalNetWidthDeduct1 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalNetWidthDeduct1"), 6)
+        Me.TowerRedundantHorizontalUFactor1 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalUFactor1"), 6)
+        Me.TowerRedundantHorizontalBoltGrade2 = DBtoStr(data.Item("TowerRedundantHorizontalBoltGrade2"))
+        Me.TowerRedundantHorizontalBoltSize2 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltSize2"), 6)
+        Me.TowerRedundantHorizontalNumBolts2 = DBtoNullableInt(data.Item("TowerRedundantHorizontalNumBolts2"))
+        Me.TowerRedundantHorizontalBoltEdgeDistance2 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltEdgeDistance2"), 6)
+        Me.TowerRedundantHorizontalGageG1Distance2 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGageG1Distance2"), 6)
+        Me.TowerRedundantHorizontalNetWidthDeduct2 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalNetWidthDeduct2"), 6)
+        Me.TowerRedundantHorizontalUFactor2 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalUFactor2"), 6)
+        Me.TowerRedundantHorizontalBoltGrade3 = DBtoStr(data.Item("TowerRedundantHorizontalBoltGrade3"))
+        Me.TowerRedundantHorizontalBoltSize3 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltSize3"), 6)
+        Me.TowerRedundantHorizontalNumBolts3 = DBtoNullableInt(data.Item("TowerRedundantHorizontalNumBolts3"))
+        Me.TowerRedundantHorizontalBoltEdgeDistance3 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltEdgeDistance3"), 6)
+        Me.TowerRedundantHorizontalGageG1Distance3 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGageG1Distance3"), 6)
+        Me.TowerRedundantHorizontalNetWidthDeduct3 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalNetWidthDeduct3"), 6)
+        Me.TowerRedundantHorizontalUFactor3 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalUFactor3"), 6)
+        Me.TowerRedundantHorizontalBoltGrade4 = DBtoStr(data.Item("TowerRedundantHorizontalBoltGrade4"))
+        Me.TowerRedundantHorizontalBoltSize4 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltSize4"), 6)
+        Me.TowerRedundantHorizontalNumBolts4 = DBtoNullableInt(data.Item("TowerRedundantHorizontalNumBolts4"))
+        Me.TowerRedundantHorizontalBoltEdgeDistance4 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalBoltEdgeDistance4"), 6)
+        Me.TowerRedundantHorizontalGageG1Distance4 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGageG1Distance4"), 6)
+        Me.TowerRedundantHorizontalNetWidthDeduct4 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalNetWidthDeduct4"), 6)
+        Me.TowerRedundantHorizontalUFactor4 = DBtoNullableDbl(data.Item("TowerRedundantHorizontalUFactor4"), 6)
+        Me.TowerRedundantDiagonalBoltGrade1 = DBtoStr(data.Item("TowerRedundantDiagonalBoltGrade1"))
+        Me.TowerRedundantDiagonalBoltSize1 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltSize1"), 6)
+        Me.TowerRedundantDiagonalNumBolts1 = DBtoNullableInt(data.Item("TowerRedundantDiagonalNumBolts1"))
+        Me.TowerRedundantDiagonalBoltEdgeDistance1 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltEdgeDistance1"), 6)
+        Me.TowerRedundantDiagonalGageG1Distance1 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGageG1Distance1"), 6)
+        Me.TowerRedundantDiagonalNetWidthDeduct1 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalNetWidthDeduct1"), 6)
+        Me.TowerRedundantDiagonalUFactor1 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalUFactor1"), 6)
+        Me.TowerRedundantDiagonalBoltGrade2 = DBtoStr(data.Item("TowerRedundantDiagonalBoltGrade2"))
+        Me.TowerRedundantDiagonalBoltSize2 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltSize2"), 6)
+        Me.TowerRedundantDiagonalNumBolts2 = DBtoNullableInt(data.Item("TowerRedundantDiagonalNumBolts2"))
+        Me.TowerRedundantDiagonalBoltEdgeDistance2 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltEdgeDistance2"), 6)
+        Me.TowerRedundantDiagonalGageG1Distance2 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGageG1Distance2"), 6)
+        Me.TowerRedundantDiagonalNetWidthDeduct2 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalNetWidthDeduct2"), 6)
+        Me.TowerRedundantDiagonalUFactor2 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalUFactor2"), 6)
+        Me.TowerRedundantDiagonalBoltGrade3 = DBtoStr(data.Item("TowerRedundantDiagonalBoltGrade3"))
+        Me.TowerRedundantDiagonalBoltSize3 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltSize3"), 6)
+        Me.TowerRedundantDiagonalNumBolts3 = DBtoNullableInt(data.Item("TowerRedundantDiagonalNumBolts3"))
+        Me.TowerRedundantDiagonalBoltEdgeDistance3 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltEdgeDistance3"), 6)
+        Me.TowerRedundantDiagonalGageG1Distance3 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGageG1Distance3"), 6)
+        Me.TowerRedundantDiagonalNetWidthDeduct3 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalNetWidthDeduct3"), 6)
+        Me.TowerRedundantDiagonalUFactor3 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalUFactor3"), 6)
+        Me.TowerRedundantDiagonalBoltGrade4 = DBtoStr(data.Item("TowerRedundantDiagonalBoltGrade4"))
+        Me.TowerRedundantDiagonalBoltSize4 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltSize4"), 6)
+        Me.TowerRedundantDiagonalNumBolts4 = DBtoNullableInt(data.Item("TowerRedundantDiagonalNumBolts4"))
+        Me.TowerRedundantDiagonalBoltEdgeDistance4 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalBoltEdgeDistance4"), 6)
+        Me.TowerRedundantDiagonalGageG1Distance4 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGageG1Distance4"), 6)
+        Me.TowerRedundantDiagonalNetWidthDeduct4 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalNetWidthDeduct4"), 6)
+        Me.TowerRedundantDiagonalUFactor4 = DBtoNullableDbl(data.Item("TowerRedundantDiagonalUFactor4"), 6)
+        Me.TowerRedundantHipBoltGrade1 = DBtoStr(data.Item("TowerRedundantHipBoltGrade1"))
+        Me.TowerRedundantHipBoltSize1 = DBtoNullableDbl(data.Item("TowerRedundantHipBoltSize1"), 6)
+        Me.TowerRedundantHipNumBolts1 = DBtoNullableInt(data.Item("TowerRedundantHipNumBolts1"))
+        Me.TowerRedundantHipBoltEdgeDistance1 = DBtoNullableDbl(data.Item("TowerRedundantHipBoltEdgeDistance1"), 6)
+        Me.TowerRedundantHipGageG1Distance1 = DBtoNullableDbl(data.Item("TowerRedundantHipGageG1Distance1"), 6)
+        Me.TowerRedundantHipNetWidthDeduct1 = DBtoNullableDbl(data.Item("TowerRedundantHipNetWidthDeduct1"), 6)
+        Me.TowerRedundantHipUFactor1 = DBtoNullableDbl(data.Item("TowerRedundantHipUFactor1"), 6)
+        Me.TowerRedundantHipBoltGrade2 = DBtoStr(data.Item("TowerRedundantHipBoltGrade2"))
+        Me.TowerRedundantHipBoltSize2 = DBtoNullableDbl(data.Item("TowerRedundantHipBoltSize2"), 6)
+        Me.TowerRedundantHipNumBolts2 = DBtoNullableInt(data.Item("TowerRedundantHipNumBolts2"))
+        Me.TowerRedundantHipBoltEdgeDistance2 = DBtoNullableDbl(data.Item("TowerRedundantHipBoltEdgeDistance2"), 6)
+        Me.TowerRedundantHipGageG1Distance2 = DBtoNullableDbl(data.Item("TowerRedundantHipGageG1Distance2"), 6)
+        Me.TowerRedundantHipNetWidthDeduct2 = DBtoNullableDbl(data.Item("TowerRedundantHipNetWidthDeduct2"), 6)
+        Me.TowerRedundantHipUFactor2 = DBtoNullableDbl(data.Item("TowerRedundantHipUFactor2"), 6)
+        Me.TowerRedundantHipBoltGrade3 = DBtoStr(data.Item("TowerRedundantHipBoltGrade3"))
+        Me.TowerRedundantHipBoltSize3 = DBtoNullableDbl(data.Item("TowerRedundantHipBoltSize3"), 6)
+        Me.TowerRedundantHipNumBolts3 = DBtoNullableInt(data.Item("TowerRedundantHipNumBolts3"))
+        Me.TowerRedundantHipBoltEdgeDistance3 = DBtoNullableDbl(data.Item("TowerRedundantHipBoltEdgeDistance3"), 6)
+        Me.TowerRedundantHipGageG1Distance3 = DBtoNullableDbl(data.Item("TowerRedundantHipGageG1Distance3"), 6)
+        Me.TowerRedundantHipNetWidthDeduct3 = DBtoNullableDbl(data.Item("TowerRedundantHipNetWidthDeduct3"), 6)
+        Me.TowerRedundantHipUFactor3 = DBtoNullableDbl(data.Item("TowerRedundantHipUFactor3"), 6)
+        Me.TowerRedundantHipBoltGrade4 = DBtoStr(data.Item("TowerRedundantHipBoltGrade4"))
+        Me.TowerRedundantHipBoltSize4 = DBtoNullableDbl(data.Item("TowerRedundantHipBoltSize4"), 6)
+        Me.TowerRedundantHipNumBolts4 = DBtoNullableInt(data.Item("TowerRedundantHipNumBolts4"))
+        Me.TowerRedundantHipBoltEdgeDistance4 = DBtoNullableDbl(data.Item("TowerRedundantHipBoltEdgeDistance4"), 6)
+        Me.TowerRedundantHipGageG1Distance4 = DBtoNullableDbl(data.Item("TowerRedundantHipGageG1Distance4"), 6)
+        Me.TowerRedundantHipNetWidthDeduct4 = DBtoNullableDbl(data.Item("TowerRedundantHipNetWidthDeduct4"), 6)
+        Me.TowerRedundantHipUFactor4 = DBtoNullableDbl(data.Item("TowerRedundantHipUFactor4"), 6)
+        Me.TowerRedundantHipDiagonalBoltGrade1 = DBtoStr(data.Item("TowerRedundantHipDiagonalBoltGrade1"))
+        Me.TowerRedundantHipDiagonalBoltSize1 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltSize1"), 6)
+        Me.TowerRedundantHipDiagonalNumBolts1 = DBtoNullableInt(data.Item("TowerRedundantHipDiagonalNumBolts1"))
+        Me.TowerRedundantHipDiagonalBoltEdgeDistance1 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltEdgeDistance1"), 6)
+        Me.TowerRedundantHipDiagonalGageG1Distance1 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGageG1Distance1"), 6)
+        Me.TowerRedundantHipDiagonalNetWidthDeduct1 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalNetWidthDeduct1"), 6)
+        Me.TowerRedundantHipDiagonalUFactor1 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalUFactor1"), 6)
+        Me.TowerRedundantHipDiagonalBoltGrade2 = DBtoStr(data.Item("TowerRedundantHipDiagonalBoltGrade2"))
+        Me.TowerRedundantHipDiagonalBoltSize2 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltSize2"), 6)
+        Me.TowerRedundantHipDiagonalNumBolts2 = DBtoNullableInt(data.Item("TowerRedundantHipDiagonalNumBolts2"))
+        Me.TowerRedundantHipDiagonalBoltEdgeDistance2 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltEdgeDistance2"), 6)
+        Me.TowerRedundantHipDiagonalGageG1Distance2 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGageG1Distance2"), 6)
+        Me.TowerRedundantHipDiagonalNetWidthDeduct2 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalNetWidthDeduct2"), 6)
+        Me.TowerRedundantHipDiagonalUFactor2 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalUFactor2"), 6)
+        Me.TowerRedundantHipDiagonalBoltGrade3 = DBtoStr(data.Item("TowerRedundantHipDiagonalBoltGrade3"))
+        Me.TowerRedundantHipDiagonalBoltSize3 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltSize3"), 6)
+        Me.TowerRedundantHipDiagonalNumBolts3 = DBtoNullableInt(data.Item("TowerRedundantHipDiagonalNumBolts3"))
+        Me.TowerRedundantHipDiagonalBoltEdgeDistance3 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltEdgeDistance3"), 6)
+        Me.TowerRedundantHipDiagonalGageG1Distance3 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGageG1Distance3"), 6)
+        Me.TowerRedundantHipDiagonalNetWidthDeduct3 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalNetWidthDeduct3"), 6)
+        Me.TowerRedundantHipDiagonalUFactor3 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalUFactor3"), 6)
+        Me.TowerRedundantHipDiagonalBoltGrade4 = DBtoStr(data.Item("TowerRedundantHipDiagonalBoltGrade4"))
+        Me.TowerRedundantHipDiagonalBoltSize4 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltSize4"), 6)
+        Me.TowerRedundantHipDiagonalNumBolts4 = DBtoNullableInt(data.Item("TowerRedundantHipDiagonalNumBolts4"))
+        Me.TowerRedundantHipDiagonalBoltEdgeDistance4 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalBoltEdgeDistance4"), 6)
+        Me.TowerRedundantHipDiagonalGageG1Distance4 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGageG1Distance4"), 6)
+        Me.TowerRedundantHipDiagonalNetWidthDeduct4 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalNetWidthDeduct4"), 6)
+        Me.TowerRedundantHipDiagonalUFactor4 = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalUFactor4"), 6)
+        Me.TowerRedundantHorizontalGradeOverwrite = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGradeOverwrite"), 6)
+        Me.TowerRedundantHorizontalMatlGradeOverwrite = DBtoStr(data.Item("TowerRedundantHorizontalMatlGradeOverwrite"))
+        Me.TowerRedundantHorizontalGrade2Overwrite = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGrade2Overwrite"), 6)
+        Me.TowerRedundantHorizontalMatlGrade2Overwrite = DBtoStr(data.Item("TowerRedundantHorizontalMatlGrade2Overwrite"))
+        Me.TowerRedundantHorizontalGrade3Overwrite = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGrade3Overwrite"), 6)
+        Me.TowerRedundantHorizontalMatlGrade3Overwrite = DBtoStr(data.Item("TowerRedundantHorizontalMatlGrade3Overwrite"))
+        Me.TowerRedundantHorizontalGrade4Overwrite = DBtoNullableDbl(data.Item("TowerRedundantHorizontalGrade4Overwrite"), 6)
+        Me.TowerRedundantHorizontalMatlGrade4Overwrite = DBtoStr(data.Item("TowerRedundantHorizontalMatlGrade4Overwrite"))
+        Me.TowerRedundantDiagonalGradeOverwrite = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGradeOverwrite"), 6)
+        Me.TowerRedundantDiagonalMatlGradeOverwrite = DBtoStr(data.Item("TowerRedundantDiagonalMatlGradeOverwrite"))
+        Me.TowerRedundantDiagonalGrade2Overwrite = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGrade2Overwrite"), 6)
+        Me.TowerRedundantDiagonalMatlGrade2Overwrite = DBtoStr(data.Item("TowerRedundantDiagonalMatlGrade2Overwrite"))
+        Me.TowerRedundantDiagonalGrade3Overwrite = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGrade3Overwrite"), 6)
+        Me.TowerRedundantDiagonalMatlGrade3Overwrite = DBtoStr(data.Item("TowerRedundantDiagonalMatlGrade3Overwrite"))
+        Me.TowerRedundantDiagonalGrade4Overwrite = DBtoNullableDbl(data.Item("TowerRedundantDiagonalGrade4Overwrite"), 6)
+        Me.TowerRedundantDiagonalMatlGrade4Overwrite = DBtoStr(data.Item("TowerRedundantDiagonalMatlGrade4Overwrite"))
+        Me.TowerRedundantSubHorizontalGradeOverwrite = DBtoNullableDbl(data.Item("TowerRedundantSubHorizontalGradeOverwrite"), 6)
+        Me.TowerRedundantSubHorizontalMatlGradeOverwrite = DBtoStr(data.Item("TowerRedundantSubHorizontalMatlGradeOverwrite"))
+        Me.TowerRedundantSubDiagonalGradeOverwrite = DBtoNullableDbl(data.Item("TowerRedundantSubDiagonalGradeOverwrite"), 6)
+        Me.TowerRedundantSubDiagonalMatlGradeOverwrite = DBtoStr(data.Item("TowerRedundantSubDiagonalMatlGradeOverwrite"))
+        Me.TowerRedundantVerticalGradeOverwrite = DBtoNullableDbl(data.Item("TowerRedundantVerticalGradeOverwrite"), 6)
+        Me.TowerRedundantVerticalMatlGrade3Overwrite = DBtoStr(data.Item("TowerRedundantVerticalMatlGrade3Overwrite"))
+        Me.TowerRedundantHipGradeOverwrite = DBtoNullableDbl(data.Item("TowerRedundantHipGradeOverwrite"), 6)
+        Me.TowerRedundantHipMatlGradeOverwrite = DBtoStr(data.Item("TowerRedundantHipMatlGradeOverwrite"))
+        Me.TowerRedundantHipGrade2Overwrite = DBtoNullableDbl(data.Item("TowerRedundantHipGrade2Overwrite"), 6)
+        Me.TowerRedundantHipMatlGrade2Overwrite = DBtoStr(data.Item("TowerRedundantHipMatlGrade2Overwrite"))
+        Me.TowerRedundantHipGrade3Overwrite = DBtoNullableDbl(data.Item("TowerRedundantHipGrade3Overwrite"), 6)
+        Me.TowerRedundantHipMatlGrade3Overwrite = DBtoStr(data.Item("TowerRedundantHipMatlGrade3Overwrite"))
+        Me.TowerRedundantHipGrade4Overwrite = DBtoNullableDbl(data.Item("TowerRedundantHipGrade4Overwrite"), 6)
+        Me.TowerRedundantHipMatlGrade4Overwrite = DBtoStr(data.Item("TowerRedundantHipMatlGrade4Overwrite"))
+        Me.TowerRedundantHipDiagonalGradeOverwrite = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGradeOverwrite"), 6)
+        Me.TowerRedundantHipDiagonalMatlGradeOverwrite = DBtoStr(data.Item("TowerRedundantHipDiagonalMatlGradeOverwrite"))
+        Me.TowerRedundantHipDiagonalGrade2Overwrite = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGrade2Overwrite"), 6)
+        Me.TowerRedundantHipDiagonalMatlGrade2Overwrite = DBtoStr(data.Item("TowerRedundantHipDiagonalMatlGrade2Overwrite"))
+        Me.TowerRedundantHipDiagonalGrade3Overwrite = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGrade3Overwrite"), 6)
+        Me.TowerRedundantHipDiagonalMatlGrade3Overwrite = DBtoStr(data.Item("TowerRedundantHipDiagonalMatlGrade3Overwrite"))
+        Me.TowerRedundantHipDiagonalGrade4Overwrite = DBtoNullableDbl(data.Item("TowerRedundantHipDiagonalGrade4Overwrite"), 6)
+        Me.TowerRedundantHipDiagonalMatlGrade4Overwrite = DBtoStr(data.Item("TowerRedundantHipDiagonalMatlGrade4Overwrite"))
 
     End Sub
 #End Region
@@ -8805,6 +14187,207 @@ Partial Public Class tnxTowerRecord
         Equals = If(Me.TowerKbraceOffsetNEX.CheckChange(otherToCompare.TowerKbraceOffsetNEX, changes, categoryName, "Tower Kbrace Offset NEX"), Equals, False)
         Equals = If(Me.TowerKbraceOffsetPEY.CheckChange(otherToCompare.TowerKbraceOffsetPEY, changes, categoryName, "Tower Kbrace Offset PEY"), Equals, False)
         Equals = If(Me.TowerKbraceOffsetPEX.CheckChange(otherToCompare.TowerKbraceOffsetPEX, changes, categoryName, "Tower Kbrace Offset PEX"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGrade.CheckChange(otherToCompare.TowerRedundantHorizontalGrade, changes, categoryName, "Tower Redundant Horizontal Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalMatlGrade.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade, changes, categoryName, "Tower Redundant Horizontal Matl Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGrade2.CheckChange(otherToCompare.TowerRedundantHorizontalGrade2, changes, categoryName, "Tower Redundant Horizontal Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalMatlGrade2.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade2, changes, categoryName, "Tower Redundant Horizontal Matl Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGrade3.CheckChange(otherToCompare.TowerRedundantHorizontalGrade3, changes, categoryName, "Tower Redundant Horizontal Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalMatlGrade3.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade3, changes, categoryName, "Tower Redundant Horizontal Matl Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGrade4.CheckChange(otherToCompare.TowerRedundantHorizontalGrade4, changes, categoryName, "Tower Redundant Horizontal Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalMatlGrade4.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade4, changes, categoryName, "Tower Redundant Horizontal Matl Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGrade.CheckChange(otherToCompare.TowerRedundantDiagonalGrade, changes, categoryName, "Tower Redundant Diagonal Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalMatlGrade.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade, changes, categoryName, "Tower Redundant Diagonal Matl Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGrade2.CheckChange(otherToCompare.TowerRedundantDiagonalGrade2, changes, categoryName, "Tower Redundant Diagonal Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalMatlGrade2.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade2, changes, categoryName, "Tower Redundant Diagonal Matl Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGrade3.CheckChange(otherToCompare.TowerRedundantDiagonalGrade3, changes, categoryName, "Tower Redundant Diagonal Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalMatlGrade3.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade3, changes, categoryName, "Tower Redundant Diagonal Matl Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGrade4.CheckChange(otherToCompare.TowerRedundantDiagonalGrade4, changes, categoryName, "Tower Redundant Diagonal Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalMatlGrade4.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade4, changes, categoryName, "Tower Redundant Diagonal Matl Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantSubHorizontalGrade.CheckChange(otherToCompare.TowerRedundantSubHorizontalGrade, changes, categoryName, "Tower Redundant Sub Horizontal Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantSubHorizontalMatlGrade.CheckChange(otherToCompare.TowerRedundantSubHorizontalMatlGrade, changes, categoryName, "Tower Redundant Sub Horizontal Matl Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantSubDiagonalGrade.CheckChange(otherToCompare.TowerRedundantSubDiagonalGrade, changes, categoryName, "Tower Redundant Sub Diagonal Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantSubDiagonalMatlGrade.CheckChange(otherToCompare.TowerRedundantSubDiagonalMatlGrade, changes, categoryName, "Tower Redundant Sub Diagonal Matl Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantVerticalGrade.CheckChange(otherToCompare.TowerRedundantVerticalGrade, changes, categoryName, "Tower Redundant Vertical Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantVerticalMatlGrade3.CheckChange(otherToCompare.TowerRedundantVerticalMatlGrade3, changes, categoryName, "Tower Redundant Vertical Matl Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGrade.CheckChange(otherToCompare.TowerRedundantHipGrade, changes, categoryName, "Tower Redundant Hip Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantHipMatlGrade.CheckChange(otherToCompare.TowerRedundantHipMatlGrade, changes, categoryName, "Tower Redundant Hip Matl Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGrade2.CheckChange(otherToCompare.TowerRedundantHipGrade2, changes, categoryName, "Tower Redundant Hip Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipMatlGrade2.CheckChange(otherToCompare.TowerRedundantHipMatlGrade2, changes, categoryName, "Tower Redundant Hip Matl Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGrade3.CheckChange(otherToCompare.TowerRedundantHipGrade3, changes, categoryName, "Tower Redundant Hip Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipMatlGrade3.CheckChange(otherToCompare.TowerRedundantHipMatlGrade3, changes, categoryName, "Tower Redundant Hip Matl Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGrade4.CheckChange(otherToCompare.TowerRedundantHipGrade4, changes, categoryName, "Tower Redundant Hip Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipMatlGrade4.CheckChange(otherToCompare.TowerRedundantHipMatlGrade4, changes, categoryName, "Tower Redundant Hip Matl Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGrade.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade, changes, categoryName, "Tower Redundant Hip Diagonal Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalMatlGrade.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGrade2.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade2, changes, categoryName, "Tower Redundant Hip Diagonal Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalMatlGrade2.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade2, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGrade3.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade3, changes, categoryName, "Tower Redundant Hip Diagonal Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalMatlGrade3.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade3, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGrade4.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade4, changes, categoryName, "Tower Redundant Hip Diagonal Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalMatlGrade4.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade4, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalType.CheckChange(otherToCompare.TowerRedundantHorizontalType, changes, categoryName, "Tower Redundant Horizontal Type"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalType2.CheckChange(otherToCompare.TowerRedundantHorizontalType2, changes, categoryName, "Tower Redundant Horizontal Type 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalType3.CheckChange(otherToCompare.TowerRedundantHorizontalType3, changes, categoryName, "Tower Redundant Horizontal Type 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalType4.CheckChange(otherToCompare.TowerRedundantHorizontalType4, changes, categoryName, "Tower Redundant Horizontal Type 4"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagType2.CheckChange(otherToCompare.TowerRedundantDiagType2, changes, categoryName, "Tower Redundant Diag Type 2"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagType3.CheckChange(otherToCompare.TowerRedundantDiagType3, changes, categoryName, "Tower Redundant Diag Type 3"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagType4.CheckChange(otherToCompare.TowerRedundantDiagType4, changes, categoryName, "Tower Redundant Diag Type 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipType2.CheckChange(otherToCompare.TowerRedundantHipType2, changes, categoryName, "Tower Redundant Hip Type 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipType3.CheckChange(otherToCompare.TowerRedundantHipType3, changes, categoryName, "Tower Redundant Hip Type 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipType4.CheckChange(otherToCompare.TowerRedundantHipType4, changes, categoryName, "Tower Redundant Hip Type 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalType2.CheckChange(otherToCompare.TowerRedundantHipDiagonalType2, changes, categoryName, "Tower Redundant Hip Diagonal Type 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalType3.CheckChange(otherToCompare.TowerRedundantHipDiagonalType3, changes, categoryName, "Tower Redundant Hip Diagonal Type 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalType4.CheckChange(otherToCompare.TowerRedundantHipDiagonalType4, changes, categoryName, "Tower Redundant Hip Diagonal Type 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltGrade1.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade1, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltSize1.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize1, changes, categoryName, "Tower Redundant Horizontal Bolt Size 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalNumBolts1.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts1, changes, categoryName, "Tower Redundant Horizontal Num Bolts 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltEdgeDistance1.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance1, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGageG1Distance1.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance1, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalNetWidthDeduct1.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct1, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalUFactor1.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor1, changes, categoryName, "Tower Redundant Horizontal U Factor 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltGrade2.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade2, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltSize2.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize2, changes, categoryName, "Tower Redundant Horizontal Bolt Size 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalNumBolts2.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts2, changes, categoryName, "Tower Redundant Horizontal Num Bolts 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltEdgeDistance2.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance2, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGageG1Distance2.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance2, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalNetWidthDeduct2.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct2, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalUFactor2.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor2, changes, categoryName, "Tower Redundant Horizontal U Factor 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltGrade3.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade3, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltSize3.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize3, changes, categoryName, "Tower Redundant Horizontal Bolt Size 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalNumBolts3.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts3, changes, categoryName, "Tower Redundant Horizontal Num Bolts 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltEdgeDistance3.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance3, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGageG1Distance3.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance3, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalNetWidthDeduct3.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct3, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalUFactor3.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor3, changes, categoryName, "Tower Redundant Horizontal U Factor 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltGrade4.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade4, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltSize4.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize4, changes, categoryName, "Tower Redundant Horizontal Bolt Size 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalNumBolts4.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts4, changes, categoryName, "Tower Redundant Horizontal Num Bolts 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalBoltEdgeDistance4.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance4, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGageG1Distance4.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance4, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalNetWidthDeduct4.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct4, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalUFactor4.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor4, changes, categoryName, "Tower Redundant Horizontal U Factor 4"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltGrade1.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade1, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 1"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltSize1.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize1, changes, categoryName, "Tower Redundant Diagonal Bolt Size 1"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalNumBolts1.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts1, changes, categoryName, "Tower Redundant Diagonal Num Bolts 1"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltEdgeDistance1.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance1, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 1"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGageG1Distance1.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance1, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 1"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalNetWidthDeduct1.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct1, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 1"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalUFactor1.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor1, changes, categoryName, "Tower Redundant Diagonal U Factor 1"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltGrade2.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade2, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltSize2.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize2, changes, categoryName, "Tower Redundant Diagonal Bolt Size 2"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalNumBolts2.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts2, changes, categoryName, "Tower Redundant Diagonal Num Bolts 2"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltEdgeDistance2.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance2, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 2"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGageG1Distance2.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance2, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 2"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalNetWidthDeduct2.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct2, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 2"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalUFactor2.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor2, changes, categoryName, "Tower Redundant Diagonal U Factor 2"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltGrade3.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade3, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltSize3.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize3, changes, categoryName, "Tower Redundant Diagonal Bolt Size 3"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalNumBolts3.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts3, changes, categoryName, "Tower Redundant Diagonal Num Bolts 3"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltEdgeDistance3.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance3, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 3"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGageG1Distance3.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance3, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 3"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalNetWidthDeduct3.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct3, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 3"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalUFactor3.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor3, changes, categoryName, "Tower Redundant Diagonal U Factor 3"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltGrade4.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade4, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltSize4.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize4, changes, categoryName, "Tower Redundant Diagonal Bolt Size 4"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalNumBolts4.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts4, changes, categoryName, "Tower Redundant Diagonal Num Bolts 4"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalBoltEdgeDistance4.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance4, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 4"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGageG1Distance4.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance4, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 4"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalNetWidthDeduct4.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct4, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 4"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalUFactor4.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor4, changes, categoryName, "Tower Redundant Diagonal U Factor 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltGrade1.CheckChange(otherToCompare.TowerRedundantHipBoltGrade1, changes, categoryName, "Tower Redundant Hip Bolt Grade 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltSize1.CheckChange(otherToCompare.TowerRedundantHipBoltSize1, changes, categoryName, "Tower Redundant Hip Bolt Size 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipNumBolts1.CheckChange(otherToCompare.TowerRedundantHipNumBolts1, changes, categoryName, "Tower Redundant Hip Num Bolts 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltEdgeDistance1.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance1, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGageG1Distance1.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance1, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipNetWidthDeduct1.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct1, changes, categoryName, "Tower Redundant Hip Net Width Deduct 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipUFactor1.CheckChange(otherToCompare.TowerRedundantHipUFactor1, changes, categoryName, "Tower Redundant Hip U Factor 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltGrade2.CheckChange(otherToCompare.TowerRedundantHipBoltGrade2, changes, categoryName, "Tower Redundant Hip Bolt Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltSize2.CheckChange(otherToCompare.TowerRedundantHipBoltSize2, changes, categoryName, "Tower Redundant Hip Bolt Size 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipNumBolts2.CheckChange(otherToCompare.TowerRedundantHipNumBolts2, changes, categoryName, "Tower Redundant Hip Num Bolts 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltEdgeDistance2.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance2, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGageG1Distance2.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance2, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipNetWidthDeduct2.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct2, changes, categoryName, "Tower Redundant Hip Net Width Deduct 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipUFactor2.CheckChange(otherToCompare.TowerRedundantHipUFactor2, changes, categoryName, "Tower Redundant Hip U Factor 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltGrade3.CheckChange(otherToCompare.TowerRedundantHipBoltGrade3, changes, categoryName, "Tower Redundant Hip Bolt Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltSize3.CheckChange(otherToCompare.TowerRedundantHipBoltSize3, changes, categoryName, "Tower Redundant Hip Bolt Size 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipNumBolts3.CheckChange(otherToCompare.TowerRedundantHipNumBolts3, changes, categoryName, "Tower Redundant Hip Num Bolts 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltEdgeDistance3.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance3, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGageG1Distance3.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance3, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipNetWidthDeduct3.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct3, changes, categoryName, "Tower Redundant Hip Net Width Deduct 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipUFactor3.CheckChange(otherToCompare.TowerRedundantHipUFactor3, changes, categoryName, "Tower Redundant Hip U Factor 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltGrade4.CheckChange(otherToCompare.TowerRedundantHipBoltGrade4, changes, categoryName, "Tower Redundant Hip Bolt Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltSize4.CheckChange(otherToCompare.TowerRedundantHipBoltSize4, changes, categoryName, "Tower Redundant Hip Bolt Size 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipNumBolts4.CheckChange(otherToCompare.TowerRedundantHipNumBolts4, changes, categoryName, "Tower Redundant Hip Num Bolts 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipBoltEdgeDistance4.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance4, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGageG1Distance4.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance4, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipNetWidthDeduct4.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct4, changes, categoryName, "Tower Redundant Hip Net Width Deduct 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipUFactor4.CheckChange(otherToCompare.TowerRedundantHipUFactor4, changes, categoryName, "Tower Redundant Hip U Factor 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltGrade1.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade1, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltSize1.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize1, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalNumBolts1.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts1, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltEdgeDistance1.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance1, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGageG1Distance1.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance1, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalNetWidthDeduct1.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct1, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalUFactor1.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor1, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 1"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltGrade2.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade2, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltSize2.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize2, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalNumBolts2.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts2, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltEdgeDistance2.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance2, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGageG1Distance2.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance2, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalNetWidthDeduct2.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct2, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalUFactor2.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor2, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 2"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltGrade3.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade3, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltSize3.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize3, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalNumBolts3.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts3, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltEdgeDistance3.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance3, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGageG1Distance3.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance3, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalNetWidthDeduct3.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct3, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalUFactor3.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor3, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 3"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltGrade4.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade4, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltSize4.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize4, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalNumBolts4.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts4, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalBoltEdgeDistance4.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance4, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGageG1Distance4.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance4, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalNetWidthDeduct4.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct4, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalUFactor4.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor4, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 4"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGradeOverwrite.CheckChange(otherToCompare.TowerRedundantHorizontalGradeOverwrite, changes, categoryName, "Tower Redundant Horizontal Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalMatlGradeOverwrite.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGradeOverwrite, changes, categoryName, "Tower Redundant Horizontal Matl Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGrade2Overwrite.CheckChange(otherToCompare.TowerRedundantHorizontalGrade2Overwrite, changes, categoryName, "Tower Redundant Horizontal Grade 2 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalMatlGrade2Overwrite.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade2Overwrite, changes, categoryName, "Tower Redundant Horizontal Matl Grade 2 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGrade3Overwrite.CheckChange(otherToCompare.TowerRedundantHorizontalGrade3Overwrite, changes, categoryName, "Tower Redundant Horizontal Grade 3 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalMatlGrade3Overwrite.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade3Overwrite, changes, categoryName, "Tower Redundant Horizontal Matl Grade 3 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalGrade4Overwrite.CheckChange(otherToCompare.TowerRedundantHorizontalGrade4Overwrite, changes, categoryName, "Tower Redundant Horizontal Grade 4 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHorizontalMatlGrade4Overwrite.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade4Overwrite, changes, categoryName, "Tower Redundant Horizontal Matl Grade 4 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGradeOverwrite.CheckChange(otherToCompare.TowerRedundantDiagonalGradeOverwrite, changes, categoryName, "Tower Redundant Diagonal Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalMatlGradeOverwrite.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGradeOverwrite, changes, categoryName, "Tower Redundant Diagonal Matl Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGrade2Overwrite.CheckChange(otherToCompare.TowerRedundantDiagonalGrade2Overwrite, changes, categoryName, "Tower Redundant Diagonal Grade 2 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalMatlGrade2Overwrite.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade2Overwrite, changes, categoryName, "Tower Redundant Diagonal Matl Grade 2 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGrade3Overwrite.CheckChange(otherToCompare.TowerRedundantDiagonalGrade3Overwrite, changes, categoryName, "Tower Redundant Diagonal Grade 3 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalMatlGrade3Overwrite.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade3Overwrite, changes, categoryName, "Tower Redundant Diagonal Matl Grade 3 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalGrade4Overwrite.CheckChange(otherToCompare.TowerRedundantDiagonalGrade4Overwrite, changes, categoryName, "Tower Redundant Diagonal Grade 4 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantDiagonalMatlGrade4Overwrite.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade4Overwrite, changes, categoryName, "Tower Redundant Diagonal Matl Grade 4 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantSubHorizontalGradeOverwrite.CheckChange(otherToCompare.TowerRedundantSubHorizontalGradeOverwrite, changes, categoryName, "Tower Redundant Sub Horizontal Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantSubHorizontalMatlGradeOverwrite.CheckChange(otherToCompare.TowerRedundantSubHorizontalMatlGradeOverwrite, changes, categoryName, "Tower Redundant Sub Horizontal Matl Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantSubDiagonalGradeOverwrite.CheckChange(otherToCompare.TowerRedundantSubDiagonalGradeOverwrite, changes, categoryName, "Tower Redundant Sub Diagonal Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantSubDiagonalMatlGradeOverwrite.CheckChange(otherToCompare.TowerRedundantSubDiagonalMatlGradeOverwrite, changes, categoryName, "Tower Redundant Sub Diagonal Matl Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantVerticalGradeOverwrite.CheckChange(otherToCompare.TowerRedundantVerticalGradeOverwrite, changes, categoryName, "Tower Redundant Vertical Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantVerticalMatlGrade3Overwrite.CheckChange(otherToCompare.TowerRedundantVerticalMatlGrade3Overwrite, changes, categoryName, "Tower Redundant Vertical Matl Grade 3 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGradeOverwrite.CheckChange(otherToCompare.TowerRedundantHipGradeOverwrite, changes, categoryName, "Tower Redundant Hip Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipMatlGradeOverwrite.CheckChange(otherToCompare.TowerRedundantHipMatlGradeOverwrite, changes, categoryName, "Tower Redundant Hip Matl Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGrade2Overwrite.CheckChange(otherToCompare.TowerRedundantHipGrade2Overwrite, changes, categoryName, "Tower Redundant Hip Grade 2 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipMatlGrade2Overwrite.CheckChange(otherToCompare.TowerRedundantHipMatlGrade2Overwrite, changes, categoryName, "Tower Redundant Hip Matl Grade 2 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGrade3Overwrite.CheckChange(otherToCompare.TowerRedundantHipGrade3Overwrite, changes, categoryName, "Tower Redundant Hip Grade 3 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipMatlGrade3Overwrite.CheckChange(otherToCompare.TowerRedundantHipMatlGrade3Overwrite, changes, categoryName, "Tower Redundant Hip Matl Grade 3 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipGrade4Overwrite.CheckChange(otherToCompare.TowerRedundantHipGrade4Overwrite, changes, categoryName, "Tower Redundant Hip Grade 4 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipMatlGrade4Overwrite.CheckChange(otherToCompare.TowerRedundantHipMatlGrade4Overwrite, changes, categoryName, "Tower Redundant Hip Matl Grade 4 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGradeOverwrite.CheckChange(otherToCompare.TowerRedundantHipDiagonalGradeOverwrite, changes, categoryName, "Tower Redundant Hip Diagonal Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalMatlGradeOverwrite.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGradeOverwrite, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGrade2Overwrite.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade2Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Grade 2 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalMatlGrade2Overwrite.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade2Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 2 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGrade3Overwrite.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade3Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Grade 3 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalMatlGrade3Overwrite.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade3Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 3 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalGrade4Overwrite.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade4Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Grade 4 Overwrite"), Equals, False)
+        Equals = If(Me.TowerRedundantHipDiagonalMatlGrade4Overwrite.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade4Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 4 Overwrite"), Equals, False)
 
         Return Equals
     End Function
