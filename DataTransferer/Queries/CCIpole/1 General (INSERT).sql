@@ -6,6 +6,7 @@ BEGIN
 		VALUES([GENERAL POLE VALUES])
 		SELECT @TopLevelID=ID FROM @TopLevel
 
+		DELETE FROM pole.reinforcement_results WHERE pole_id = @TopLevelID
 
 		--[UNREINF SECTION SUBQUERY]
 
