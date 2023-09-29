@@ -1011,11 +1011,11 @@ Partial Public Class CCIplate
                                             If Not IsNothing(sdrow.local_group_id) Then
                                                 .Worksheets("Database").Cells(myrow4, mycol).Value = CType(sdrow.local_group_id, Integer)
                                             Else
-                                                If Me.Version = "4.2.7" Then '4.2.7 initially saved to Prod EDS; neglected local group id
-                                                    .Worksheets("Database").Cells(myrow4, mycol).Value = CType(sgid, Double)
-                                                Else
-                                                    .Worksheets("Database").Cells(myrow4, mycol).ClearContents
-                                                End If
+                                                'If Me.Version = "4.2.7" Then '4.2.7 initially saving to Prod EDS; neglected local group id
+                                                .Worksheets("Database").Cells(myrow4, mycol).Value = CType(sgid, Double) 'This field will only be blank for WO initially completed during live WO testing. If local group ID doesn't exist, records are not saving to EDS. 
+                                                'Else
+                                                '    .Worksheets("Database").Cells(myrow4, mycol).ClearContents
+                                                'End If
                                             End If
 
                                             If Not IsNothing(sdrow.stiffener_location) Then
@@ -1265,11 +1265,11 @@ Partial Public Class CCIplate
                                     If Not IsNothing(bdrow.local_group_id) Then
                                         .Worksheets("Database").Cells(myrow2, mycol).Value = CType(bdrow.local_group_id, Integer)
                                     Else
-                                        If Me.Version = "4.2.7" Then '4.2.7 initially saved to Prod EDS; neglected local group id
-                                            .Worksheets("Database").Cells(myrow2, mycol).Value = CType(bgid, Integer)
-                                        Else
-                                            .Worksheets("Database").Cells(myrow2, mycol).ClearContents
-                                        End If
+                                        'If Me.Version = "4.2.7" Then '4.2.7 initially saving to Prod EDS; neglected local group id
+                                        .Worksheets("Database").Cells(myrow2, mycol).Value = CType(bgid, Integer) 'This field will only be blank for WO initially completed during live WO testing. If local group ID doesn't exist, records are not saving to EDS. 
+                                        'Else
+                                        '    .Worksheets("Database").Cells(myrow2, mycol).ClearContents
+                                        'End If
                                     End If
 
                                     If Not IsNothing(bdrow.bolt_location) Then
