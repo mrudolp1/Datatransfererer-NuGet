@@ -1004,13 +1004,19 @@ Partial Public Class CCIplate
                                             End If
                                             If Not IsNothing(sdrow.stiffener_id) Then
                                                 .Worksheets("Sub Tables (SAPI)").Range("BO" & StiffDRow + (PlateDRow - 3) * 100).Value = CType(sdrow.stiffener_id, Integer)
-                                                .Worksheets("Database").Cells(myrow4, mycol).Value = CType(sgid, Double)
                                             Else
                                                 .Worksheets("Sub Tables (SAPI)").Range("BO" & StiffDRow + (PlateDRow - 3) * 100).ClearContents
-                                                .Worksheets("Database").Cells(myrow4, mycol).ClearContents
                                             End If
 
-
+                                            If Not IsNothing(sdrow.local_group_id) Then
+                                                .Worksheets("Database").Cells(myrow4, mycol).Value = CType(sdrow.local_group_id, Integer)
+                                            Else
+                                                'If Me.Version = "4.2.7" Then '4.2.7 initially saving to Prod EDS; neglected local group id
+                                                .Worksheets("Database").Cells(myrow4, mycol).Value = CType(sgid, Double) 'This field will only be blank for WO initially completed during live WO testing. If local group ID doesn't exist, records are not saving to EDS. 
+                                                'Else
+                                                '    .Worksheets("Database").Cells(myrow4, mycol).ClearContents
+                                                'End If
+                                            End If
 
                                             If Not IsNothing(sdrow.stiffener_location) Then
                                                 .Worksheets("Database").Cells(myrow4 + 1, mycol).Value = CType(sdrow.stiffener_location, Double)
@@ -1255,7 +1261,17 @@ Partial Public Class CCIplate
                                     'If Not IsNothing(bdrow.bolt_id) Then
                                     '    .Worksheets("Database").Cells(myrow, mycol).Value = CType(bdrow.bolt_id, Integer)
                                     'End If
-                                    .Worksheets("Database").Cells(myrow2, mycol).Value = CType(bgid, Integer)
+
+                                    If Not IsNothing(bdrow.local_group_id) Then
+                                        .Worksheets("Database").Cells(myrow2, mycol).Value = CType(bdrow.local_group_id, Integer)
+                                    Else
+                                        'If Me.Version = "4.2.7" Then '4.2.7 initially saving to Prod EDS; neglected local group id
+                                        .Worksheets("Database").Cells(myrow2, mycol).Value = CType(bgid, Integer) 'This field will only be blank for WO initially completed during live WO testing. If local group ID doesn't exist, records are not saving to EDS. 
+                                        'Else
+                                        '    .Worksheets("Database").Cells(myrow2, mycol).ClearContents
+                                        'End If
+                                    End If
+
                                     If Not IsNothing(bdrow.bolt_location) Then
                                         .Worksheets("Database").Cells(myrow2 + 4, mycol).Value = CType(bdrow.bolt_location, Double)
                                     End If
@@ -3193,8 +3209,9 @@ Partial Public Class BoltDetail
         If EDStruefalse = False Then 'Only pull in local id when referencing Excel
             'Me.local_id = DBtoNullableInt(dr.Item("local_connection_id")) 'nothing references bolt details so deactivating
             Me.local_connection_id = DBtoNullableInt(dr.Item("local_connection_id"))
-            Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id"))
+            'Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id"))
         End If
+        Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id")) 'Added to EDS database to account for certain worklows with custom bolts. 
         'Me.bolt_id = If(EDStruefalse, DBtoNullableInt(dr.Item("bolt_id")), DBtoNullableInt(dr.Item("local_group_id")))
         Me.bolt_group_id = If(EDStruefalse, DBtoNullableInt(dr.Item("bolt_id")), DBtoNullableInt(dr.Item("group_id")))
         Me.bolt_location = DBtoNullableDbl(dr.Item("bolt_location"))
@@ -3229,6 +3246,7 @@ Partial Public Class BoltDetail
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.bolt_thread_type.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.area_override.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tension_only.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_group_id.ToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -3246,6 +3264,7 @@ Partial Public Class BoltDetail
         SQLInsertFields = SQLInsertFields.AddtoDBString("bolt_thread_type")
         SQLInsertFields = SQLInsertFields.AddtoDBString("area_override")
         SQLInsertFields = SQLInsertFields.AddtoDBString("tension_only")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("local_group_id")
 
         Return SQLInsertFields
     End Function
@@ -3264,6 +3283,7 @@ Partial Public Class BoltDetail
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("bolt_thread_type = " & Me.bolt_thread_type.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("area_override = " & Me.area_override.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tension_only = " & Me.tension_only.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_group_id = " & Me.local_group_id.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -3291,6 +3311,7 @@ Partial Public Class BoltDetail
         Equals = If(Me.bolt_thread_type.CheckChange(otherToCompare.bolt_thread_type, changes, categoryName, "Bolt Thread Type"), Equals, False)
         Equals = If(Me.area_override.CheckChange(otherToCompare.area_override, changes, categoryName, "Area Override"), Equals, False)
         Equals = If(Me.tension_only.CheckChange(otherToCompare.tension_only, changes, categoryName, "Tension Only"), Equals, False)
+        Equals = If(Me.local_group_id.CheckChange(otherToCompare.local_group_id, changes, categoryName, "Local Group Id"), Equals, False)
 
         'Materials
         If Me.CCIplateMaterials.Count > 0 Then
@@ -4540,8 +4561,9 @@ Partial Public Class StiffenerDetail
         If EDStruefalse = False Then 'Only pull in local id when referencing Excel
             'Me.local_id = DBtoNullableInt(dr.Item("local_id")) 'nothing references stiffener details so deactivating
             Me.local_plate_id = DBtoNullableInt(dr.Item("local_plate_id"))
-            Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id"))
+            'Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id"))
         End If
+        Me.local_group_id = DBtoNullableInt(dr.Item("local_group_id")) 'Added to EDS database to account for certain worklows with custom stiffeners. 
         Me.stiffener_id = If(EDStruefalse, DBtoNullableInt(dr.Item("stiffener_id")), DBtoNullableInt(dr.Item("group_id")))
         Me.stiffener_location = DBtoNullableDbl(dr.Item("stiffener_location"))
         Me.stiffener_width = DBtoNullableDbl(dr.Item("stiffener_width"))
@@ -4580,6 +4602,7 @@ Partial Public Class StiffenerDetail
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.h_fillet_weld.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.v_fillet_weld.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.weld_strength.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.local_group_id.ToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -4601,6 +4624,7 @@ Partial Public Class StiffenerDetail
         SQLInsertFields = SQLInsertFields.AddtoDBString("h_fillet_weld")
         SQLInsertFields = SQLInsertFields.AddtoDBString("v_fillet_weld")
         SQLInsertFields = SQLInsertFields.AddtoDBString("weld_strength")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("local_group_id")
 
         Return SQLInsertFields
     End Function
@@ -4622,6 +4646,7 @@ Partial Public Class StiffenerDetail
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("h_fillet_weld = " & Me.h_fillet_weld.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("v_fillet_weld = " & Me.v_fillet_weld.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("weld_strength = " & Me.weld_strength.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("local_group_id = " & Me.local_group_id.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -4653,6 +4678,7 @@ Partial Public Class StiffenerDetail
         Equals = If(Me.h_fillet_weld.CheckChange(otherToCompare.h_fillet_weld, changes, categoryName, "H Fillet Weld"), Equals, False)
         Equals = If(Me.v_fillet_weld.CheckChange(otherToCompare.v_fillet_weld, changes, categoryName, "V Fillet Weld"), Equals, False)
         Equals = If(Me.weld_strength.CheckChange(otherToCompare.weld_strength, changes, categoryName, "Weld Strength"), Equals, False)
+        Equals = If(Me.local_group_id.CheckChange(otherToCompare.local_group_id, changes, categoryName, "Local Group Id"), Equals, False)
 
     End Function
 #End Region
