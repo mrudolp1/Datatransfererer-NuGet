@@ -5625,6 +5625,30 @@ Partial Public Class tnxModel
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalType = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalType2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalType3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalType4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
                     End Select
                 Case caseFilter = "Tower"
                     ''''Tower Rec (Base Structure)''''
@@ -8079,231 +8103,27 @@ Partial Public Class tnxModel
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
-                        Case tnxVar.Equals("TowerRedundantHorizontalGradeOverwrite")
+                        Case tnxVar.Equals("TowerRedundantDiagonalType")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGradeOverwrite = tnxValue
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType = tnxValue
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
-                        Case tnxVar.Equals("TowerRedundantHorizontalMatlGradeOverwrite")
+                        Case tnxVar.Equals("TowerRedundantDiagonalType2")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGradeOverwrite = tnxValue
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType2 = tnxValue
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
-                        Case tnxVar.Equals("TowerRedundantHorizontalGrade2Overwrite")
+                        Case tnxVar.Equals("TowerRedundantDiagonalType3")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGrade2Overwrite = tnxValue
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType3 = tnxValue
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
-                        Case tnxVar.Equals("TowerRedundantHorizontalMatlGrade2Overwrite")
+                        Case tnxVar.Equals("TowerRedundantDiagonalType4")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHorizontalGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHorizontalMatlGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHorizontalGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHorizontalMatlGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantDiagonalGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantDiagonalMatlGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantDiagonalGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantDiagonalMatlGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantDiagonalGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantDiagonalMatlGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantDiagonalGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantDiagonalMatlGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantSubHorizontalGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantSubHorizontalMatlGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalMatlGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantSubDiagonalGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantSubDiagonalMatlGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalMatlGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantVerticalGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantVerticalMatlGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalMatlGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipMatlGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipMatlGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipMatlGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipMatlGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipDiagonalGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipDiagonalGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipDiagonalGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipDiagonalGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
-                        Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGrade4Overwrite = tnxValue
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType4 = tnxValue
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
@@ -12240,6 +12060,18 @@ Partial Public Class tnxModel
                             If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor4)) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHipDiagonalUFactor4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor4))
                             End If
+                            If IsSomethingString(.AntennaRedundantDiagonalType) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalType=" & .AntennaRedundantDiagonalType)
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalType2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalType2=" & .AntennaRedundantDiagonalType2)
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalType3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalType3=" & .AntennaRedundantDiagonalType3)
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalType4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalType4=" & .AntennaRedundantDiagonalType4)
+                            End If
                         End With
                     Next i
 
@@ -12659,44 +12491,10 @@ Partial Public Class tnxModel
                             newERIList.Add("TowerRedundantHipDiagonalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGageG1Distance4))
                             newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalNetWidthDeduct4))
                             newERIList.Add("TowerRedundantHipDiagonalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalUFactor4))
-                            newERIList.Add("TowerRedundantHorizontalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGradeOverwrite))
-                            newERIList.Add("TowerRedundantHorizontalMatlGradeOverwrite=" & .TowerRedundantHorizontalMatlGradeOverwrite)
-                            newERIList.Add("TowerRedundantHorizontalGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGrade2Overwrite))
-                            newERIList.Add("TowerRedundantHorizontalMatlGrade2Overwrite=" & .TowerRedundantHorizontalMatlGrade2Overwrite)
-                            newERIList.Add("TowerRedundantHorizontalGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGrade3Overwrite))
-                            newERIList.Add("TowerRedundantHorizontalMatlGrade3Overwrite=" & .TowerRedundantHorizontalMatlGrade3Overwrite)
-                            newERIList.Add("TowerRedundantHorizontalGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGrade4Overwrite))
-                            newERIList.Add("TowerRedundantHorizontalMatlGrade4Overwrite=" & .TowerRedundantHorizontalMatlGrade4Overwrite)
-                            newERIList.Add("TowerRedundantDiagonalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGradeOverwrite))
-                            newERIList.Add("TowerRedundantDiagonalMatlGradeOverwrite=" & .TowerRedundantDiagonalMatlGradeOverwrite)
-                            newERIList.Add("TowerRedundantDiagonalGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGrade2Overwrite))
-                            newERIList.Add("TowerRedundantDiagonalMatlGrade2Overwrite=" & .TowerRedundantDiagonalMatlGrade2Overwrite)
-                            newERIList.Add("TowerRedundantDiagonalGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGrade3Overwrite))
-                            newERIList.Add("TowerRedundantDiagonalMatlGrade3Overwrite=" & .TowerRedundantDiagonalMatlGrade3Overwrite)
-                            newERIList.Add("TowerRedundantDiagonalGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGrade4Overwrite))
-                            newERIList.Add("TowerRedundantDiagonalMatlGrade4Overwrite=" & .TowerRedundantDiagonalMatlGrade4Overwrite)
-                            newERIList.Add("TowerRedundantSubHorizontalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubHorizontalGradeOverwrite))
-                            newERIList.Add("TowerRedundantSubHorizontalMatlGradeOverwrite=" & .TowerRedundantSubHorizontalMatlGradeOverwrite)
-                            newERIList.Add("TowerRedundantSubDiagonalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubDiagonalGradeOverwrite))
-                            newERIList.Add("TowerRedundantSubDiagonalMatlGradeOverwrite=" & .TowerRedundantSubDiagonalMatlGradeOverwrite)
-                            newERIList.Add("TowerRedundantVerticalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantVerticalGradeOverwrite))
-                            newERIList.Add("TowerRedundantVerticalMatlGrade3Overwrite=" & .TowerRedundantVerticalMatlGrade3Overwrite)
-                            newERIList.Add("TowerRedundantHipGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGradeOverwrite))
-                            newERIList.Add("TowerRedundantHipMatlGradeOverwrite=" & .TowerRedundantHipMatlGradeOverwrite)
-                            newERIList.Add("TowerRedundantHipGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGrade2Overwrite))
-                            newERIList.Add("TowerRedundantHipMatlGrade2Overwrite=" & .TowerRedundantHipMatlGrade2Overwrite)
-                            newERIList.Add("TowerRedundantHipGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGrade3Overwrite))
-                            newERIList.Add("TowerRedundantHipMatlGrade3Overwrite=" & .TowerRedundantHipMatlGrade3Overwrite)
-                            newERIList.Add("TowerRedundantHipGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGrade4Overwrite))
-                            newERIList.Add("TowerRedundantHipMatlGrade4Overwrite=" & .TowerRedundantHipMatlGrade4Overwrite)
-                            newERIList.Add("TowerRedundantHipDiagonalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGradeOverwrite))
-                            newERIList.Add("TowerRedundantHipDiagonalMatlGradeOverwrite=" & .TowerRedundantHipDiagonalMatlGradeOverwrite)
-                            newERIList.Add("TowerRedundantHipDiagonalGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGrade2Overwrite))
-                            newERIList.Add("TowerRedundantHipDiagonalMatlGrade2Overwrite=" & .TowerRedundantHipDiagonalMatlGrade2Overwrite)
-                            newERIList.Add("TowerRedundantHipDiagonalGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGrade3Overwrite))
-                            newERIList.Add("TowerRedundantHipDiagonalMatlGrade3Overwrite=" & .TowerRedundantHipDiagonalMatlGrade3Overwrite)
-                            newERIList.Add("TowerRedundantHipDiagonalGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGrade4Overwrite))
-                            newERIList.Add("TowerRedundantHipDiagonalMatlGrade4Overwrite=" & .TowerRedundantHipDiagonalMatlGrade4Overwrite)
+                            newERIList.Add("TowerRedundantDiagonalType=" & .TowerRedundantDiagonalType)
+                            newERIList.Add("TowerRedundantDiagonalType2=" & .TowerRedundantDiagonalType2)
+                            newERIList.Add("TowerRedundantDiagonalType3=" & .TowerRedundantDiagonalType3)
+                            newERIList.Add("TowerRedundantDiagonalType4=" & .TowerRedundantDiagonalType4)
 
                         End With
                     Next i

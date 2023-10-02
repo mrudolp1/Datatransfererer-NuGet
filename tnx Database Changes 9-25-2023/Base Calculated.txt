@@ -163,44 +163,10 @@ ADD TowerRedundantHipDiagonalBoltEdgeDistance4 decimal(18, 6),
 ADD TowerRedundantHipDiagonalGageG1Distance4 decimal(18, 6),
 ADD TowerRedundantHipDiagonalNetWidthDeduct4 decimal(18, 6),
 ADD TowerRedundantHipDiagonalUFactor4 decimal(18, 6),
-ADD TowerRedundantHorizontalGradeOverwrite decimal(18, 6),
-ADD TowerRedundantHorizontalMatlGradeOverwrite varchar(100),
-ADD TowerRedundantHorizontalGrade2Overwrite decimal(18, 6),
-ADD TowerRedundantHorizontalMatlGrade2Overwrite varchar(100),
-ADD TowerRedundantHorizontalGrade3Overwrite decimal(18, 6),
-ADD TowerRedundantHorizontalMatlGrade3Overwrite varchar(100),
-ADD TowerRedundantHorizontalGrade4Overwrite decimal(18, 6),
-ADD TowerRedundantHorizontalMatlGrade4Overwrite varchar(100),
-ADD TowerRedundantDiagonalGradeOverwrite decimal(18, 6),
-ADD TowerRedundantDiagonalMatlGradeOverwrite varchar(100),
-ADD TowerRedundantDiagonalGrade2Overwrite decimal(18, 6),
-ADD TowerRedundantDiagonalMatlGrade2Overwrite varchar(100),
-ADD TowerRedundantDiagonalGrade3Overwrite decimal(18, 6),
-ADD TowerRedundantDiagonalMatlGrade3Overwrite varchar(100),
-ADD TowerRedundantDiagonalGrade4Overwrite decimal(18, 6),
-ADD TowerRedundantDiagonalMatlGrade4Overwrite varchar(100),
-ADD TowerRedundantSubHorizontalGradeOverwrite decimal(18, 6),
-ADD TowerRedundantSubHorizontalMatlGradeOverwrite varchar(100),
-ADD TowerRedundantSubDiagonalGradeOverwrite decimal(18, 6),
-ADD TowerRedundantSubDiagonalMatlGradeOverwrite varchar(100),
-ADD TowerRedundantVerticalGradeOverwrite decimal(18, 6),
-ADD TowerRedundantVerticalMatlGrade3Overwrite varchar(100),
-ADD TowerRedundantHipGradeOverwrite decimal(18, 6),
-ADD TowerRedundantHipMatlGradeOverwrite varchar(100),
-ADD TowerRedundantHipGrade2Overwrite decimal(18, 6),
-ADD TowerRedundantHipMatlGrade2Overwrite varchar(100),
-ADD TowerRedundantHipGrade3Overwrite decimal(18, 6),
-ADD TowerRedundantHipMatlGrade3Overwrite varchar(100),
-ADD TowerRedundantHipGrade4Overwrite decimal(18, 6),
-ADD TowerRedundantHipMatlGrade4Overwrite varchar(100),
-ADD TowerRedundantHipDiagonalGradeOverwrite decimal(18, 6),
-ADD TowerRedundantHipDiagonalMatlGradeOverwrite varchar(100),
-ADD TowerRedundantHipDiagonalGrade2Overwrite decimal(18, 6),
-ADD TowerRedundantHipDiagonalMatlGrade2Overwrite varchar(100),
-ADD TowerRedundantHipDiagonalGrade3Overwrite decimal(18, 6),
-ADD TowerRedundantHipDiagonalMatlGrade3Overwrite varchar(100),
-ADD TowerRedundantHipDiagonalGrade4Overwrite decimal(18, 6),
-ADD TowerRedundantHipDiagonalMatlGrade4Overwrite varchar(100),
+ADD TowerRedundantDiagonalType varchar(100),
+ADD TowerRedundantDiagonalType2 varchar(100),
+ADD TowerRedundantDiagonalType3 varchar(100),
+ADD TowerRedundantDiagonalType4 varchar(100),
 ######################## END SQL Column Add ########################
 \\\\\\
 \\\\\\
@@ -368,44 +334,10 @@ Private _TowerRedundantHipDiagonalBoltEdgeDistance4 As Double?
 Private _TowerRedundantHipDiagonalGageG1Distance4 As Double? 
 Private _TowerRedundantHipDiagonalNetWidthDeduct4 As Double? 
 Private _TowerRedundantHipDiagonalUFactor4 As Double? 
-Private _TowerRedundantHorizontalGradeOverwrite As Double? 
-Private _TowerRedundantHorizontalMatlGradeOverwrite As String 
-Private _TowerRedundantHorizontalGrade2Overwrite As Double? 
-Private _TowerRedundantHorizontalMatlGrade2Overwrite As String 
-Private _TowerRedundantHorizontalGrade3Overwrite As Double? 
-Private _TowerRedundantHorizontalMatlGrade3Overwrite As String 
-Private _TowerRedundantHorizontalGrade4Overwrite As Double? 
-Private _TowerRedundantHorizontalMatlGrade4Overwrite As String 
-Private _TowerRedundantDiagonalGradeOverwrite As Double? 
-Private _TowerRedundantDiagonalMatlGradeOverwrite As String 
-Private _TowerRedundantDiagonalGrade2Overwrite As Double? 
-Private _TowerRedundantDiagonalMatlGrade2Overwrite As String 
-Private _TowerRedundantDiagonalGrade3Overwrite As Double? 
-Private _TowerRedundantDiagonalMatlGrade3Overwrite As String 
-Private _TowerRedundantDiagonalGrade4Overwrite As Double? 
-Private _TowerRedundantDiagonalMatlGrade4Overwrite As String 
-Private _TowerRedundantSubHorizontalGradeOverwrite As Double? 
-Private _TowerRedundantSubHorizontalMatlGradeOverwrite As String 
-Private _TowerRedundantSubDiagonalGradeOverwrite As Double? 
-Private _TowerRedundantSubDiagonalMatlGradeOverwrite As String 
-Private _TowerRedundantVerticalGradeOverwrite As Double? 
-Private _TowerRedundantVerticalMatlGrade3Overwrite As String 
-Private _TowerRedundantHipGradeOverwrite As Double? 
-Private _TowerRedundantHipMatlGradeOverwrite As String 
-Private _TowerRedundantHipGrade2Overwrite As Double? 
-Private _TowerRedundantHipMatlGrade2Overwrite As String 
-Private _TowerRedundantHipGrade3Overwrite As Double? 
-Private _TowerRedundantHipMatlGrade3Overwrite As String 
-Private _TowerRedundantHipGrade4Overwrite As Double? 
-Private _TowerRedundantHipMatlGrade4Overwrite As String 
-Private _TowerRedundantHipDiagonalGradeOverwrite As Double? 
-Private _TowerRedundantHipDiagonalMatlGradeOverwrite As String 
-Private _TowerRedundantHipDiagonalGrade2Overwrite As Double? 
-Private _TowerRedundantHipDiagonalMatlGrade2Overwrite As String 
-Private _TowerRedundantHipDiagonalGrade3Overwrite As Double? 
-Private _TowerRedundantHipDiagonalMatlGrade3Overwrite As String 
-Private _TowerRedundantHipDiagonalGrade4Overwrite As Double? 
-Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String 
+Private _TowerRedundantDiagonalType As String 
+Private _TowerRedundantDiagonalType2 As String 
+Private _TowerRedundantDiagonalType3 As String 
+Private _TowerRedundantDiagonalType4 As String 
 ######################## END Define ########################
 \\\\\\
 \\\\\\
@@ -1877,346 +1809,40 @@ Private _TowerRedundantHipDiagonalMatlGrade4Overwrite As String
             				Me._TowerRedundantHipDiagonalUFactor4 = Value
         			End Set
     		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGradeOverwrite() As Double??
+     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Type")>
+    		<DataMember()> Public Property TowerRedundantDiagonalType() As String
         			Get
-            				Return Me._TowerRedundantHorizontalGradeOverwrite
+            				Return Me._TowerRedundantDiagonalType
         			End Get
         			Set
-            				Me._TowerRedundantHorizontalGradeOverwrite = Value
+            				Me._TowerRedundantDiagonalType = Value
         			End Set
     		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalMatlGradeOverwrite() As String
+     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Type 2")>
+    		<DataMember()> Public Property TowerRedundantDiagonalType2() As String
         			Get
-            				Return Me._TowerRedundantHorizontalMatlGradeOverwrite
+            				Return Me._TowerRedundantDiagonalType2
         			End Get
         			Set
-            				Me._TowerRedundantHorizontalMatlGradeOverwrite = Value
+            				Me._TowerRedundantDiagonalType2 = Value
         			End Set
     		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGrade2Overwrite() As Double??
+     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Type 3")>
+    		<DataMember()> Public Property TowerRedundantDiagonalType3() As String
         			Get
-            				Return Me._TowerRedundantHorizontalGrade2Overwrite
+            				Return Me._TowerRedundantDiagonalType3
         			End Get
         			Set
-            				Me._TowerRedundantHorizontalGrade2Overwrite = Value
+            				Me._TowerRedundantDiagonalType3 = Value
         			End Set
     		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalMatlGrade2Overwrite() As String
+     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Type 4")>
+    		<DataMember()> Public Property TowerRedundantDiagonalType4() As String
         			Get
-            				Return Me._TowerRedundantHorizontalMatlGrade2Overwrite
+            				Return Me._TowerRedundantDiagonalType4
         			End Get
         			Set
-            				Me._TowerRedundantHorizontalMatlGrade2Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGrade3Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantHorizontalGrade3Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHorizontalGrade3Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalMatlGrade3Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantHorizontalMatlGrade3Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHorizontalMatlGrade3Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalGrade4Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantHorizontalGrade4Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHorizontalGrade4Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Horizontal Matl Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHorizontalMatlGrade4Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantHorizontalMatlGrade4Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHorizontalMatlGrade4Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGradeOverwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantDiagonalGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantDiagonalGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalMatlGradeOverwrite() As String
-        			Get
-            				Return Me._TowerRedundantDiagonalMatlGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantDiagonalMatlGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGrade2Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantDiagonalGrade2Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantDiagonalGrade2Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalMatlGrade2Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantDiagonalMatlGrade2Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantDiagonalMatlGrade2Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGrade3Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantDiagonalGrade3Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantDiagonalGrade3Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalMatlGrade3Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantDiagonalMatlGrade3Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantDiagonalMatlGrade3Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalGrade4Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantDiagonalGrade4Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantDiagonalGrade4Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Diagonal Matl Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantDiagonalMatlGrade4Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantDiagonalMatlGrade4Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantDiagonalMatlGrade4Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Horizontal Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantSubHorizontalGradeOverwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantSubHorizontalGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantSubHorizontalGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Horizontal Matl Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantSubHorizontalMatlGradeOverwrite() As String
-        			Get
-            				Return Me._TowerRedundantSubHorizontalMatlGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantSubHorizontalMatlGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Diagonal Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantSubDiagonalGradeOverwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantSubDiagonalGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantSubDiagonalGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Sub Diagonal Matl Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantSubDiagonalMatlGradeOverwrite() As String
-        			Get
-            				Return Me._TowerRedundantSubDiagonalMatlGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantSubDiagonalMatlGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Vertical Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantVerticalGradeOverwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantVerticalGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantVerticalGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Vertical Matl Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantVerticalMatlGrade3Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantVerticalMatlGrade3Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantVerticalMatlGrade3Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipGradeOverwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantHipGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipMatlGradeOverwrite() As String
-        			Get
-            				Return Me._TowerRedundantHipMatlGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipMatlGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipGrade2Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantHipGrade2Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipGrade2Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipMatlGrade2Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantHipMatlGrade2Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipMatlGrade2Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipGrade3Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantHipGrade3Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipGrade3Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipMatlGrade3Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantHipMatlGrade3Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipMatlGrade3Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipGrade4Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantHipGrade4Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipGrade4Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Matl Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipMatlGrade4Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantHipMatlGrade4Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipMatlGrade4Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGradeOverwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantHipDiagonalGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipDiagonalGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalMatlGradeOverwrite() As String
-        			Get
-            				Return Me._TowerRedundantHipDiagonalMatlGradeOverwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipDiagonalMatlGradeOverwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade2Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantHipDiagonalGrade2Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipDiagonalGrade2Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade 2 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalMatlGrade2Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantHipDiagonalMatlGrade2Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipDiagonalMatlGrade2Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade3Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantHipDiagonalGrade3Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipDiagonalGrade3Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade 3 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalMatlGrade3Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantHipDiagonalMatlGrade3Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipDiagonalMatlGrade3Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalGrade4Overwrite() As Double??
-        			Get
-            				Return Me._TowerRedundantHipDiagonalGrade4Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipDiagonalGrade4Overwrite = Value
-        			End Set
-    		End Property
-     		<Category("TNX Tower Record"), Description(""), DisplayName("Tower Redundant Hip Diagonal Matl Grade 4 Overwrite")>
-    		<DataMember()> Public Property TowerRedundantHipDiagonalMatlGrade4Overwrite() As String
-        			Get
-            				Return Me._TowerRedundantHipDiagonalMatlGrade4Overwrite
-        			End Get
-        			Set
-            				Me._TowerRedundantHipDiagonalMatlGrade4Overwrite = Value
+            				Me._TowerRedundantDiagonalType4 = Value
         			End Set
     		End Property
 ######################## END Property ########################
@@ -2386,44 +2012,10 @@ Me.TowerRedundantHipDiagonalBoltEdgeDistance4 = DBtoNullableDec(recRow.Item("Tow
 Me.TowerRedundantHipDiagonalGageG1Distance4 = DBtoNullableDec(recRow.Item("TowerRedundantHipDiagonalGageG1Distance4"),6)
 Me.TowerRedundantHipDiagonalNetWidthDeduct4 = DBtoNullableDec(recRow.Item("TowerRedundantHipDiagonalNetWidthDeduct4"),6)
 Me.TowerRedundantHipDiagonalUFactor4 = DBtoNullableDec(recRow.Item("TowerRedundantHipDiagonalUFactor4"),6)
-Me.TowerRedundantHorizontalGradeOverwrite = DBtoNullableDec(recRow.Item("TowerRedundantHorizontalGradeOverwrite"),6)
-Me.TowerRedundantHorizontalMatlGradeOverwrite = DBtoStr(recRow.Item("TowerRedundantHorizontalMatlGradeOverwrite"))
-Me.TowerRedundantHorizontalGrade2Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantHorizontalGrade2Overwrite"),6)
-Me.TowerRedundantHorizontalMatlGrade2Overwrite = DBtoStr(recRow.Item("TowerRedundantHorizontalMatlGrade2Overwrite"))
-Me.TowerRedundantHorizontalGrade3Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantHorizontalGrade3Overwrite"),6)
-Me.TowerRedundantHorizontalMatlGrade3Overwrite = DBtoStr(recRow.Item("TowerRedundantHorizontalMatlGrade3Overwrite"))
-Me.TowerRedundantHorizontalGrade4Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantHorizontalGrade4Overwrite"),6)
-Me.TowerRedundantHorizontalMatlGrade4Overwrite = DBtoStr(recRow.Item("TowerRedundantHorizontalMatlGrade4Overwrite"))
-Me.TowerRedundantDiagonalGradeOverwrite = DBtoNullableDec(recRow.Item("TowerRedundantDiagonalGradeOverwrite"),6)
-Me.TowerRedundantDiagonalMatlGradeOverwrite = DBtoStr(recRow.Item("TowerRedundantDiagonalMatlGradeOverwrite"))
-Me.TowerRedundantDiagonalGrade2Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantDiagonalGrade2Overwrite"),6)
-Me.TowerRedundantDiagonalMatlGrade2Overwrite = DBtoStr(recRow.Item("TowerRedundantDiagonalMatlGrade2Overwrite"))
-Me.TowerRedundantDiagonalGrade3Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantDiagonalGrade3Overwrite"),6)
-Me.TowerRedundantDiagonalMatlGrade3Overwrite = DBtoStr(recRow.Item("TowerRedundantDiagonalMatlGrade3Overwrite"))
-Me.TowerRedundantDiagonalGrade4Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantDiagonalGrade4Overwrite"),6)
-Me.TowerRedundantDiagonalMatlGrade4Overwrite = DBtoStr(recRow.Item("TowerRedundantDiagonalMatlGrade4Overwrite"))
-Me.TowerRedundantSubHorizontalGradeOverwrite = DBtoNullableDec(recRow.Item("TowerRedundantSubHorizontalGradeOverwrite"),6)
-Me.TowerRedundantSubHorizontalMatlGradeOverwrite = DBtoStr(recRow.Item("TowerRedundantSubHorizontalMatlGradeOverwrite"))
-Me.TowerRedundantSubDiagonalGradeOverwrite = DBtoNullableDec(recRow.Item("TowerRedundantSubDiagonalGradeOverwrite"),6)
-Me.TowerRedundantSubDiagonalMatlGradeOverwrite = DBtoStr(recRow.Item("TowerRedundantSubDiagonalMatlGradeOverwrite"))
-Me.TowerRedundantVerticalGradeOverwrite = DBtoNullableDec(recRow.Item("TowerRedundantVerticalGradeOverwrite"),6)
-Me.TowerRedundantVerticalMatlGrade3Overwrite = DBtoStr(recRow.Item("TowerRedundantVerticalMatlGrade3Overwrite"))
-Me.TowerRedundantHipGradeOverwrite = DBtoNullableDec(recRow.Item("TowerRedundantHipGradeOverwrite"),6)
-Me.TowerRedundantHipMatlGradeOverwrite = DBtoStr(recRow.Item("TowerRedundantHipMatlGradeOverwrite"))
-Me.TowerRedundantHipGrade2Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantHipGrade2Overwrite"),6)
-Me.TowerRedundantHipMatlGrade2Overwrite = DBtoStr(recRow.Item("TowerRedundantHipMatlGrade2Overwrite"))
-Me.TowerRedundantHipGrade3Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantHipGrade3Overwrite"),6)
-Me.TowerRedundantHipMatlGrade3Overwrite = DBtoStr(recRow.Item("TowerRedundantHipMatlGrade3Overwrite"))
-Me.TowerRedundantHipGrade4Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantHipGrade4Overwrite"),6)
-Me.TowerRedundantHipMatlGrade4Overwrite = DBtoStr(recRow.Item("TowerRedundantHipMatlGrade4Overwrite"))
-Me.TowerRedundantHipDiagonalGradeOverwrite = DBtoNullableDec(recRow.Item("TowerRedundantHipDiagonalGradeOverwrite"),6)
-Me.TowerRedundantHipDiagonalMatlGradeOverwrite = DBtoStr(recRow.Item("TowerRedundantHipDiagonalMatlGradeOverwrite"))
-Me.TowerRedundantHipDiagonalGrade2Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantHipDiagonalGrade2Overwrite"),6)
-Me.TowerRedundantHipDiagonalMatlGrade2Overwrite = DBtoStr(recRow.Item("TowerRedundantHipDiagonalMatlGrade2Overwrite"))
-Me.TowerRedundantHipDiagonalGrade3Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantHipDiagonalGrade3Overwrite"),6)
-Me.TowerRedundantHipDiagonalMatlGrade3Overwrite = DBtoStr(recRow.Item("TowerRedundantHipDiagonalMatlGrade3Overwrite"))
-Me.TowerRedundantHipDiagonalGrade4Overwrite = DBtoNullableDec(recRow.Item("TowerRedundantHipDiagonalGrade4Overwrite"),6)
-Me.TowerRedundantHipDiagonalMatlGrade4Overwrite = DBtoStr(recRow.Item("TowerRedundantHipDiagonalMatlGrade4Overwrite"))
+Me.TowerRedundantDiagonalType = DBtoStr(recRow.Item("TowerRedundantDiagonalType"))
+Me.TowerRedundantDiagonalType2 = DBtoStr(recRow.Item("TowerRedundantDiagonalType2"))
+Me.TowerRedundantDiagonalType3 = DBtoStr(recRow.Item("TowerRedundantDiagonalType3"))
+Me.TowerRedundantDiagonalType4 = DBtoStr(recRow.Item("TowerRedundantDiagonalType4"))
 ######################## END Construct From DataRow ########################
 \\\\\\
 \\\\\\
@@ -2591,249 +2183,181 @@ insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalBoltEdgeDi
 insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance4.ToString)
 insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct4.ToString)
 insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor4.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalMatlGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalGrade2Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade2Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalGrade3Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade3Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalGrade4Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHorizontalMatlGrade4Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalMatlGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalGrade2Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade2Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalGrade3Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade3Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalGrade4Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalMatlGrade4Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantSubHorizontalMatlGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantSubDiagonalMatlGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantVerticalMatlGrade3Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipMatlGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipGrade2Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipMatlGrade2Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipGrade3Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipMatlGrade3Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipGrade4Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipMatlGrade4Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGradeOverwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalGrade2Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade2Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalGrade3Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade3Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalGrade4Overwrite.ToString)
-insertString = insertString.AddtoDBString(Me.TowerRedundantHipDiagonalMatlGrade4Overwrite.ToString)
+insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalType.ToString)
+insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalType2.ToString)
+insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalType3.ToString)
+insertString = insertString.AddtoDBString(Me.TowerRedundantDiagonalType4.ToString)
 ######################## END Generate SQL ########################
 \\\\\\
 \\\\\\
 ######################## BEGIN Equals ########################
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGrade, changes, categoryName, "Tower Redundant Horizontal Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade, changes, categoryName, "Tower Redundant Horizontal Matl Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGrade2, changes, categoryName, "Tower Redundant Horizontal Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade2, changes, categoryName, "Tower Redundant Horizontal Matl Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGrade3, changes, categoryName, "Tower Redundant Horizontal Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade3, changes, categoryName, "Tower Redundant Horizontal Matl Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGrade4, changes, categoryName, "Tower Redundant Horizontal Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade4, changes, categoryName, "Tower Redundant Horizontal Matl Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGrade, changes, categoryName, "Tower Redundant Diagonal Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade, changes, categoryName, "Tower Redundant Diagonal Matl Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGrade2, changes, categoryName, "Tower Redundant Diagonal Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade2, changes, categoryName, "Tower Redundant Diagonal Matl Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGrade3, changes, categoryName, "Tower Redundant Diagonal Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade3, changes, categoryName, "Tower Redundant Diagonal Matl Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGrade4, changes, categoryName, "Tower Redundant Diagonal Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade4, changes, categoryName, "Tower Redundant Diagonal Matl Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantSubHorizontalGrade, changes, categoryName, "Tower Redundant Sub Horizontal Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantSubHorizontalMatlGrade, changes, categoryName, "Tower Redundant Sub Horizontal Matl Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantSubDiagonalGrade, changes, categoryName, "Tower Redundant Sub Diagonal Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantSubDiagonalMatlGrade, changes, categoryName, "Tower Redundant Sub Diagonal Matl Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantVerticalGrade, changes, categoryName, "Tower Redundant Vertical Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantVerticalMatlGrade3, changes, categoryName, "Tower Redundant Vertical Matl Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGrade, changes, categoryName, "Tower Redundant Hip Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipMatlGrade, changes, categoryName, "Tower Redundant Hip Matl Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGrade2, changes, categoryName, "Tower Redundant Hip Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipMatlGrade2, changes, categoryName, "Tower Redundant Hip Matl Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGrade3, changes, categoryName, "Tower Redundant Hip Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipMatlGrade3, changes, categoryName, "Tower Redundant Hip Matl Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGrade4, changes, categoryName, "Tower Redundant Hip Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipMatlGrade4, changes, categoryName, "Tower Redundant Hip Matl Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade, changes, categoryName, "Tower Redundant Hip Diagonal Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade2, changes, categoryName, "Tower Redundant Hip Diagonal Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade2, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade3, changes, categoryName, "Tower Redundant Hip Diagonal Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade3, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade4, changes, categoryName, "Tower Redundant Hip Diagonal Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade4, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalType, changes, categoryName, "Tower Redundant Horizontal Type"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalType2, changes, categoryName, "Tower Redundant Horizontal Type 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalType3, changes, categoryName, "Tower Redundant Horizontal Type 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalType4, changes, categoryName, "Tower Redundant Horizontal Type 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagType2, changes, categoryName, "Tower Redundant Diag Type 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagType3, changes, categoryName, "Tower Redundant Diag Type 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagType4, changes, categoryName, "Tower Redundant Diag Type 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipType2, changes, categoryName, "Tower Redundant Hip Type 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipType3, changes, categoryName, "Tower Redundant Hip Type 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipType4, changes, categoryName, "Tower Redundant Hip Type 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalType2, changes, categoryName, "Tower Redundant Hip Diagonal Type 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalType3, changes, categoryName, "Tower Redundant Hip Diagonal Type 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalType4, changes, categoryName, "Tower Redundant Hip Diagonal Type 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade1, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize1, changes, categoryName, "Tower Redundant Horizontal Bolt Size 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts1, changes, categoryName, "Tower Redundant Horizontal Num Bolts 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance1, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance1, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct1, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor1, changes, categoryName, "Tower Redundant Horizontal U Factor 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade2, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize2, changes, categoryName, "Tower Redundant Horizontal Bolt Size 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts2, changes, categoryName, "Tower Redundant Horizontal Num Bolts 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance2, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance2, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct2, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor2, changes, categoryName, "Tower Redundant Horizontal U Factor 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade3, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize3, changes, categoryName, "Tower Redundant Horizontal Bolt Size 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts3, changes, categoryName, "Tower Redundant Horizontal Num Bolts 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance3, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance3, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct3, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor3, changes, categoryName, "Tower Redundant Horizontal U Factor 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade4, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize4, changes, categoryName, "Tower Redundant Horizontal Bolt Size 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts4, changes, categoryName, "Tower Redundant Horizontal Num Bolts 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance4, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance4, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct4, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor4, changes, categoryName, "Tower Redundant Horizontal U Factor 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade1, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize1, changes, categoryName, "Tower Redundant Diagonal Bolt Size 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts1, changes, categoryName, "Tower Redundant Diagonal Num Bolts 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance1, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance1, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct1, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor1, changes, categoryName, "Tower Redundant Diagonal U Factor 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade2, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize2, changes, categoryName, "Tower Redundant Diagonal Bolt Size 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts2, changes, categoryName, "Tower Redundant Diagonal Num Bolts 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance2, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance2, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct2, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor2, changes, categoryName, "Tower Redundant Diagonal U Factor 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade3, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize3, changes, categoryName, "Tower Redundant Diagonal Bolt Size 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts3, changes, categoryName, "Tower Redundant Diagonal Num Bolts 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance3, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance3, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct3, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor3, changes, categoryName, "Tower Redundant Diagonal U Factor 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade4, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize4, changes, categoryName, "Tower Redundant Diagonal Bolt Size 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts4, changes, categoryName, "Tower Redundant Diagonal Num Bolts 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance4, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance4, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct4, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor4, changes, categoryName, "Tower Redundant Diagonal U Factor 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltGrade1, changes, categoryName, "Tower Redundant Hip Bolt Grade 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltSize1, changes, categoryName, "Tower Redundant Hip Bolt Size 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipNumBolts1, changes, categoryName, "Tower Redundant Hip Num Bolts 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance1, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance1, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct1, changes, categoryName, "Tower Redundant Hip Net Width Deduct 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipUFactor1, changes, categoryName, "Tower Redundant Hip U Factor 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltGrade2, changes, categoryName, "Tower Redundant Hip Bolt Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltSize2, changes, categoryName, "Tower Redundant Hip Bolt Size 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipNumBolts2, changes, categoryName, "Tower Redundant Hip Num Bolts 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance2, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance2, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct2, changes, categoryName, "Tower Redundant Hip Net Width Deduct 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipUFactor2, changes, categoryName, "Tower Redundant Hip U Factor 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltGrade3, changes, categoryName, "Tower Redundant Hip Bolt Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltSize3, changes, categoryName, "Tower Redundant Hip Bolt Size 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipNumBolts3, changes, categoryName, "Tower Redundant Hip Num Bolts 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance3, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance3, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct3, changes, categoryName, "Tower Redundant Hip Net Width Deduct 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipUFactor3, changes, categoryName, "Tower Redundant Hip U Factor 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltGrade4, changes, categoryName, "Tower Redundant Hip Bolt Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltSize4, changes, categoryName, "Tower Redundant Hip Bolt Size 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipNumBolts4, changes, categoryName, "Tower Redundant Hip Num Bolts 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance4, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance4, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct4, changes, categoryName, "Tower Redundant Hip Net Width Deduct 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipUFactor4, changes, categoryName, "Tower Redundant Hip U Factor 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade1, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize1, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts1, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance1, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance1, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct1, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor1, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 1"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade2, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize2, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts2, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance2, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance2, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct2, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor2, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 2"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade3, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize3, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts3, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance3, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance3, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct3, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor3, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 3"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade4, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize4, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts4, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance4, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance4, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct4, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor4, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 4"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGradeOverwrite, changes, categoryName, "Tower Redundant Horizontal Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGradeOverwrite, changes, categoryName, "Tower Redundant Horizontal Matl Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGrade2Overwrite, changes, categoryName, "Tower Redundant Horizontal Grade 2 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade2Overwrite, changes, categoryName, "Tower Redundant Horizontal Matl Grade 2 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGrade3Overwrite, changes, categoryName, "Tower Redundant Horizontal Grade 3 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade3Overwrite, changes, categoryName, "Tower Redundant Horizontal Matl Grade 3 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalGrade4Overwrite, changes, categoryName, "Tower Redundant Horizontal Grade 4 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade4Overwrite, changes, categoryName, "Tower Redundant Horizontal Matl Grade 4 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGradeOverwrite, changes, categoryName, "Tower Redundant Diagonal Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGradeOverwrite, changes, categoryName, "Tower Redundant Diagonal Matl Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGrade2Overwrite, changes, categoryName, "Tower Redundant Diagonal Grade 2 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade2Overwrite, changes, categoryName, "Tower Redundant Diagonal Matl Grade 2 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGrade3Overwrite, changes, categoryName, "Tower Redundant Diagonal Grade 3 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade3Overwrite, changes, categoryName, "Tower Redundant Diagonal Matl Grade 3 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalGrade4Overwrite, changes, categoryName, "Tower Redundant Diagonal Grade 4 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade4Overwrite, changes, categoryName, "Tower Redundant Diagonal Matl Grade 4 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantSubHorizontalGradeOverwrite, changes, categoryName, "Tower Redundant Sub Horizontal Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantSubHorizontalMatlGradeOverwrite, changes, categoryName, "Tower Redundant Sub Horizontal Matl Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantSubDiagonalGradeOverwrite, changes, categoryName, "Tower Redundant Sub Diagonal Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantSubDiagonalMatlGradeOverwrite, changes, categoryName, "Tower Redundant Sub Diagonal Matl Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantVerticalGradeOverwrite, changes, categoryName, "Tower Redundant Vertical Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantVerticalMatlGrade3Overwrite, changes, categoryName, "Tower Redundant Vertical Matl Grade 3 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGradeOverwrite, changes, categoryName, "Tower Redundant Hip Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipMatlGradeOverwrite, changes, categoryName, "Tower Redundant Hip Matl Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGrade2Overwrite, changes, categoryName, "Tower Redundant Hip Grade 2 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipMatlGrade2Overwrite, changes, categoryName, "Tower Redundant Hip Matl Grade 2 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGrade3Overwrite, changes, categoryName, "Tower Redundant Hip Grade 3 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipMatlGrade3Overwrite, changes, categoryName, "Tower Redundant Hip Matl Grade 3 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipGrade4Overwrite, changes, categoryName, "Tower Redundant Hip Grade 4 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipMatlGrade4Overwrite, changes, categoryName, "Tower Redundant Hip Matl Grade 4 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGradeOverwrite, changes, categoryName, "Tower Redundant Hip Diagonal Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGradeOverwrite, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade2Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Grade 2 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade2Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 2 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade3Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Grade 3 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade3Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 3 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade4Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Grade 4 Overwrite"), Equals, False)
-Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade4Overwrite, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 4 Overwrite"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalGrade.CheckChange(otherToCompare.TowerRedundantHorizontalGrade, changes, categoryName, "Tower Redundant Horizontal Grade"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalMatlGrade.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade, changes, categoryName, "Tower Redundant Horizontal Matl Grade"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalGrade2.CheckChange(otherToCompare.TowerRedundantHorizontalGrade2, changes, categoryName, "Tower Redundant Horizontal Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalMatlGrade2.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade2, changes, categoryName, "Tower Redundant Horizontal Matl Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalGrade3.CheckChange(otherToCompare.TowerRedundantHorizontalGrade3, changes, categoryName, "Tower Redundant Horizontal Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalMatlGrade3.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade3, changes, categoryName, "Tower Redundant Horizontal Matl Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalGrade4.CheckChange(otherToCompare.TowerRedundantHorizontalGrade4, changes, categoryName, "Tower Redundant Horizontal Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalMatlGrade4.CheckChange(otherToCompare.TowerRedundantHorizontalMatlGrade4, changes, categoryName, "Tower Redundant Horizontal Matl Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalGrade.CheckChange(otherToCompare.TowerRedundantDiagonalGrade, changes, categoryName, "Tower Redundant Diagonal Grade"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalMatlGrade.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade, changes, categoryName, "Tower Redundant Diagonal Matl Grade"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalGrade2.CheckChange(otherToCompare.TowerRedundantDiagonalGrade2, changes, categoryName, "Tower Redundant Diagonal Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalMatlGrade2.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade2, changes, categoryName, "Tower Redundant Diagonal Matl Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalGrade3.CheckChange(otherToCompare.TowerRedundantDiagonalGrade3, changes, categoryName, "Tower Redundant Diagonal Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalMatlGrade3.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade3, changes, categoryName, "Tower Redundant Diagonal Matl Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalGrade4.CheckChange(otherToCompare.TowerRedundantDiagonalGrade4, changes, categoryName, "Tower Redundant Diagonal Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalMatlGrade4.CheckChange(otherToCompare.TowerRedundantDiagonalMatlGrade4, changes, categoryName, "Tower Redundant Diagonal Matl Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantSubHorizontalGrade.CheckChange(otherToCompare.TowerRedundantSubHorizontalGrade, changes, categoryName, "Tower Redundant Sub Horizontal Grade"), Equals, False)
+Equals = If(Me.TowerRedundantSubHorizontalMatlGrade.CheckChange(otherToCompare.TowerRedundantSubHorizontalMatlGrade, changes, categoryName, "Tower Redundant Sub Horizontal Matl Grade"), Equals, False)
+Equals = If(Me.TowerRedundantSubDiagonalGrade.CheckChange(otherToCompare.TowerRedundantSubDiagonalGrade, changes, categoryName, "Tower Redundant Sub Diagonal Grade"), Equals, False)
+Equals = If(Me.TowerRedundantSubDiagonalMatlGrade.CheckChange(otherToCompare.TowerRedundantSubDiagonalMatlGrade, changes, categoryName, "Tower Redundant Sub Diagonal Matl Grade"), Equals, False)
+Equals = If(Me.TowerRedundantVerticalGrade.CheckChange(otherToCompare.TowerRedundantVerticalGrade, changes, categoryName, "Tower Redundant Vertical Grade"), Equals, False)
+Equals = If(Me.TowerRedundantVerticalMatlGrade3.CheckChange(otherToCompare.TowerRedundantVerticalMatlGrade3, changes, categoryName, "Tower Redundant Vertical Matl Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipGrade.CheckChange(otherToCompare.TowerRedundantHipGrade, changes, categoryName, "Tower Redundant Hip Grade"), Equals, False)
+Equals = If(Me.TowerRedundantHipMatlGrade.CheckChange(otherToCompare.TowerRedundantHipMatlGrade, changes, categoryName, "Tower Redundant Hip Matl Grade"), Equals, False)
+Equals = If(Me.TowerRedundantHipGrade2.CheckChange(otherToCompare.TowerRedundantHipGrade2, changes, categoryName, "Tower Redundant Hip Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipMatlGrade2.CheckChange(otherToCompare.TowerRedundantHipMatlGrade2, changes, categoryName, "Tower Redundant Hip Matl Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipGrade3.CheckChange(otherToCompare.TowerRedundantHipGrade3, changes, categoryName, "Tower Redundant Hip Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipMatlGrade3.CheckChange(otherToCompare.TowerRedundantHipMatlGrade3, changes, categoryName, "Tower Redundant Hip Matl Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipGrade4.CheckChange(otherToCompare.TowerRedundantHipGrade4, changes, categoryName, "Tower Redundant Hip Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipMatlGrade4.CheckChange(otherToCompare.TowerRedundantHipMatlGrade4, changes, categoryName, "Tower Redundant Hip Matl Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalGrade.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade, changes, categoryName, "Tower Redundant Hip Diagonal Grade"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalMatlGrade.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalGrade2.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade2, changes, categoryName, "Tower Redundant Hip Diagonal Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalMatlGrade2.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade2, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalGrade3.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade3, changes, categoryName, "Tower Redundant Hip Diagonal Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalMatlGrade3.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade3, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalGrade4.CheckChange(otherToCompare.TowerRedundantHipDiagonalGrade4, changes, categoryName, "Tower Redundant Hip Diagonal Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalMatlGrade4.CheckChange(otherToCompare.TowerRedundantHipDiagonalMatlGrade4, changes, categoryName, "Tower Redundant Hip Diagonal Matl Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalType.CheckChange(otherToCompare.TowerRedundantHorizontalType, changes, categoryName, "Tower Redundant Horizontal Type"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalType2.CheckChange(otherToCompare.TowerRedundantHorizontalType2, changes, categoryName, "Tower Redundant Horizontal Type 2"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalType3.CheckChange(otherToCompare.TowerRedundantHorizontalType3, changes, categoryName, "Tower Redundant Horizontal Type 3"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalType4.CheckChange(otherToCompare.TowerRedundantHorizontalType4, changes, categoryName, "Tower Redundant Horizontal Type 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagType2.CheckChange(otherToCompare.TowerRedundantDiagType2, changes, categoryName, "Tower Redundant Diag Type 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagType3.CheckChange(otherToCompare.TowerRedundantDiagType3, changes, categoryName, "Tower Redundant Diag Type 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagType4.CheckChange(otherToCompare.TowerRedundantDiagType4, changes, categoryName, "Tower Redundant Diag Type 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipType2.CheckChange(otherToCompare.TowerRedundantHipType2, changes, categoryName, "Tower Redundant Hip Type 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipType3.CheckChange(otherToCompare.TowerRedundantHipType3, changes, categoryName, "Tower Redundant Hip Type 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipType4.CheckChange(otherToCompare.TowerRedundantHipType4, changes, categoryName, "Tower Redundant Hip Type 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalType2.CheckChange(otherToCompare.TowerRedundantHipDiagonalType2, changes, categoryName, "Tower Redundant Hip Diagonal Type 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalType3.CheckChange(otherToCompare.TowerRedundantHipDiagonalType3, changes, categoryName, "Tower Redundant Hip Diagonal Type 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalType4.CheckChange(otherToCompare.TowerRedundantHipDiagonalType4, changes, categoryName, "Tower Redundant Hip Diagonal Type 4"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltGrade1.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade1, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 1"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltSize1.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize1, changes, categoryName, "Tower Redundant Horizontal Bolt Size 1"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalNumBolts1.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts1, changes, categoryName, "Tower Redundant Horizontal Num Bolts 1"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltEdgeDistance1.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance1, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 1"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalGageG1Distance1.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance1, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 1"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalNetWidthDeduct1.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct1, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 1"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalUFactor1.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor1, changes, categoryName, "Tower Redundant Horizontal U Factor 1"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltGrade2.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade2, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltSize2.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize2, changes, categoryName, "Tower Redundant Horizontal Bolt Size 2"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalNumBolts2.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts2, changes, categoryName, "Tower Redundant Horizontal Num Bolts 2"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltEdgeDistance2.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance2, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 2"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalGageG1Distance2.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance2, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 2"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalNetWidthDeduct2.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct2, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 2"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalUFactor2.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor2, changes, categoryName, "Tower Redundant Horizontal U Factor 2"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltGrade3.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade3, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltSize3.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize3, changes, categoryName, "Tower Redundant Horizontal Bolt Size 3"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalNumBolts3.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts3, changes, categoryName, "Tower Redundant Horizontal Num Bolts 3"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltEdgeDistance3.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance3, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 3"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalGageG1Distance3.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance3, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 3"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalNetWidthDeduct3.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct3, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 3"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalUFactor3.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor3, changes, categoryName, "Tower Redundant Horizontal U Factor 3"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltGrade4.CheckChange(otherToCompare.TowerRedundantHorizontalBoltGrade4, changes, categoryName, "Tower Redundant Horizontal Bolt Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltSize4.CheckChange(otherToCompare.TowerRedundantHorizontalBoltSize4, changes, categoryName, "Tower Redundant Horizontal Bolt Size 4"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalNumBolts4.CheckChange(otherToCompare.TowerRedundantHorizontalNumBolts4, changes, categoryName, "Tower Redundant Horizontal Num Bolts 4"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalBoltEdgeDistance4.CheckChange(otherToCompare.TowerRedundantHorizontalBoltEdgeDistance4, changes, categoryName, "Tower Redundant Horizontal Bolt Edge Distance 4"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalGageG1Distance4.CheckChange(otherToCompare.TowerRedundantHorizontalGageG1Distance4, changes, categoryName, "Tower Redundant Horizontal Gage G 1 Distance 4"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalNetWidthDeduct4.CheckChange(otherToCompare.TowerRedundantHorizontalNetWidthDeduct4, changes, categoryName, "Tower Redundant Horizontal Net Width Deduct 4"), Equals, False)
+Equals = If(Me.TowerRedundantHorizontalUFactor4.CheckChange(otherToCompare.TowerRedundantHorizontalUFactor4, changes, categoryName, "Tower Redundant Horizontal U Factor 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltGrade1.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade1, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 1"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltSize1.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize1, changes, categoryName, "Tower Redundant Diagonal Bolt Size 1"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalNumBolts1.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts1, changes, categoryName, "Tower Redundant Diagonal Num Bolts 1"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltEdgeDistance1.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance1, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 1"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalGageG1Distance1.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance1, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 1"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalNetWidthDeduct1.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct1, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 1"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalUFactor1.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor1, changes, categoryName, "Tower Redundant Diagonal U Factor 1"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltGrade2.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade2, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltSize2.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize2, changes, categoryName, "Tower Redundant Diagonal Bolt Size 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalNumBolts2.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts2, changes, categoryName, "Tower Redundant Diagonal Num Bolts 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltEdgeDistance2.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance2, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalGageG1Distance2.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance2, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalNetWidthDeduct2.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct2, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalUFactor2.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor2, changes, categoryName, "Tower Redundant Diagonal U Factor 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltGrade3.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade3, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltSize3.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize3, changes, categoryName, "Tower Redundant Diagonal Bolt Size 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalNumBolts3.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts3, changes, categoryName, "Tower Redundant Diagonal Num Bolts 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltEdgeDistance3.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance3, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalGageG1Distance3.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance3, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalNetWidthDeduct3.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct3, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalUFactor3.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor3, changes, categoryName, "Tower Redundant Diagonal U Factor 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltGrade4.CheckChange(otherToCompare.TowerRedundantDiagonalBoltGrade4, changes, categoryName, "Tower Redundant Diagonal Bolt Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltSize4.CheckChange(otherToCompare.TowerRedundantDiagonalBoltSize4, changes, categoryName, "Tower Redundant Diagonal Bolt Size 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalNumBolts4.CheckChange(otherToCompare.TowerRedundantDiagonalNumBolts4, changes, categoryName, "Tower Redundant Diagonal Num Bolts 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalBoltEdgeDistance4.CheckChange(otherToCompare.TowerRedundantDiagonalBoltEdgeDistance4, changes, categoryName, "Tower Redundant Diagonal Bolt Edge Distance 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalGageG1Distance4.CheckChange(otherToCompare.TowerRedundantDiagonalGageG1Distance4, changes, categoryName, "Tower Redundant Diagonal Gage G 1 Distance 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalNetWidthDeduct4.CheckChange(otherToCompare.TowerRedundantDiagonalNetWidthDeduct4, changes, categoryName, "Tower Redundant Diagonal Net Width Deduct 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalUFactor4.CheckChange(otherToCompare.TowerRedundantDiagonalUFactor4, changes, categoryName, "Tower Redundant Diagonal U Factor 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltGrade1.CheckChange(otherToCompare.TowerRedundantHipBoltGrade1, changes, categoryName, "Tower Redundant Hip Bolt Grade 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltSize1.CheckChange(otherToCompare.TowerRedundantHipBoltSize1, changes, categoryName, "Tower Redundant Hip Bolt Size 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipNumBolts1.CheckChange(otherToCompare.TowerRedundantHipNumBolts1, changes, categoryName, "Tower Redundant Hip Num Bolts 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltEdgeDistance1.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance1, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipGageG1Distance1.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance1, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipNetWidthDeduct1.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct1, changes, categoryName, "Tower Redundant Hip Net Width Deduct 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipUFactor1.CheckChange(otherToCompare.TowerRedundantHipUFactor1, changes, categoryName, "Tower Redundant Hip U Factor 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltGrade2.CheckChange(otherToCompare.TowerRedundantHipBoltGrade2, changes, categoryName, "Tower Redundant Hip Bolt Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltSize2.CheckChange(otherToCompare.TowerRedundantHipBoltSize2, changes, categoryName, "Tower Redundant Hip Bolt Size 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipNumBolts2.CheckChange(otherToCompare.TowerRedundantHipNumBolts2, changes, categoryName, "Tower Redundant Hip Num Bolts 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltEdgeDistance2.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance2, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipGageG1Distance2.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance2, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipNetWidthDeduct2.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct2, changes, categoryName, "Tower Redundant Hip Net Width Deduct 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipUFactor2.CheckChange(otherToCompare.TowerRedundantHipUFactor2, changes, categoryName, "Tower Redundant Hip U Factor 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltGrade3.CheckChange(otherToCompare.TowerRedundantHipBoltGrade3, changes, categoryName, "Tower Redundant Hip Bolt Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltSize3.CheckChange(otherToCompare.TowerRedundantHipBoltSize3, changes, categoryName, "Tower Redundant Hip Bolt Size 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipNumBolts3.CheckChange(otherToCompare.TowerRedundantHipNumBolts3, changes, categoryName, "Tower Redundant Hip Num Bolts 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltEdgeDistance3.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance3, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipGageG1Distance3.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance3, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipNetWidthDeduct3.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct3, changes, categoryName, "Tower Redundant Hip Net Width Deduct 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipUFactor3.CheckChange(otherToCompare.TowerRedundantHipUFactor3, changes, categoryName, "Tower Redundant Hip U Factor 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltGrade4.CheckChange(otherToCompare.TowerRedundantHipBoltGrade4, changes, categoryName, "Tower Redundant Hip Bolt Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltSize4.CheckChange(otherToCompare.TowerRedundantHipBoltSize4, changes, categoryName, "Tower Redundant Hip Bolt Size 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipNumBolts4.CheckChange(otherToCompare.TowerRedundantHipNumBolts4, changes, categoryName, "Tower Redundant Hip Num Bolts 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipBoltEdgeDistance4.CheckChange(otherToCompare.TowerRedundantHipBoltEdgeDistance4, changes, categoryName, "Tower Redundant Hip Bolt Edge Distance 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipGageG1Distance4.CheckChange(otherToCompare.TowerRedundantHipGageG1Distance4, changes, categoryName, "Tower Redundant Hip Gage G 1 Distance 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipNetWidthDeduct4.CheckChange(otherToCompare.TowerRedundantHipNetWidthDeduct4, changes, categoryName, "Tower Redundant Hip Net Width Deduct 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipUFactor4.CheckChange(otherToCompare.TowerRedundantHipUFactor4, changes, categoryName, "Tower Redundant Hip U Factor 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltGrade1.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade1, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltSize1.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize1, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalNumBolts1.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts1, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltEdgeDistance1.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance1, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalGageG1Distance1.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance1, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalNetWidthDeduct1.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct1, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalUFactor1.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor1, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 1"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltGrade2.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade2, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltSize2.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize2, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalNumBolts2.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts2, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltEdgeDistance2.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance2, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalGageG1Distance2.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance2, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalNetWidthDeduct2.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct2, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalUFactor2.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor2, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 2"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltGrade3.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade3, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltSize3.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize3, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalNumBolts3.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts3, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltEdgeDistance3.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance3, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalGageG1Distance3.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance3, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalNetWidthDeduct3.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct3, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalUFactor3.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor3, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 3"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltGrade4.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltGrade4, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Grade 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltSize4.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltSize4, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Size 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalNumBolts4.CheckChange(otherToCompare.TowerRedundantHipDiagonalNumBolts4, changes, categoryName, "Tower Redundant Hip Diagonal Num Bolts 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalBoltEdgeDistance4.CheckChange(otherToCompare.TowerRedundantHipDiagonalBoltEdgeDistance4, changes, categoryName, "Tower Redundant Hip Diagonal Bolt Edge Distance 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalGageG1Distance4.CheckChange(otherToCompare.TowerRedundantHipDiagonalGageG1Distance4, changes, categoryName, "Tower Redundant Hip Diagonal Gage G 1 Distance 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalNetWidthDeduct4.CheckChange(otherToCompare.TowerRedundantHipDiagonalNetWidthDeduct4, changes, categoryName, "Tower Redundant Hip Diagonal Net Width Deduct 4"), Equals, False)
+Equals = If(Me.TowerRedundantHipDiagonalUFactor4.CheckChange(otherToCompare.TowerRedundantHipDiagonalUFactor4, changes, categoryName, "Tower Redundant Hip Diagonal U Factor 4"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalType.CheckChange(otherToCompare.TowerRedundantDiagonalType, changes, categoryName, "Tower Redundant Diagonal Type"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalType2.CheckChange(otherToCompare.TowerRedundantDiagonalType2, changes, categoryName, "Tower Redundant Diagonal Type 2"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalType3.CheckChange(otherToCompare.TowerRedundantDiagonalType3, changes, categoryName, "Tower Redundant Diagonal Type 3"), Equals, False)
+Equals = If(Me.TowerRedundantDiagonalType4.CheckChange(otherToCompare.TowerRedundantDiagonalType4, changes, categoryName, "Tower Redundant Diagonal Type 4"), Equals, False)
 ######################## END Equals ########################
 \\\\\\
 \\\\\\
@@ -3816,231 +3340,27 @@ Equals = If(Me.AntennaHeight.CheckChange(otherToCompare.TowerRedundantHipDiagona
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
- 	Case tnxVar.Equals("TowerRedundantHorizontalGradeOverwrite")
+ 	Case tnxVar.Equals("TowerRedundantDiagonalType")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGradeOverwrite = tnxValue
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType = tnxValue
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
- 	Case tnxVar.Equals("TowerRedundantHorizontalMatlGradeOverwrite")
+ 	Case tnxVar.Equals("TowerRedundantDiagonalType2")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGradeOverwrite = tnxValue
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType2 = tnxValue
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
- 	Case tnxVar.Equals("TowerRedundantHorizontalGrade2Overwrite")
+ 	Case tnxVar.Equals("TowerRedundantDiagonalType3")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGrade2Overwrite = tnxValue
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType3 = tnxValue
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
- 	Case tnxVar.Equals("TowerRedundantHorizontalMatlGrade2Overwrite")
+ 	Case tnxVar.Equals("TowerRedundantDiagonalType4")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHorizontalGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHorizontalMatlGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHorizontalGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHorizontalMatlGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantDiagonalGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantDiagonalMatlGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantDiagonalGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantDiagonalMatlGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantDiagonalGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantDiagonalMatlGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantDiagonalGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantDiagonalMatlGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantSubHorizontalGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantSubHorizontalMatlGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalMatlGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantSubDiagonalGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantSubDiagonalMatlGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalMatlGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantVerticalGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantVerticalMatlGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalMatlGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipMatlGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipMatlGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipMatlGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipMatlGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipDiagonalGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGradeOverwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGradeOverwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipDiagonalGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGrade2Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGrade2Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipDiagonalGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGrade3Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGrade3Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipDiagonalGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGrade4Overwrite = tnxValue
-                            Catch ex As Exception
-                                Debug.Print("Error parsing TNX variable: " & tnxVar)
-                            End Try
- 	Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGrade4Overwrite")
-                            Try
-                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGrade4Overwrite = tnxValue
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType4 = tnxValue
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
@@ -4211,44 +3531,10 @@ newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance4=" & Me.settings.USUni
 newERIList.Add("TowerRedundantHipDiagonalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGageG1Distance4))
 newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalNetWidthDeduct4))
 newERIList.Add("TowerRedundantHipDiagonalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalUFactor4))
-newERIList.Add("TowerRedundantHorizontalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGradeOverwrite))
-newERIList.Add("TowerRedundantHorizontalMatlGradeOverwrite=" &  .TowerRedundantHorizontalMatlGradeOverwrite)
-newERIList.Add("TowerRedundantHorizontalGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGrade2Overwrite))
-newERIList.Add("TowerRedundantHorizontalMatlGrade2Overwrite=" &  .TowerRedundantHorizontalMatlGrade2Overwrite)
-newERIList.Add("TowerRedundantHorizontalGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGrade3Overwrite))
-newERIList.Add("TowerRedundantHorizontalMatlGrade3Overwrite=" &  .TowerRedundantHorizontalMatlGrade3Overwrite)
-newERIList.Add("TowerRedundantHorizontalGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHorizontalGrade4Overwrite))
-newERIList.Add("TowerRedundantHorizontalMatlGrade4Overwrite=" &  .TowerRedundantHorizontalMatlGrade4Overwrite)
-newERIList.Add("TowerRedundantDiagonalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGradeOverwrite))
-newERIList.Add("TowerRedundantDiagonalMatlGradeOverwrite=" &  .TowerRedundantDiagonalMatlGradeOverwrite)
-newERIList.Add("TowerRedundantDiagonalGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGrade2Overwrite))
-newERIList.Add("TowerRedundantDiagonalMatlGrade2Overwrite=" &  .TowerRedundantDiagonalMatlGrade2Overwrite)
-newERIList.Add("TowerRedundantDiagonalGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGrade3Overwrite))
-newERIList.Add("TowerRedundantDiagonalMatlGrade3Overwrite=" &  .TowerRedundantDiagonalMatlGrade3Overwrite)
-newERIList.Add("TowerRedundantDiagonalGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantDiagonalGrade4Overwrite))
-newERIList.Add("TowerRedundantDiagonalMatlGrade4Overwrite=" &  .TowerRedundantDiagonalMatlGrade4Overwrite)
-newERIList.Add("TowerRedundantSubHorizontalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantSubHorizontalGradeOverwrite))
-newERIList.Add("TowerRedundantSubHorizontalMatlGradeOverwrite=" &  .TowerRedundantSubHorizontalMatlGradeOverwrite)
-newERIList.Add("TowerRedundantSubDiagonalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantSubDiagonalGradeOverwrite))
-newERIList.Add("TowerRedundantSubDiagonalMatlGradeOverwrite=" &  .TowerRedundantSubDiagonalMatlGradeOverwrite)
-newERIList.Add("TowerRedundantVerticalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantVerticalGradeOverwrite))
-newERIList.Add("TowerRedundantVerticalMatlGrade3Overwrite=" &  .TowerRedundantVerticalMatlGrade3Overwrite)
-newERIList.Add("TowerRedundantHipGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGradeOverwrite))
-newERIList.Add("TowerRedundantHipMatlGradeOverwrite=" &  .TowerRedundantHipMatlGradeOverwrite)
-newERIList.Add("TowerRedundantHipGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGrade2Overwrite))
-newERIList.Add("TowerRedundantHipMatlGrade2Overwrite=" &  .TowerRedundantHipMatlGrade2Overwrite)
-newERIList.Add("TowerRedundantHipGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGrade3Overwrite))
-newERIList.Add("TowerRedundantHipMatlGrade3Overwrite=" &  .TowerRedundantHipMatlGrade3Overwrite)
-newERIList.Add("TowerRedundantHipGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipGrade4Overwrite))
-newERIList.Add("TowerRedundantHipMatlGrade4Overwrite=" &  .TowerRedundantHipMatlGrade4Overwrite)
-newERIList.Add("TowerRedundantHipDiagonalGradeOverwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGradeOverwrite))
-newERIList.Add("TowerRedundantHipDiagonalMatlGradeOverwrite=" &  .TowerRedundantHipDiagonalMatlGradeOverwrite)
-newERIList.Add("TowerRedundantHipDiagonalGrade2Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGrade2Overwrite))
-newERIList.Add("TowerRedundantHipDiagonalMatlGrade2Overwrite=" &  .TowerRedundantHipDiagonalMatlGrade2Overwrite)
-newERIList.Add("TowerRedundantHipDiagonalGrade3Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGrade3Overwrite))
-newERIList.Add("TowerRedundantHipDiagonalMatlGrade3Overwrite=" &  .TowerRedundantHipDiagonalMatlGrade3Overwrite)
-newERIList.Add("TowerRedundantHipDiagonalGrade4Overwrite=" & Me.settings.USUnits.Properties.convertToERIUnits( .TowerRedundantHipDiagonalGrade4Overwrite))
-newERIList.Add("TowerRedundantHipDiagonalMatlGrade4Overwrite=" &  .TowerRedundantHipDiagonalMatlGrade4Overwrite)
+newERIList.Add("TowerRedundantDiagonalType=" &  .TowerRedundantDiagonalType)
+newERIList.Add("TowerRedundantDiagonalType2=" &  .TowerRedundantDiagonalType2)
+newERIList.Add("TowerRedundantDiagonalType3=" &  .TowerRedundantDiagonalType3)
+newERIList.Add("TowerRedundantDiagonalType4=" &  .TowerRedundantDiagonalType4)
 ######################## END GenerateERI ########################
 \\\\\\
 \\\\\\
@@ -4416,6 +3702,10 @@ SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalBolt
 SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalGageG1Distance4.NullableToString.FormatDBValue)
 SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
 SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantHipDiagonalUFactor4.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalType.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalType2.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalType3.NullableToString.FormatDBValue)
+SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerRedundantDiagonalType4.NullableToString.FormatDBValue)
 ######################## END SQL InsertValues ########################
 \\\\\\
 \\\\\\
@@ -4583,248 +3873,180 @@ SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalBoltEd
 SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance4")
 SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct4")
 SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalUFactor4")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade2Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade2Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade3Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade3Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalGrade4Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHorizontalMatlGrade4Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade2Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade2Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade3Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade3Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalGrade4Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalMatlGrade4Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubHorizontalMatlGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantSubDiagonalMatlGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantVerticalMatlGrade3Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade2Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade2Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade3Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade3Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipGrade4Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipMatlGrade4Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGradeOverwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade2Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade3Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalGrade4Overwrite")
-SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4Overwrite")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalType")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalType2")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalType3")
+SQLInsertFields = SQLInsertFields.AddtoDBString("TowerRedundantDiagonalType4")
 ######################## END SQL InsertFields ########################
 \\\\\\
 \\\\\\
 ######################## BEGIN SQLUpdateFieldsandValues ########################
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalMatlGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor1 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor2 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor3 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor4 = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalMatlGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGradeOverwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
-SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4Overwrite = " & Me.Rec.NullableToString.FormatDBValue)]
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade = " & Me.TowerRedundantHorizontalGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade = " & Me.TowerRedundantHorizontalMatlGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade2 = " & Me.TowerRedundantHorizontalGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade2 = " & Me.TowerRedundantHorizontalMatlGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade3 = " & Me.TowerRedundantHorizontalGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade3 = " & Me.TowerRedundantHorizontalMatlGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGrade4 = " & Me.TowerRedundantHorizontalGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalMatlGrade4 = " & Me.TowerRedundantHorizontalMatlGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade = " & Me.TowerRedundantDiagonalGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade = " & Me.TowerRedundantDiagonalMatlGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade2 = " & Me.TowerRedundantDiagonalGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade2 = " & Me.TowerRedundantDiagonalMatlGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade3 = " & Me.TowerRedundantDiagonalGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade3 = " & Me.TowerRedundantDiagonalMatlGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGrade4 = " & Me.TowerRedundantDiagonalGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalMatlGrade4 = " & Me.TowerRedundantDiagonalMatlGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalGrade = " & Me.TowerRedundantSubHorizontalGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubHorizontalMatlGrade = " & Me.TowerRedundantSubHorizontalMatlGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalGrade = " & Me.TowerRedundantSubDiagonalGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantSubDiagonalMatlGrade = " & Me.TowerRedundantSubDiagonalMatlGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalGrade = " & Me.TowerRedundantVerticalGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantVerticalMatlGrade3 = " & Me.TowerRedundantVerticalMatlGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade = " & Me.TowerRedundantHipGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade = " & Me.TowerRedundantHipMatlGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade2 = " & Me.TowerRedundantHipGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade2 = " & Me.TowerRedundantHipMatlGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade3 = " & Me.TowerRedundantHipGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade3 = " & Me.TowerRedundantHipMatlGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGrade4 = " & Me.TowerRedundantHipGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipMatlGrade4 = " & Me.TowerRedundantHipMatlGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade = " & Me.TowerRedundantHipDiagonalGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade = " & Me.TowerRedundantHipDiagonalMatlGrade.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade2 = " & Me.TowerRedundantHipDiagonalGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade2 = " & Me.TowerRedundantHipDiagonalMatlGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade3 = " & Me.TowerRedundantHipDiagonalGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade3 = " & Me.TowerRedundantHipDiagonalMatlGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGrade4 = " & Me.TowerRedundantHipDiagonalGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalMatlGrade4 = " & Me.TowerRedundantHipDiagonalMatlGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType = " & Me.TowerRedundantHorizontalType.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType2 = " & Me.TowerRedundantHorizontalType2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType3 = " & Me.TowerRedundantHorizontalType3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalType4 = " & Me.TowerRedundantHorizontalType4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType2 = " & Me.TowerRedundantDiagType2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType3 = " & Me.TowerRedundantDiagType3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagType4 = " & Me.TowerRedundantDiagType4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType2 = " & Me.TowerRedundantHipType2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType3 = " & Me.TowerRedundantHipType3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipType4 = " & Me.TowerRedundantHipType4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType2 = " & Me.TowerRedundantHipDiagonalType2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType3 = " & Me.TowerRedundantHipDiagonalType3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalType4 = " & Me.TowerRedundantHipDiagonalType4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade1 = " & Me.TowerRedundantHorizontalBoltGrade1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize1 = " & Me.TowerRedundantHorizontalBoltSize1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts1 = " & Me.TowerRedundantHorizontalNumBolts1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance1 = " & Me.TowerRedundantHorizontalBoltEdgeDistance1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance1 = " & Me.TowerRedundantHorizontalGageG1Distance1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct1 = " & Me.TowerRedundantHorizontalNetWidthDeduct1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor1 = " & Me.TowerRedundantHorizontalUFactor1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade2 = " & Me.TowerRedundantHorizontalBoltGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize2 = " & Me.TowerRedundantHorizontalBoltSize2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts2 = " & Me.TowerRedundantHorizontalNumBolts2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance2 = " & Me.TowerRedundantHorizontalBoltEdgeDistance2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance2 = " & Me.TowerRedundantHorizontalGageG1Distance2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct2 = " & Me.TowerRedundantHorizontalNetWidthDeduct2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor2 = " & Me.TowerRedundantHorizontalUFactor2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade3 = " & Me.TowerRedundantHorizontalBoltGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize3 = " & Me.TowerRedundantHorizontalBoltSize3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts3 = " & Me.TowerRedundantHorizontalNumBolts3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance3 = " & Me.TowerRedundantHorizontalBoltEdgeDistance3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance3 = " & Me.TowerRedundantHorizontalGageG1Distance3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct3 = " & Me.TowerRedundantHorizontalNetWidthDeduct3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor3 = " & Me.TowerRedundantHorizontalUFactor3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltGrade4 = " & Me.TowerRedundantHorizontalBoltGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltSize4 = " & Me.TowerRedundantHorizontalBoltSize4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNumBolts4 = " & Me.TowerRedundantHorizontalNumBolts4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalBoltEdgeDistance4 = " & Me.TowerRedundantHorizontalBoltEdgeDistance4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalGageG1Distance4 = " & Me.TowerRedundantHorizontalGageG1Distance4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalNetWidthDeduct4 = " & Me.TowerRedundantHorizontalNetWidthDeduct4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHorizontalUFactor4 = " & Me.TowerRedundantHorizontalUFactor4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade1 = " & Me.TowerRedundantDiagonalBoltGrade1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize1 = " & Me.TowerRedundantDiagonalBoltSize1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts1 = " & Me.TowerRedundantDiagonalNumBolts1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance1 = " & Me.TowerRedundantDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance1 = " & Me.TowerRedundantDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct1 = " & Me.TowerRedundantDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor1 = " & Me.TowerRedundantDiagonalUFactor1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade2 = " & Me.TowerRedundantDiagonalBoltGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize2 = " & Me.TowerRedundantDiagonalBoltSize2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts2 = " & Me.TowerRedundantDiagonalNumBolts2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance2 = " & Me.TowerRedundantDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance2 = " & Me.TowerRedundantDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct2 = " & Me.TowerRedundantDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor2 = " & Me.TowerRedundantDiagonalUFactor2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade3 = " & Me.TowerRedundantDiagonalBoltGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize3 = " & Me.TowerRedundantDiagonalBoltSize3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts3 = " & Me.TowerRedundantDiagonalNumBolts3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance3 = " & Me.TowerRedundantDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance3 = " & Me.TowerRedundantDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct3 = " & Me.TowerRedundantDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor3 = " & Me.TowerRedundantDiagonalUFactor3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltGrade4 = " & Me.TowerRedundantDiagonalBoltGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltSize4 = " & Me.TowerRedundantDiagonalBoltSize4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNumBolts4 = " & Me.TowerRedundantDiagonalNumBolts4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalBoltEdgeDistance4 = " & Me.TowerRedundantDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalGageG1Distance4 = " & Me.TowerRedundantDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalNetWidthDeduct4 = " & Me.TowerRedundantDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalUFactor4 = " & Me.TowerRedundantDiagonalUFactor4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade1 = " & Me.TowerRedundantHipBoltGrade1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize1 = " & Me.TowerRedundantHipBoltSize1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts1 = " & Me.TowerRedundantHipNumBolts1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance1 = " & Me.TowerRedundantHipBoltEdgeDistance1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance1 = " & Me.TowerRedundantHipGageG1Distance1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct1 = " & Me.TowerRedundantHipNetWidthDeduct1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor1 = " & Me.TowerRedundantHipUFactor1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade2 = " & Me.TowerRedundantHipBoltGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize2 = " & Me.TowerRedundantHipBoltSize2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts2 = " & Me.TowerRedundantHipNumBolts2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance2 = " & Me.TowerRedundantHipBoltEdgeDistance2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance2 = " & Me.TowerRedundantHipGageG1Distance2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct2 = " & Me.TowerRedundantHipNetWidthDeduct2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor2 = " & Me.TowerRedundantHipUFactor2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade3 = " & Me.TowerRedundantHipBoltGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize3 = " & Me.TowerRedundantHipBoltSize3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts3 = " & Me.TowerRedundantHipNumBolts3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance3 = " & Me.TowerRedundantHipBoltEdgeDistance3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance3 = " & Me.TowerRedundantHipGageG1Distance3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct3 = " & Me.TowerRedundantHipNetWidthDeduct3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor3 = " & Me.TowerRedundantHipUFactor3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltGrade4 = " & Me.TowerRedundantHipBoltGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltSize4 = " & Me.TowerRedundantHipBoltSize4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNumBolts4 = " & Me.TowerRedundantHipNumBolts4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipBoltEdgeDistance4 = " & Me.TowerRedundantHipBoltEdgeDistance4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipGageG1Distance4 = " & Me.TowerRedundantHipGageG1Distance4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipNetWidthDeduct4 = " & Me.TowerRedundantHipNetWidthDeduct4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipUFactor4 = " & Me.TowerRedundantHipUFactor4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade1 = " & Me.TowerRedundantHipDiagonalBoltGrade1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize1 = " & Me.TowerRedundantHipDiagonalBoltSize1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts1 = " & Me.TowerRedundantHipDiagonalNumBolts1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance1 = " & Me.TowerRedundantHipDiagonalBoltEdgeDistance1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance1 = " & Me.TowerRedundantHipDiagonalGageG1Distance1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct1 = " & Me.TowerRedundantHipDiagonalNetWidthDeduct1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor1 = " & Me.TowerRedundantHipDiagonalUFactor1.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade2 = " & Me.TowerRedundantHipDiagonalBoltGrade2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize2 = " & Me.TowerRedundantHipDiagonalBoltSize2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts2 = " & Me.TowerRedundantHipDiagonalNumBolts2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance2 = " & Me.TowerRedundantHipDiagonalBoltEdgeDistance2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance2 = " & Me.TowerRedundantHipDiagonalGageG1Distance2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct2 = " & Me.TowerRedundantHipDiagonalNetWidthDeduct2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor2 = " & Me.TowerRedundantHipDiagonalUFactor2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade3 = " & Me.TowerRedundantHipDiagonalBoltGrade3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize3 = " & Me.TowerRedundantHipDiagonalBoltSize3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts3 = " & Me.TowerRedundantHipDiagonalNumBolts3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance3 = " & Me.TowerRedundantHipDiagonalBoltEdgeDistance3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance3 = " & Me.TowerRedundantHipDiagonalGageG1Distance3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct3 = " & Me.TowerRedundantHipDiagonalNetWidthDeduct3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor3 = " & Me.TowerRedundantHipDiagonalUFactor3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltGrade4 = " & Me.TowerRedundantHipDiagonalBoltGrade4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltSize4 = " & Me.TowerRedundantHipDiagonalBoltSize4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNumBolts4 = " & Me.TowerRedundantHipDiagonalNumBolts4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalBoltEdgeDistance4 = " & Me.TowerRedundantHipDiagonalBoltEdgeDistance4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalGageG1Distance4 = " & Me.TowerRedundantHipDiagonalGageG1Distance4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalNetWidthDeduct4 = " & Me.TowerRedundantHipDiagonalNetWidthDeduct4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantHipDiagonalUFactor4 = " & Me.TowerRedundantHipDiagonalUFactor4.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalType = " & Me.TowerRedundantDiagonalType.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalType2 = " & Me.TowerRedundantDiagonalType2.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalType3 = " & Me.TowerRedundantDiagonalType3.NullableToString.FormatDBValue)
+SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerRedundantDiagonalType4 = " & Me.TowerRedundantDiagonalType4.NullableToString.FormatDBValue)
 ######################## END SQLUpdateFieldsandValues ########################
 \\\\\\
