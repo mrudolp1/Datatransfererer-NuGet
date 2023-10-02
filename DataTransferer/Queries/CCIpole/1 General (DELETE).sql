@@ -1,6 +1,8 @@
 ﻿
 BEGIN
 
+	DELETE FROM pole.reinforcement_results WHERE pole_id = [ID]
+
 	--[RESULTS SUBQUERY]
 	
 	--[REINF GROUP SUBQUERY]

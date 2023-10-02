@@ -127,7 +127,7 @@ End Class
 Public Module Common
     Public Function myVersion() As String
         'Return CCI_Engineering_Templates.My.Application.Info..Version.ToString
-        Return "1.2.0.11"
+        Return "1.2.0.12"
     End Function
 
     'IEM 11/4/2021 Sometimes you need a little something

@@ -1106,6 +1106,7 @@ Public Class ReportOptions
             "4-TOWER FOUNDATION DRAWINGS/DESIGN/SPECS",
             "4-TOWER MANUFACTURER DRAWINGS",
             "4-POST-INSTALLATION INSPECTION",
+            "4-TOWER REINFORCEMENT DESIGN/DRAWINGS/DATA",
             "4-POST-MODIFICATION INSPECTION"})
 
         Dim doc_query = "select dtm.doc_type_name doc_name, dim.doc_id doc_id, doc_actvy_status_lkup_code validity
@@ -1131,7 +1132,7 @@ Public Class ReportOptions
 
                Dim found As Boolean = False
                 For Each doc As TableDocument In Me.TableDocuments
-                    If Golden.Equals(doc) Then
+                    If t.Document = doc.Document AndAlso t.Reference = doc.Reference Then 'If Golden.Equals(doc) Then
                         found = True
                         Exit For
                     End If

@@ -4647,6 +4647,1008 @@ Partial Public Class tnxModel
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalMatlGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalMatlGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalMatlGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalMatlGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalMatlGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalMatlGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalMatlGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalMatlGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalMatlGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalMatlGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalMatlGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalMatlGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubHorizontalMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubHorizontalMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantSubDiagonalMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantSubDiagonalMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantVerticalMatlGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantVerticalMatlGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipMatlGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipMatlGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipMatlGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipMatlGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipMatlGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipMatlGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalMatlGrade")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalMatlGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalMatlGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalMatlGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalMatlGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalMatlGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalMatlGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalType = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalType2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalType3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalType4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagType2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagType3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagType4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipType2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipType3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipType4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalType2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalType3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalType4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltGrade1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltGrade1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltSize1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltSize1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalNumBolts1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNumBolts1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltEdgeDistance1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltEdgeDistance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalGageG1Distance1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGageG1Distance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalNetWidthDeduct1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNetWidthDeduct1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalUFactor1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalUFactor1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltSize2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltSize2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalNumBolts2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNumBolts2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltEdgeDistance2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltEdgeDistance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalGageG1Distance2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGageG1Distance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalNetWidthDeduct2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNetWidthDeduct2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalUFactor2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalUFactor2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltSize3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltSize3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalNumBolts3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNumBolts3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltEdgeDistance3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltEdgeDistance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalGageG1Distance3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGageG1Distance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalNetWidthDeduct3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNetWidthDeduct3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalUFactor3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalUFactor3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltSize4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltSize4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalNumBolts4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNumBolts4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalBoltEdgeDistance4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalBoltEdgeDistance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalGageG1Distance4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalGageG1Distance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalNetWidthDeduct4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalNetWidthDeduct4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHorizontalUFactor4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHorizontalUFactor4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltGrade1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltGrade1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltSize1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltSize1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalNumBolts1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNumBolts1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltEdgeDistance1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltEdgeDistance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalGageG1Distance1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGageG1Distance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalNetWidthDeduct1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNetWidthDeduct1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalUFactor1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalUFactor1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltSize2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltSize2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalNumBolts2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNumBolts2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltEdgeDistance2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltEdgeDistance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalGageG1Distance2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGageG1Distance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalNetWidthDeduct2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNetWidthDeduct2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalUFactor2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalUFactor2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltSize3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltSize3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalNumBolts3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNumBolts3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltEdgeDistance3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltEdgeDistance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalGageG1Distance3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGageG1Distance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalNetWidthDeduct3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNetWidthDeduct3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalUFactor3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalUFactor3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltSize4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltSize4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalNumBolts4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNumBolts4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalBoltEdgeDistance4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalBoltEdgeDistance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalGageG1Distance4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalGageG1Distance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalNetWidthDeduct4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalNetWidthDeduct4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalUFactor4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalUFactor4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltGrade1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltGrade1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltSize1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltSize1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipNumBolts1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNumBolts1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltEdgeDistance1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltEdgeDistance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipGageG1Distance1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGageG1Distance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipNetWidthDeduct1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNetWidthDeduct1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipUFactor1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipUFactor1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltSize2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltSize2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipNumBolts2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNumBolts2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltEdgeDistance2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltEdgeDistance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipGageG1Distance2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGageG1Distance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipNetWidthDeduct2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNetWidthDeduct2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipUFactor2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipUFactor2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltSize3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltSize3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipNumBolts3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNumBolts3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltEdgeDistance3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltEdgeDistance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipGageG1Distance3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGageG1Distance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipNetWidthDeduct3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNetWidthDeduct3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipUFactor3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipUFactor3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltSize4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltSize4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipNumBolts4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNumBolts4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipBoltEdgeDistance4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipBoltEdgeDistance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipGageG1Distance4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipGageG1Distance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipNetWidthDeduct4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipNetWidthDeduct4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipUFactor4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipUFactor4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltGrade1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltGrade1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltSize1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltSize1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalNumBolts1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNumBolts1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltEdgeDistance1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltEdgeDistance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalGageG1Distance1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGageG1Distance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalNetWidthDeduct1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNetWidthDeduct1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalUFactor1")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalUFactor1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltGrade2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltSize2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltSize2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalNumBolts2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNumBolts2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltEdgeDistance2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltEdgeDistance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalGageG1Distance2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGageG1Distance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalNetWidthDeduct2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNetWidthDeduct2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalUFactor2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalUFactor2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltGrade3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltSize3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltSize3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalNumBolts3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNumBolts3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltEdgeDistance3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltEdgeDistance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalGageG1Distance3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGageG1Distance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalNetWidthDeduct3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNetWidthDeduct3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalUFactor3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalUFactor3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltGrade4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltSize4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltSize4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalNumBolts4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNumBolts4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalBoltEdgeDistance4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalBoltEdgeDistance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalGageG1Distance4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalGageG1Distance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalNetWidthDeduct4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalNetWidthDeduct4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantHipDiagonalUFactor4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantHipDiagonalUFactor4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalType")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalType = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalType2")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalType3")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("AntennaRedundantDiagonalType4")
+                            Try
+                                Me.geometry.upperStructure(recIndex).AntennaRedundantDiagonalType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
                     End Select
                 Case caseFilter = "Tower"
                     ''''Tower Rec (Base Structure)''''
@@ -6123,6 +7125,1010 @@ Partial Public Class tnxModel
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalMatlGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalMatlGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalMatlGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalMatlGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalMatlGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalMatlGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalMatlGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalMatlGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubHorizontalMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubHorizontalMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantSubDiagonalMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantSubDiagonalMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantVerticalMatlGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantVerticalMatlGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipMatlGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipMatlGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipMatlGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipMatlGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalMatlGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalMatlGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalType = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalType2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalType3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalType4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagType2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagType3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagType4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipType2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipType3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipType4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalType2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalType3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalType4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltGrade1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltGrade1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltSize1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltSize1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalNumBolts1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNumBolts1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltEdgeDistance1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltEdgeDistance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalGageG1Distance1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGageG1Distance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalNetWidthDeduct1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNetWidthDeduct1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalUFactor1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalUFactor1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltSize2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltSize2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalNumBolts2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNumBolts2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltEdgeDistance2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltEdgeDistance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalGageG1Distance2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGageG1Distance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalNetWidthDeduct2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNetWidthDeduct2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalUFactor2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalUFactor2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltSize3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltSize3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalNumBolts3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNumBolts3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltEdgeDistance3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltEdgeDistance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalGageG1Distance3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGageG1Distance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalNetWidthDeduct3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNetWidthDeduct3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalUFactor3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalUFactor3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltSize4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltSize4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalNumBolts4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNumBolts4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalBoltEdgeDistance4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalBoltEdgeDistance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalGageG1Distance4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalGageG1Distance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalNetWidthDeduct4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalNetWidthDeduct4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHorizontalUFactor4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHorizontalUFactor4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltGrade1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltGrade1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltSize1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltSize1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalNumBolts1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNumBolts1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltEdgeDistance1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltEdgeDistance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalGageG1Distance1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGageG1Distance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalNetWidthDeduct1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNetWidthDeduct1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalUFactor1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalUFactor1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltSize2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltSize2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalNumBolts2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNumBolts2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltEdgeDistance2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltEdgeDistance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalGageG1Distance2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGageG1Distance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalNetWidthDeduct2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNetWidthDeduct2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalUFactor2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalUFactor2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltSize3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltSize3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalNumBolts3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNumBolts3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltEdgeDistance3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltEdgeDistance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalGageG1Distance3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGageG1Distance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalNetWidthDeduct3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNetWidthDeduct3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalUFactor3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalUFactor3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltSize4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltSize4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalNumBolts4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNumBolts4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalBoltEdgeDistance4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalBoltEdgeDistance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalGageG1Distance4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalGageG1Distance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalNetWidthDeduct4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalNetWidthDeduct4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalUFactor4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalUFactor4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltGrade1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltGrade1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltSize1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltSize1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipNumBolts1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNumBolts1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltEdgeDistance1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltEdgeDistance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipGageG1Distance1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGageG1Distance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipNetWidthDeduct1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNetWidthDeduct1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipUFactor1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipUFactor1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltSize2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltSize2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipNumBolts2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNumBolts2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltEdgeDistance2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltEdgeDistance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipGageG1Distance2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGageG1Distance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipNetWidthDeduct2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNetWidthDeduct2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipUFactor2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipUFactor2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltSize3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltSize3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipNumBolts3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNumBolts3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltEdgeDistance3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltEdgeDistance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipGageG1Distance3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGageG1Distance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipNetWidthDeduct3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNetWidthDeduct3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipUFactor3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipUFactor3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltSize4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltSize4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipNumBolts4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNumBolts4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipBoltEdgeDistance4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipBoltEdgeDistance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipGageG1Distance4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipGageG1Distance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipNetWidthDeduct4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipNetWidthDeduct4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipUFactor4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipUFactor4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltGrade1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltGrade1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltSize1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltSize1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalNumBolts1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNumBolts1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltEdgeDistance1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltEdgeDistance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalGageG1Distance1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGageG1Distance1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalNetWidthDeduct1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNetWidthDeduct1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalUFactor1")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalUFactor1 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltGrade2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltGrade2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltSize2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltSize2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalNumBolts2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNumBolts2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltEdgeDistance2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltEdgeDistance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalGageG1Distance2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGageG1Distance2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalNetWidthDeduct2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNetWidthDeduct2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalUFactor2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalUFactor2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltGrade3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltGrade3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltSize3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltSize3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalNumBolts3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNumBolts3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltEdgeDistance3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltEdgeDistance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalGageG1Distance3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGageG1Distance3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalNetWidthDeduct3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNetWidthDeduct3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalUFactor3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalUFactor3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltGrade4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltGrade4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltSize4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltSize4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalNumBolts4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNumBolts4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalBoltEdgeDistance4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalBoltEdgeDistance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalGageG1Distance4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalGageG1Distance4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalNetWidthDeduct4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalNetWidthDeduct4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantHipDiagonalUFactor4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantHipDiagonalUFactor4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalType")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalType2")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType2 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalType3")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType3 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerRedundantDiagonalType4")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerRedundantDiagonalType4 = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+
+
                     End Select
                 Case caseFilter = "Guy"
                     ''''Guy Rec''''
@@ -9597,6 +11603,475 @@ Partial Public Class tnxModel
                             newERIList.Add("AntennaKbraceOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaKbraceOffsetNEX))
                             newERIList.Add("AntennaKbraceOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaKbraceOffsetPEY))
                             newERIList.Add("AntennaKbraceOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaKbraceOffsetPEX))
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGrade))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalMatlGrade=" & .AntennaRedundantHorizontalMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGrade2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGrade2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGrade2))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalMatlGrade2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalMatlGrade2=" & .AntennaRedundantHorizontalMatlGrade2)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGrade3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGrade3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGrade3))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalMatlGrade3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalMatlGrade3=" & .AntennaRedundantHorizontalMatlGrade3)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGrade4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGrade4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGrade4))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalMatlGrade4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalMatlGrade4=" & .AntennaRedundantHorizontalMatlGrade4)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGrade))
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalMatlGrade=" & .AntennaRedundantDiagonalMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGrade2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGrade2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGrade2))
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalMatlGrade2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalMatlGrade2=" & .AntennaRedundantDiagonalMatlGrade2)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGrade3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGrade3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGrade3))
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalMatlGrade3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalMatlGrade3=" & .AntennaRedundantDiagonalMatlGrade3)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGrade4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGrade4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGrade4))
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalMatlGrade4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalMatlGrade4=" & .AntennaRedundantDiagonalMatlGrade4)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantSubHorizontalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantSubHorizontalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantSubHorizontalGrade))
+                            End If
+                            If IsSomethingString(.AntennaRedundantSubHorizontalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantSubHorizontalMatlGrade=" & .AntennaRedundantSubHorizontalMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantSubDiagonalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantSubDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantSubDiagonalGrade))
+                            End If
+                            If IsSomethingString(.AntennaRedundantSubDiagonalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantSubDiagonalMatlGrade=" & .AntennaRedundantSubDiagonalMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantVerticalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantVerticalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantVerticalGrade))
+                            End If
+                            If IsSomethingString(.AntennaRedundantVerticalMatlGrade3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantVerticalMatlGrade3=" & .AntennaRedundantVerticalMatlGrade3)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGrade))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipMatlGrade=" & .AntennaRedundantHipMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGrade2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGrade2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGrade2))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipMatlGrade2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipMatlGrade2=" & .AntennaRedundantHipMatlGrade2)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGrade3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGrade3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGrade3))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipMatlGrade3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipMatlGrade3=" & .AntennaRedundantHipMatlGrade3)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGrade4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGrade4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGrade4))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipMatlGrade4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipMatlGrade4=" & .AntennaRedundantHipMatlGrade4)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGrade)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGrade))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalMatlGrade) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalMatlGrade=" & .AntennaRedundantHipDiagonalMatlGrade)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGrade2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGrade2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGrade2))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalMatlGrade2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalMatlGrade2=" & .AntennaRedundantHipDiagonalMatlGrade2)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGrade3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGrade3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGrade3))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalMatlGrade3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalMatlGrade3=" & .AntennaRedundantHipDiagonalMatlGrade3)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGrade4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGrade4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGrade4))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalMatlGrade4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalMatlGrade4=" & .AntennaRedundantHipDiagonalMatlGrade4)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalType) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalType=" & .AntennaRedundantHorizontalType)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalType2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalType2=" & .AntennaRedundantHorizontalType2)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalType3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalType3=" & .AntennaRedundantHorizontalType3)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalType4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalType4=" & .AntennaRedundantHorizontalType4)
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagType2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagType2=" & .AntennaRedundantDiagType2)
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagType3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagType3=" & .AntennaRedundantDiagType3)
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagType4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagType4=" & .AntennaRedundantDiagType4)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipType2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipType2=" & .AntennaRedundantHipType2)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipType3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipType3=" & .AntennaRedundantHipType3)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipType4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipType4=" & .AntennaRedundantHipType4)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalType2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalType2=" & .AntennaRedundantHipDiagonalType2)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalType3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalType3=" & .AntennaRedundantHipDiagonalType3)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalType4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalType4=" & .AntennaRedundantHipDiagonalType4)
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalBoltGrade1) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltGrade1=" & .AntennaRedundantHorizontalBoltGrade1)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltSize1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize1))
+                            End If
+                            newERIList.Add("AntennaRedundantHorizontalNumBolts1=" & .AntennaRedundantHorizontalNumBolts1)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalUFactor1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor1))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalBoltGrade2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltGrade2=" & .AntennaRedundantHorizontalBoltGrade2)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltSize2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize2))
+                            End If
+                            newERIList.Add("AntennaRedundantHorizontalNumBolts2=" & .AntennaRedundantHorizontalNumBolts2)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalUFactor2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor2))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalBoltGrade3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltGrade3=" & .AntennaRedundantHorizontalBoltGrade3)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltSize3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize3))
+                            End If
+                            newERIList.Add("AntennaRedundantHorizontalNumBolts3=" & .AntennaRedundantHorizontalNumBolts3)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalUFactor3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor3))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHorizontalBoltGrade4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltGrade4=" & .AntennaRedundantHorizontalBoltGrade4)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltSize4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize4))
+                            End If
+                            newERIList.Add("AntennaRedundantHorizontalNumBolts4=" & .AntennaRedundantHorizontalNumBolts4)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalUFactor4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor4))
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalBoltGrade1) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltGrade1=" & .AntennaRedundantDiagonalBoltGrade1)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltSize1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize1))
+                            End If
+                            newERIList.Add("AntennaRedundantDiagonalNumBolts1=" & .AntennaRedundantDiagonalNumBolts1)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalUFactor1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor1))
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalBoltGrade2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltGrade2=" & .AntennaRedundantDiagonalBoltGrade2)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltSize2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize2))
+                            End If
+                            newERIList.Add("AntennaRedundantDiagonalNumBolts2=" & .AntennaRedundantDiagonalNumBolts2)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalUFactor2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor2))
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalBoltGrade3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltGrade3=" & .AntennaRedundantDiagonalBoltGrade3)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltSize3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize3))
+                            End If
+                            newERIList.Add("AntennaRedundantDiagonalNumBolts3=" & .AntennaRedundantDiagonalNumBolts3)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalUFactor3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor3))
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalBoltGrade4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltGrade4=" & .AntennaRedundantDiagonalBoltGrade4)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltSize4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize4))
+                            End If
+                            newERIList.Add("AntennaRedundantDiagonalNumBolts4=" & .AntennaRedundantDiagonalNumBolts4)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalUFactor4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor4))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipBoltGrade1) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltGrade1=" & .AntennaRedundantHipBoltGrade1)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltSize1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize1))
+                            End If
+                            newERIList.Add("AntennaRedundantHipNumBolts1=" & .AntennaRedundantHipNumBolts1)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGageG1Distance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipNetWidthDeduct1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipUFactor1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor1))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipBoltGrade2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltGrade2=" & .AntennaRedundantHipBoltGrade2)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltSize2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize2))
+                            End If
+                            newERIList.Add("AntennaRedundantHipNumBolts2=" & .AntennaRedundantHipNumBolts2)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGageG1Distance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipNetWidthDeduct2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipUFactor2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor2))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipBoltGrade3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltGrade3=" & .AntennaRedundantHipBoltGrade3)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltSize3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize3))
+                            End If
+                            newERIList.Add("AntennaRedundantHipNumBolts3=" & .AntennaRedundantHipNumBolts3)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGageG1Distance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipNetWidthDeduct3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipUFactor3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor3))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipBoltGrade4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltGrade4=" & .AntennaRedundantHipBoltGrade4)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltSize4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize4))
+                            End If
+                            newERIList.Add("AntennaRedundantHipNumBolts4=" & .AntennaRedundantHipNumBolts4)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGageG1Distance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipNetWidthDeduct4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipUFactor4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor4))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalBoltGrade1) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltGrade1=" & .AntennaRedundantHipDiagonalBoltGrade1)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize1))
+                            End If
+                            newERIList.Add("AntennaRedundantHipDiagonalNumBolts1=" & .AntennaRedundantHipDiagonalNumBolts1)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct1))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalUFactor1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor1))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalBoltGrade2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltGrade2=" & .AntennaRedundantHipDiagonalBoltGrade2)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize2))
+                            End If
+                            newERIList.Add("AntennaRedundantHipDiagonalNumBolts2=" & .AntennaRedundantHipDiagonalNumBolts2)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct2))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalUFactor2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor2))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalBoltGrade3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltGrade3=" & .AntennaRedundantHipDiagonalBoltGrade3)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize3))
+                            End If
+                            newERIList.Add("AntennaRedundantHipDiagonalNumBolts3=" & .AntennaRedundantHipDiagonalNumBolts3)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct3))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalUFactor3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor3))
+                            End If
+                            If IsSomethingString(.AntennaRedundantHipDiagonalBoltGrade4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltGrade4=" & .AntennaRedundantHipDiagonalBoltGrade4)
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize4))
+                            End If
+                            newERIList.Add("AntennaRedundantHipDiagonalNumBolts4=" & .AntennaRedundantHipDiagonalNumBolts4)
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct4))
+                            End If
+                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalUFactor4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor4))
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalType) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalType=" & .AntennaRedundantDiagonalType)
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalType2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalType2=" & .AntennaRedundantDiagonalType2)
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalType3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalType3=" & .AntennaRedundantDiagonalType3)
+                            End If
+                            If IsSomethingString(.AntennaRedundantDiagonalType4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalType4=" & .AntennaRedundantDiagonalType4)
+                            End If
                         End With
                     Next i
 
@@ -9853,6 +12328,174 @@ Partial Public Class tnxModel
                             newERIList.Add("TowerKbraceOffsetNEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerKbraceOffsetNEX))
                             newERIList.Add("TowerKbraceOffsetPEY=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerKbraceOffsetPEY))
                             newERIList.Add("TowerKbraceOffsetPEX=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerKbraceOffsetPEX))
+                            newERIList.Add("TowerRedundantHorizontalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGrade))
+                            newERIList.Add("TowerRedundantHorizontalMatlGrade=" & .TowerRedundantHorizontalMatlGrade)
+                            newERIList.Add("TowerRedundantHorizontalGrade2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGrade2))
+                            newERIList.Add("TowerRedundantHorizontalMatlGrade2=" & .TowerRedundantHorizontalMatlGrade2)
+                            newERIList.Add("TowerRedundantHorizontalGrade3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGrade3))
+                            newERIList.Add("TowerRedundantHorizontalMatlGrade3=" & .TowerRedundantHorizontalMatlGrade3)
+                            newERIList.Add("TowerRedundantHorizontalGrade4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGrade4))
+                            newERIList.Add("TowerRedundantHorizontalMatlGrade4=" & .TowerRedundantHorizontalMatlGrade4)
+                            newERIList.Add("TowerRedundantDiagonalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGrade))
+                            newERIList.Add("TowerRedundantDiagonalMatlGrade=" & .TowerRedundantDiagonalMatlGrade)
+                            newERIList.Add("TowerRedundantDiagonalGrade2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGrade2))
+                            newERIList.Add("TowerRedundantDiagonalMatlGrade2=" & .TowerRedundantDiagonalMatlGrade2)
+                            newERIList.Add("TowerRedundantDiagonalGrade3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGrade3))
+                            newERIList.Add("TowerRedundantDiagonalMatlGrade3=" & .TowerRedundantDiagonalMatlGrade3)
+                            newERIList.Add("TowerRedundantDiagonalGrade4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGrade4))
+                            newERIList.Add("TowerRedundantDiagonalMatlGrade4=" & .TowerRedundantDiagonalMatlGrade4)
+                            newERIList.Add("TowerRedundantSubHorizontalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubHorizontalGrade))
+                            newERIList.Add("TowerRedundantSubHorizontalMatlGrade=" & .TowerRedundantSubHorizontalMatlGrade)
+                            newERIList.Add("TowerRedundantSubDiagonalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantSubDiagonalGrade))
+                            newERIList.Add("TowerRedundantSubDiagonalMatlGrade=" & .TowerRedundantSubDiagonalMatlGrade)
+                            newERIList.Add("TowerRedundantVerticalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantVerticalGrade))
+                            newERIList.Add("TowerRedundantVerticalMatlGrade3=" & .TowerRedundantVerticalMatlGrade3)
+                            newERIList.Add("TowerRedundantHipGrade=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGrade))
+                            newERIList.Add("TowerRedundantHipMatlGrade=" & .TowerRedundantHipMatlGrade)
+                            newERIList.Add("TowerRedundantHipGrade2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGrade2))
+                            newERIList.Add("TowerRedundantHipMatlGrade2=" & .TowerRedundantHipMatlGrade2)
+                            newERIList.Add("TowerRedundantHipGrade3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGrade3))
+                            newERIList.Add("TowerRedundantHipMatlGrade3=" & .TowerRedundantHipMatlGrade3)
+                            newERIList.Add("TowerRedundantHipGrade4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGrade4))
+                            newERIList.Add("TowerRedundantHipMatlGrade4=" & .TowerRedundantHipMatlGrade4)
+                            newERIList.Add("TowerRedundantHipDiagonalGrade=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGrade))
+                            newERIList.Add("TowerRedundantHipDiagonalMatlGrade=" & .TowerRedundantHipDiagonalMatlGrade)
+                            newERIList.Add("TowerRedundantHipDiagonalGrade2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGrade2))
+                            newERIList.Add("TowerRedundantHipDiagonalMatlGrade2=" & .TowerRedundantHipDiagonalMatlGrade2)
+                            newERIList.Add("TowerRedundantHipDiagonalGrade3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGrade3))
+                            newERIList.Add("TowerRedundantHipDiagonalMatlGrade3=" & .TowerRedundantHipDiagonalMatlGrade3)
+                            newERIList.Add("TowerRedundantHipDiagonalGrade4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGrade4))
+                            newERIList.Add("TowerRedundantHipDiagonalMatlGrade4=" & .TowerRedundantHipDiagonalMatlGrade4)
+                            newERIList.Add("TowerRedundantHorizontalType=" & .TowerRedundantHorizontalType)
+                            newERIList.Add("TowerRedundantHorizontalType2=" & .TowerRedundantHorizontalType2)
+                            newERIList.Add("TowerRedundantHorizontalType3=" & .TowerRedundantHorizontalType3)
+                            newERIList.Add("TowerRedundantHorizontalType4=" & .TowerRedundantHorizontalType4)
+                            newERIList.Add("TowerRedundantDiagType2=" & .TowerRedundantDiagType2)
+                            newERIList.Add("TowerRedundantDiagType3=" & .TowerRedundantDiagType3)
+                            newERIList.Add("TowerRedundantDiagType4=" & .TowerRedundantDiagType4)
+                            newERIList.Add("TowerRedundantHipType2=" & .TowerRedundantHipType2)
+                            newERIList.Add("TowerRedundantHipType3=" & .TowerRedundantHipType3)
+                            newERIList.Add("TowerRedundantHipType4=" & .TowerRedundantHipType4)
+                            newERIList.Add("TowerRedundantHipDiagonalType2=" & .TowerRedundantHipDiagonalType2)
+                            newERIList.Add("TowerRedundantHipDiagonalType3=" & .TowerRedundantHipDiagonalType3)
+                            newERIList.Add("TowerRedundantHipDiagonalType4=" & .TowerRedundantHipDiagonalType4)
+                            newERIList.Add("TowerRedundantHorizontalBoltGrade1=" & .TowerRedundantHorizontalBoltGrade1)
+                            newERIList.Add("TowerRedundantHorizontalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltSize1))
+                            newERIList.Add("TowerRedundantHorizontalNumBolts1=" & .TowerRedundantHorizontalNumBolts1)
+                            newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltEdgeDistance1))
+                            newERIList.Add("TowerRedundantHorizontalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGageG1Distance1))
+                            newERIList.Add("TowerRedundantHorizontalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalNetWidthDeduct1))
+                            newERIList.Add("TowerRedundantHorizontalUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalUFactor1))
+                            newERIList.Add("TowerRedundantHorizontalBoltGrade2=" & .TowerRedundantHorizontalBoltGrade2)
+                            newERIList.Add("TowerRedundantHorizontalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltSize2))
+                            newERIList.Add("TowerRedundantHorizontalNumBolts2=" & .TowerRedundantHorizontalNumBolts2)
+                            newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltEdgeDistance2))
+                            newERIList.Add("TowerRedundantHorizontalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGageG1Distance2))
+                            newERIList.Add("TowerRedundantHorizontalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalNetWidthDeduct2))
+                            newERIList.Add("TowerRedundantHorizontalUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalUFactor2))
+                            newERIList.Add("TowerRedundantHorizontalBoltGrade3=" & .TowerRedundantHorizontalBoltGrade3)
+                            newERIList.Add("TowerRedundantHorizontalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltSize3))
+                            newERIList.Add("TowerRedundantHorizontalNumBolts3=" & .TowerRedundantHorizontalNumBolts3)
+                            newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltEdgeDistance3))
+                            newERIList.Add("TowerRedundantHorizontalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGageG1Distance3))
+                            newERIList.Add("TowerRedundantHorizontalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalNetWidthDeduct3))
+                            newERIList.Add("TowerRedundantHorizontalUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalUFactor3))
+                            newERIList.Add("TowerRedundantHorizontalBoltGrade4=" & .TowerRedundantHorizontalBoltGrade4)
+                            newERIList.Add("TowerRedundantHorizontalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltSize4))
+                            newERIList.Add("TowerRedundantHorizontalNumBolts4=" & .TowerRedundantHorizontalNumBolts4)
+                            newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltEdgeDistance4))
+                            newERIList.Add("TowerRedundantHorizontalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGageG1Distance4))
+                            newERIList.Add("TowerRedundantHorizontalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalNetWidthDeduct4))
+                            newERIList.Add("TowerRedundantHorizontalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalUFactor4))
+                            newERIList.Add("TowerRedundantDiagonalBoltGrade1=" & .TowerRedundantDiagonalBoltGrade1)
+                            newERIList.Add("TowerRedundantDiagonalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltSize1))
+                            newERIList.Add("TowerRedundantDiagonalNumBolts1=" & .TowerRedundantDiagonalNumBolts1)
+                            newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltEdgeDistance1))
+                            newERIList.Add("TowerRedundantDiagonalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGageG1Distance1))
+                            newERIList.Add("TowerRedundantDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalNetWidthDeduct1))
+                            newERIList.Add("TowerRedundantDiagonalUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalUFactor1))
+                            newERIList.Add("TowerRedundantDiagonalBoltGrade2=" & .TowerRedundantDiagonalBoltGrade2)
+                            newERIList.Add("TowerRedundantDiagonalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltSize2))
+                            newERIList.Add("TowerRedundantDiagonalNumBolts2=" & .TowerRedundantDiagonalNumBolts2)
+                            newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltEdgeDistance2))
+                            newERIList.Add("TowerRedundantDiagonalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGageG1Distance2))
+                            newERIList.Add("TowerRedundantDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalNetWidthDeduct2))
+                            newERIList.Add("TowerRedundantDiagonalUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalUFactor2))
+                            newERIList.Add("TowerRedundantDiagonalBoltGrade3=" & .TowerRedundantDiagonalBoltGrade3)
+                            newERIList.Add("TowerRedundantDiagonalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltSize3))
+                            newERIList.Add("TowerRedundantDiagonalNumBolts3=" & .TowerRedundantDiagonalNumBolts3)
+                            newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltEdgeDistance3))
+                            newERIList.Add("TowerRedundantDiagonalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGageG1Distance3))
+                            newERIList.Add("TowerRedundantDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalNetWidthDeduct3))
+                            newERIList.Add("TowerRedundantDiagonalUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalUFactor3))
+                            newERIList.Add("TowerRedundantDiagonalBoltGrade4=" & .TowerRedundantDiagonalBoltGrade4)
+                            newERIList.Add("TowerRedundantDiagonalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltSize4))
+                            newERIList.Add("TowerRedundantDiagonalNumBolts4=" & .TowerRedundantDiagonalNumBolts4)
+                            newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltEdgeDistance4))
+                            newERIList.Add("TowerRedundantDiagonalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGageG1Distance4))
+                            newERIList.Add("TowerRedundantDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalNetWidthDeduct4))
+                            newERIList.Add("TowerRedundantDiagonalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalUFactor4))
+                            newERIList.Add("TowerRedundantHipBoltGrade1=" & .TowerRedundantHipBoltGrade1)
+                            newERIList.Add("TowerRedundantHipBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltSize1))
+                            newERIList.Add("TowerRedundantHipNumBolts1=" & .TowerRedundantHipNumBolts1)
+                            newERIList.Add("TowerRedundantHipBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltEdgeDistance1))
+                            newERIList.Add("TowerRedundantHipGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGageG1Distance1))
+                            newERIList.Add("TowerRedundantHipNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipNetWidthDeduct1))
+                            newERIList.Add("TowerRedundantHipUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipUFactor1))
+                            newERIList.Add("TowerRedundantHipBoltGrade2=" & .TowerRedundantHipBoltGrade2)
+                            newERIList.Add("TowerRedundantHipBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltSize2))
+                            newERIList.Add("TowerRedundantHipNumBolts2=" & .TowerRedundantHipNumBolts2)
+                            newERIList.Add("TowerRedundantHipBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltEdgeDistance2))
+                            newERIList.Add("TowerRedundantHipGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGageG1Distance2))
+                            newERIList.Add("TowerRedundantHipNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipNetWidthDeduct2))
+                            newERIList.Add("TowerRedundantHipUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipUFactor2))
+                            newERIList.Add("TowerRedundantHipBoltGrade3=" & .TowerRedundantHipBoltGrade3)
+                            newERIList.Add("TowerRedundantHipBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltSize3))
+                            newERIList.Add("TowerRedundantHipNumBolts3=" & .TowerRedundantHipNumBolts3)
+                            newERIList.Add("TowerRedundantHipBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltEdgeDistance3))
+                            newERIList.Add("TowerRedundantHipGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGageG1Distance3))
+                            newERIList.Add("TowerRedundantHipNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipNetWidthDeduct3))
+                            newERIList.Add("TowerRedundantHipUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipUFactor3))
+                            newERIList.Add("TowerRedundantHipBoltGrade4=" & .TowerRedundantHipBoltGrade4)
+                            newERIList.Add("TowerRedundantHipBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltSize4))
+                            newERIList.Add("TowerRedundantHipNumBolts4=" & .TowerRedundantHipNumBolts4)
+                            newERIList.Add("TowerRedundantHipBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltEdgeDistance4))
+                            newERIList.Add("TowerRedundantHipGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGageG1Distance4))
+                            newERIList.Add("TowerRedundantHipNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipNetWidthDeduct4))
+                            newERIList.Add("TowerRedundantHipUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipUFactor4))
+                            newERIList.Add("TowerRedundantHipDiagonalBoltGrade1=" & .TowerRedundantHipDiagonalBoltGrade1)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltSize1))
+                            newERIList.Add("TowerRedundantHipDiagonalNumBolts1=" & .TowerRedundantHipDiagonalNumBolts1)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltEdgeDistance1))
+                            newERIList.Add("TowerRedundantHipDiagonalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGageG1Distance1))
+                            newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalNetWidthDeduct1))
+                            newERIList.Add("TowerRedundantHipDiagonalUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalUFactor1))
+                            newERIList.Add("TowerRedundantHipDiagonalBoltGrade2=" & .TowerRedundantHipDiagonalBoltGrade2)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltSize2))
+                            newERIList.Add("TowerRedundantHipDiagonalNumBolts2=" & .TowerRedundantHipDiagonalNumBolts2)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltEdgeDistance2))
+                            newERIList.Add("TowerRedundantHipDiagonalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGageG1Distance2))
+                            newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalNetWidthDeduct2))
+                            newERIList.Add("TowerRedundantHipDiagonalUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalUFactor2))
+                            newERIList.Add("TowerRedundantHipDiagonalBoltGrade3=" & .TowerRedundantHipDiagonalBoltGrade3)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltSize3))
+                            newERIList.Add("TowerRedundantHipDiagonalNumBolts3=" & .TowerRedundantHipDiagonalNumBolts3)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltEdgeDistance3))
+                            newERIList.Add("TowerRedundantHipDiagonalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGageG1Distance3))
+                            newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalNetWidthDeduct3))
+                            newERIList.Add("TowerRedundantHipDiagonalUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalUFactor3))
+                            newERIList.Add("TowerRedundantHipDiagonalBoltGrade4=" & .TowerRedundantHipDiagonalBoltGrade4)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltSize4))
+                            newERIList.Add("TowerRedundantHipDiagonalNumBolts4=" & .TowerRedundantHipDiagonalNumBolts4)
+                            newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltEdgeDistance4))
+                            newERIList.Add("TowerRedundantHipDiagonalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGageG1Distance4))
+                            newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalNetWidthDeduct4))
+                            newERIList.Add("TowerRedundantHipDiagonalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalUFactor4))
+                            newERIList.Add("TowerRedundantDiagonalType=" & .TowerRedundantDiagonalType)
+                            newERIList.Add("TowerRedundantDiagonalType2=" & .TowerRedundantDiagonalType2)
+                            newERIList.Add("TowerRedundantDiagonalType3=" & .TowerRedundantDiagonalType3)
+                            newERIList.Add("TowerRedundantDiagonalType4=" & .TowerRedundantDiagonalType4)
+
                         End With
                     Next i
                 Case line(0).Equals("NumGuyRecs")
