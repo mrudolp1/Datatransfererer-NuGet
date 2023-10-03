@@ -151,6 +151,44 @@ Public Module WorkflowHelpers
         End If
     End Function
 
+    Private Async Function SiteDataIntoSheet(ByVal xlWorkbook As Excel.Workbook,
+                                               ByVal toolFileName As String,
+                                               ByVal orderSheet As String,
+                                               ByVal orderRange As String,
+                                               ByVal edsStructure As EDSStructure,
+                                               Optional cancelToken As CancellationToken = Nothing,
+                                               Optional progress As IProgress(Of LogMessage) = Nothing
+                                            ) As Task(Of Boolean)
+        Dim savedOrder As Boolean = True
+        Dim savedOrderError As String = ""
+        'Some specific examples had to be built in because these tools handle the site data differently on the input tab.
+        Try
+            If toolFileName.ToLower.Contains("ccipole") Then
+                xlWorkbook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.work_order_seq_num?.ToString()
+                Await WriteLineLogLine("DEBUG | WO Number " & edsStructure.work_order_seq_num?.ToString() & " added to workbook", progress, True)
+            ElseIf toolFileName.ToLower.Contains("cciseismic") Then
+                xlWorkbook.Worksheets("Site SDC Data").Range("wo").value = edsStructure.work_order_seq_num.ToString()
+                xlWorkbook.Worksheets("Site SDC Data").Range("app").value = edsStructure.order?.ToString()
+                xlWorkbook.Worksheets("Site SDC Data").Range("rev").value = edsStructure.orderRev?.ToString()
+                Await WriteLineLogLine("DEBUG | WO Number " & edsStructure.work_order_seq_num?.ToString() & " added to workbook", progress, True)
+                Await WriteLineLogLine("DEBUG | Order Number " & edsStructure.MyOrder().ToString() & " added to workbook", progress, True)
+            Else
+                xlWorkbook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.MyOrder().ToString()
+                Await WriteLineLogLine("DEBUG | Order Number " & edsStructure.MyOrder().ToString() & " added to workbook", progress, True)
+            End If
+        Catch ex As Exception
+            savedOrder = False
+            savedOrderError = ex.Message
+            'Throwing this in a try-catch for the time being in case these ranges being editted have other impacts
+        End Try
+
+        If Not savedOrder Then
+            Await WriteLineLogLine("WARNING | Could not add WO/Order data to workbook", progress, True)
+            Await WriteLineLogLine("ERROR | " & savedOrderError, progress, True)
+        End If
+
+    End Function
+
     'Seb's macro runner adjusted specifically for unit testing
     Public Async Function Import_Previous_Version(
                                            ByVal xlapp As Excel.Application,
@@ -189,36 +227,12 @@ Public Module WorkflowHelpers
                 'Check that the strings aren't empty and that ismaesting = true
                 If params.Item1 IsNot Nothing And params.Item2 IsNot Nothing And params.Item3 Then
                     Await WriteLineLogLine("DEBUG | BEGIN MACRO: " & macroName, progress, True)
-                    Await xlapp.Run(prefix & "Import_Previous_Version." & macroName, params.Item1, params.Item2, params.Item3)
+                    xlapp.Run(prefix & "Import_Previous_Version." & macroName, params.Item1, params.Item2, params.Item3)
                     Await WriteLineLogLine("DEBUG | END MACRO:  " & macroName, progress, True)
 
-                    Dim savedOrder As Boolean = True
-                    Dim savedOrderError As String = ""
-                    'Some specific examples had to be built in because these tools handle the site data differently on the input tab.
-                    Try
-                        If toolFileName.ToLower.Contains("ccipole") Then
-                            xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.work_order_seq_num
-                            Await WriteLineLogLine("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook", progress, True)
-                        ElseIf toolFileName.ToLower.Contains("cciseismic") Then
-                            xlWorkBook.Worksheets("Site SDC Data").Range("wo").value = edsStructure.work_order_seq_num
-                            xlWorkBook.Worksheets("Site SDC Data").Range("app").value = edsStructure.order
-                            xlWorkBook.Worksheets("Site SDC Data").Range("rev").value = edsStructure.orderRev
-                            Await WriteLineLogLine("DEBUG | WO Number" & edsStructure.work_order_seq_num & " added to workbook", progress, True)
-                            Await WriteLineLogLine("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook", progress, True)
-                        Else
-                            xlWorkBook.Worksheets(orderSheet).Range(orderRange).value = edsStructure.MyOrder()
-                            Await WriteLineLogLine("DEBUG | Order Number" & edsStructure.MyOrder() & " added to workbook", progress, True)
-                        End If
-                    Catch ex As Exception
-                        savedOrder = False
-                        savedOrderError = ex.Message
-                        'Throwing this in a try-catch for the time being in case these ranges being editted have other impacts
-                    End Try
 
-                    If Not savedOrder Then
-                        Await WriteLineLogLine("WARNING | Could not add WO/Order data to workbook", progress, True)
-                        Await WriteLineLogLine("ERROR | " & savedOrderError, progress, True)
-                    End If
+                    Await SiteDataIntoSheet(xlWorkBook, toolFileName, orderSheet, orderRange, edsStructure, cancelToken, progress)
+
                 Else
                     Await WriteLineLogLine("ERROR | Parameters not specific ", progress, True)
                     Await WriteLineLogLine("DEBUG | Tool: " & toolFileName & " failed to import inputs", progress, True)
