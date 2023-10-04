@@ -10,6 +10,7 @@ Imports MoreLinq
 
 Public Delegate Function OverwriteFile(ByVal FileName As String) As Boolean
 
+Public Delegate Function CreateFile(ByVal FileName As String) As Boolean
 'To expand collections in the main property grid, this process may help but doesn't need to be implemented right now
 'https://www.codeproject.com/Articles/4448/Customized-display-of-collection-data-in-a-Propert?fid=16073&df=90&mpp=25&sort=Position&view=Normal&spc=Relaxed&prof=True&fr=176
 
@@ -398,7 +399,7 @@ Partial Public MustInherit Class EDSExcelObject
 
     End Sub
 
-    Public Sub SavetoExcel(overwriteFile As OverwriteFile, Optional workBookPath As String = Nothing, Optional index As Integer = 0)
+    Public Sub SavetoExcel(overwriteFile As OverwriteFile, createFile As CreateFile, Optional workBookPath As String = Nothing, Optional index As Integer = 0, Optional searchString As String = "Skip It")
         Dim wb As New Workbook
 
 
@@ -417,6 +418,14 @@ Partial Public MustInherit Class EDSExcelObject
 
         If File.Exists(workBookPath) AndAlso
             Not overwriteFile(Path.GetFileName(workBookPath)) Then Exit Sub
+
+        If searchString <> "Skip It" Then
+            For Each fi As FileInfo In New DirectoryInfo(Me.ParentStructure?.WorkingDirectory).GetFiles()
+                If (fi.Name.ToUpper().Contains(searchString.ToUpper()) And Not fi.Name.Contains("EDS") And fi.Extension.ToUpper() = ".XLSM") AndAlso
+                    Not createFile(fi.Name) Then Exit Sub
+            Next
+        End If
+
 
         wb.LoadDocument(Template, FileType)
         wb.BeginUpdate()

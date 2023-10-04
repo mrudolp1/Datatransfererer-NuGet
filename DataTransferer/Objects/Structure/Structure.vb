@@ -724,7 +724,7 @@ Partial Public Class EDSStructure
     ''' </summary>
     ''' <param name="overwriteFile">Delegate function which take a file path as a string and returns a boolean.</param>
     ''' <param name="folderPath">Save to folder path.</param>
-    Public Sub SaveTools(overwriteFile As OverwriteFile, Optional folderPath As String = "")
+    Public Sub SaveTools(overwriteFile As OverwriteFile, createFile As CreateFile, Optional folderPath As String = "")
 
         If folderPath = "" Then
             folderPath = Me.WorkingDirectory
@@ -739,31 +739,31 @@ Partial Public Class EDSStructure
         If Me.tnx IsNot Nothing Then Me.tnx.GenerateERI(overwriteFile, Path.Combine(folderPath, Me.bus_unit & ".eri"))
 
         For i = 0 To Me.PierandPads.Count - 1
-            PierandPads(i).SavetoExcel(overwriteFile, index:=i)
+            PierandPads(i).SavetoExcel(overwriteFile, createFile, index:=i, searchString:="Pier & Pad Foundation")
         Next
         For i = 0 To Me.Piles.Count - 1
-            Piles(i).SavetoExcel(overwriteFile, index:=i)
+            Piles(i).SavetoExcel(overwriteFile, createFile, index:=i, searchString:="Pile Foundation")
         Next
         For i = 0 To Me.UnitBases.Count - 1
-            UnitBases(i).SavetoExcel(overwriteFile, index:=i)
+            UnitBases(i).SavetoExcel(overwriteFile, createFile, index:=i, searchString:="SST Unit Base Foundation")
         Next
         For i = 0 To Me.DrilledPierTools.Count - 1
-            DrilledPierTools(i).SavetoExcel(overwriteFile, index:=i)
+            DrilledPierTools(i).SavetoExcel(overwriteFile, createFile, index:=i, searchString:="Drilled Pier Foundation")
         Next
         For i = 0 To Me.GuyAnchorBlockTools.Count - 1
-            GuyAnchorBlockTools(i).SavetoExcel(overwriteFile, index:=i)
+            GuyAnchorBlockTools(i).SavetoExcel(overwriteFile, createFile, index:=i, searchString:="Guyed Anchor Block Foundation")
         Next
         For i = 0 To Me.CCIplates.Count - 1
-            CCIplates(i).SavetoExcel(overwriteFile, index:=i)
+            CCIplates(i).SavetoExcel(overwriteFile, createFile, index:=i, searchString:="CCIplate")
         Next
         For i = 0 To Me.Poles.Count - 1
-            Poles(i).SavetoExcel(overwriteFile, index:=i)
+            Poles(i).SavetoExcel(overwriteFile, createFile, index:=i, searchString:="CCIpole")
         Next
         For i = 0 To Me.LegReinforcements.Count - 1
-            LegReinforcements(i).SavetoExcel(overwriteFile, index:=i)
+            LegReinforcements(i).SavetoExcel(overwriteFile, createFile, index:=i, searchString:="Leg Reinforcement Tool")
         Next
         For i = 0 To Me.CCISeismics.Count - 1
-            CCISeismics(i).SavetoExcel(overwriteFile, index:=i)
+            CCISeismics(i).SavetoExcel(overwriteFile, createFile, index:=i, searchString:="CCIseismic")
         Next
     End Sub
 #End Region
