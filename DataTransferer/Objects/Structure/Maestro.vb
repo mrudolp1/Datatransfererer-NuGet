@@ -104,6 +104,8 @@ Partial Public Class EDSStructure
                 'Run TNX
                 If RunTNX Then
                     If Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
+                Else
+                    Await WriteLineLogLine("INFO | ERI not included in Load Case. Skipping TNX", progress)
                 End If
                 'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
@@ -202,6 +204,8 @@ Partial Public Class EDSStructure
                 If RunTNX Then
                     '/run tnx
                     If Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
+                Else
+                    Await WriteLineLogLine("INFO | ERI not included in Load Case. Skipping TNX", progress)
                 End If
 
                 '/run seismic macro to create eri with seismic loads if needed
