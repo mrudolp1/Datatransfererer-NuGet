@@ -8,6 +8,7 @@ Guyed Anchor Block (5.0.0) and later
 CCISeismic (4.0.0) and later
 Leg Reinforcement (11.0.0) and later
 CCIpole (5.0.0) and later
+CCIplate (5.0.0) and later
 *****PLACE HOLDER FOR CCIplate
 
 ***********Foundation Tools***********
