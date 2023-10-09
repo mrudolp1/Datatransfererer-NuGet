@@ -20,7 +20,7 @@ Partial Public Class EDSStructure
     ''' </summary>
     ''' <param name="isDevMode">Determines if the beta version of TNX should be used.</param>
     ''' <param name="xlVisibility">Determines excel tools appear in the foreground (true) or are hidden (false).</param>
-    Public Async Function ConductAsync(Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
+    Public Async Function ConductAsync(RunTNX As Boolean, Optional isDevMode As Boolean = False, Optional ByVal xlVisibility As Boolean = False, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
         AnalysisRunning = True
         Dim dt As String = DateTime.Now.ToString.Replace("/", "-").Replace(":", ".")
 
@@ -66,7 +66,7 @@ Partial Public Class EDSStructure
         Dim basePlateConnection As Connection = Nothing
         Dim basePlateBoltGroup As BoltGroup = Nothing
 
-        Dim workingAreaPath As String = Me.WorkingDirectory 'ask Dan where this is, ' ask Seb if he found this
+        Dim workingAreaPath As String = Me.WorkingDirectory 'ask Dan where this is, ' ask Seb if he found this, 'Seb found this
 
         Dim logFileName As String = Me.bus_unit & "_" & Me.structure_id & "_" & Me.work_order_seq_num & "_" & dt & ".txt"
 
@@ -102,8 +102,11 @@ Partial Public Class EDSStructure
                 End If
 
                 'Run TNX
-                If Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
-
+                If RunTNX Then
+                    If Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
+                Else
+                    Await WriteLineLogLine("INFO | ERI not included in Load Case. Skipping TNX", progress)
+                End If
                 'CCI Pole step 2 - pull in reactions
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
                     excelResult = Await OpenExcelRunMacroAsync(poleWeUsin, poleMacImportTNXReactions, xlVisibility, toolName:="CCIPole - Step 2", cancelToken:=cancelToken, progress:=progress)
@@ -198,12 +201,14 @@ Partial Public Class EDSStructure
                 'Check if TNX has been ran. if not, run it
                 'Dan will provide a file path to check for in the working directory
 
-
-                '/run tnx
-                If Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
+                If RunTNX Then
+                    '/run tnx
+                    If Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
+                Else
+                    Await WriteLineLogLine("INFO | ERI not included in Load Case. Skipping TNX", progress)
+                End If
 
                 '/run seismic macro to create eri with seismic loads if needed
-
                 If Me.CCISeismics.Count > 0 Then
                     If Me.CCISeismics.Count > 1 Then
                         Await WriteLineLogLine("WARNING | " & Me.CCISeismics.Count & " CCISeismic files found! Using first or default..", progress)

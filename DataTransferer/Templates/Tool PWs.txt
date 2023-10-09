@@ -1,4 +1,16 @@
-﻿**************************************
+﻿ALL TOOL VBA PASSWORDS:
+Password: Crown!
+Drilled Pier (6.0.0) and later
+SST Unit Base (4.0.0) and later
+Pile (3.0.0) and later
+Pier & Pad (4.0.0) and later
+Guyed Anchor Block (5.0.0) and later
+CCISeismic (4.0.0) and later
+Leg Reinforcement (11.0.0) and later
+CCIpole (5.0.0) and later
+CCIplate (5.0.0) and later
+*****PLACE HOLDER FOR CCIplate
+
 ***********Foundation Tools***********
 UNLOCK WORKBOOK:
 (current)
@@ -10,12 +22,16 @@ UNLOCK WORKBOOK:
 UNLOCK VBA:
   y:7+ji|Q"?<i
 ***********Foundation Tools***********
-**************************************
+
+
+
 ********Leg Reinforcement Tool********
 UNLOCK VBA:
   LegReinforcement2020
 ********Leg Reinforcement Tool********
-**************************************
+
+
+
 *************CCISeismic***************
 Worksheets are not password protected.
 UNLOCK VBA:
@@ -24,7 +40,9 @@ or
   CCISeismic 
      (before version 3.0.0)
 *************CCISeismic***************
-**************************************
+
+
+
 *************CCIPole******************
 UNLOCK VBA:
   A-{​​​​​​​​p]RBHq>&d7p=47-X+71t=6
@@ -32,7 +50,9 @@ UNLOCK VBA:
 UNLOCK WORKBOOK:
   !Crown123!
 *************CCIPole******************
-**************************************
+
+
+
 *************CCIPlate*****************
 UNLOCK VBA:
   x]5qD@{​​7jY.3M19xM>z8]{​​​​​​​​​{​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​ x
@@ -40,4 +60,3 @@ UNLOCK VBA:
 UNLOCK WORKBOOK:
   Crown!
 *************CCIPlate*****************
-**************************************
