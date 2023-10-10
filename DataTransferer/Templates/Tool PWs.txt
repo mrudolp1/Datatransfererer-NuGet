@@ -13,6 +13,8 @@ CCIplate (5.0.0) and later
 
 ***********Foundation Tools***********
 UNLOCK WORKBOOK:
+Drilled Pier 6.1.0 and later: Crown!
+
 (current)
   =Y=f987L=Wug
 
