@@ -33,7 +33,7 @@ Partial Public Class CCISeismic
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         'Add additional sub table references here. Table names should be consistent with EDS table names. 
         Get
-            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Seismic Details", "A1:AD2", "Details (SAPI)")}
+            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Seismic Details", "A1:AE2", "Details (SAPI)")}
 
             'note: Excel table names are consistent with EDS table names to limit work required within constructors
 
@@ -120,6 +120,7 @@ Partial Public Class CCISeismic
     Private _create_seismic_loads As Boolean?
     Private _user_force_appurtenance As Boolean?
     Private _sdc As String
+    Private _design_code As String
 
     <Category("Seismic"), Description(""), DisplayName("Lat Sign")>
      <DataMember()> Public Property lat_sign() As String
@@ -373,6 +374,15 @@ Partial Public Class CCISeismic
             Me._sdc = Value
         End Set
     End Property
+    <Category("Seismic"), Description(""), DisplayName("Design Code")>
+    <DataMember()> Public Property design_code() As String
+        Get
+            Return Me._design_code
+        End Get
+        Set
+            Me._design_code = Value
+        End Set
+    End Property
 
 #End Region
 
@@ -444,7 +454,7 @@ Partial Public Class CCISeismic
             Me.sdc = DBtoStr(dr.Item("sdc"))
         Catch ex As Exception
         End Try
-
+        Me.design_code = DBtoStr(dr.Item("design_code"))
 
     End Sub
 
@@ -478,7 +488,9 @@ Partial Public Class CCISeismic
 
     Public Overrides Sub workBookFiller(ByRef wb As Workbook)
         '''''Customize for each excel tool'''''
-        'Dim LegReinRow As Integer
+        Dim code_change As Boolean = False
+        Dim use_asce_d As Boolean
+        Dim site_soil_d, risk_category_d As String
 
         'Site Code Criteria
         Dim tia_current As String
@@ -518,6 +530,25 @@ Partial Public Class CCISeismic
                 tia_current = "TIA-222-H-1"
             End If
             .Worksheets("Site SDC Data").Range("dcode").Value = CType(tia_current, String)
+
+            'Check for code change. Code change will invalidate Site Soil and Risk Category and seismic values (Ss, S1 and TL) pulled in from EDS. 
+            'When code change occurs, going to assume default values to rerun USGS and continue analysis
+            If Not IsNothing(design_code) Then
+                If design_code <> tia_current Then
+                    code_change = True
+                    .Worksheets("Details (SAPI)").Range("A4").Value = CType(True, Boolean)
+                    'Determine default values
+                    If tia_current = "TIA-222-H-1" Then
+                        use_asce_d = False
+                        site_soil_d = "D (Default)"
+                        risk_category_d = "II"
+                    ElseIf tia_current = "TIA-222-G" Or tia_current = "ASCE 7-10" Then
+                        use_asce_d = False
+                        site_soil_d = "D"
+                        risk_category_d = "II"
+                    End If
+                End If
+            End If
 
             'Latitude
             If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.lat_dec) Then
@@ -621,30 +652,40 @@ Partial Public Class CCISeismic
             'Else
             '    .Worksheets("Site SDC Data").Range("longsec").ClearContents
             'End If
-            If Not IsNothing(Me.use_asce) Then
-                .Worksheets("Reference").Range("Use_ASCE").Value = CType(Me.use_asce, Boolean)
-            End If
-            If Not IsNothing(Me.site_soil) Then
-                .Worksheets("Site SDC Data").Range("soil").Value = CType(Me.site_soil, String)
-            End If
-            If Not IsNothing(Me.risk_category) Then
-                .Worksheets("Site SDC Data").Range("risk").Value = CType(Me.risk_category, String)
-            End If
-            If Not IsNothing(Me.ss) Then
-                .Worksheets("Site SDC Data").Range("ss").Value = CType(Me.ss, Double)
-            Else
+            If code_change Then
+                .Worksheets("Reference").Range("Use_ASCE").Value = CType(use_asce_d, Boolean)
+                .Worksheets("Site SDC Data").Range("soil").Value = CType(site_soil_d, String)
+                .Worksheets("Site SDC Data").Range("risk").Value = CType(risk_category_d, String)
                 .Worksheets("Site SDC Data").Range("ss").ClearContents
-            End If
-            If Not IsNothing(Me.s1) Then
-                .Worksheets("Site SDC Data").Range("suno").Value = CType(Me.s1, Double)
-            Else
                 .Worksheets("Site SDC Data").Range("suno").ClearContents
-            End If
-            If Not IsNothing(Me.tl) Then
-                .Worksheets("Site SDC Data").Range("tl").Value = CType(Me.tl, Double)
-            Else
                 .Worksheets("Site SDC Data").Range("tl").ClearContents
+            Else
+                If Not IsNothing(Me.use_asce) Then
+                    .Worksheets("Reference").Range("Use_ASCE").Value = CType(Me.use_asce, Boolean)
+                End If
+                If Not IsNothing(Me.site_soil) Then
+                    .Worksheets("Site SDC Data").Range("soil").Value = CType(Me.site_soil, String)
+                End If
+                If Not IsNothing(Me.risk_category) Then
+                    .Worksheets("Site SDC Data").Range("risk").Value = CType(Me.risk_category, String)
+                End If
+                If Not IsNothing(Me.ss) Then
+                    .Worksheets("Site SDC Data").Range("ss").Value = CType(Me.ss, Double)
+                Else
+                    .Worksheets("Site SDC Data").Range("ss").ClearContents
+                End If
+                If Not IsNothing(Me.s1) Then
+                    .Worksheets("Site SDC Data").Range("suno").Value = CType(Me.s1, Double)
+                Else
+                    .Worksheets("Site SDC Data").Range("suno").ClearContents
+                End If
+                If Not IsNothing(Me.tl) Then
+                    .Worksheets("Site SDC Data").Range("tl").Value = CType(Me.tl, Double)
+                Else
+                    .Worksheets("Site SDC Data").Range("tl").ClearContents
+                End If
             End If
+
             If Not IsNothing(Me.importance_factor_override) Then
                 .Worksheets("Reference").Range("ie_override").Value = CType(Me.importance_factor_override, Boolean)
             End If
@@ -743,6 +784,7 @@ Partial Public Class CCISeismic
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.elasticity.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.create_seismic_loads.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.user_force_appurtenance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.design_code.ToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -783,6 +825,7 @@ Partial Public Class CCISeismic
         SQLInsertFields = SQLInsertFields.AddtoDBString("elasticity")
         SQLInsertFields = SQLInsertFields.AddtoDBString("create_seismic_loads")
         SQLInsertFields = SQLInsertFields.AddtoDBString("user_force_appurtenance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("design_code")
 
         Return SQLInsertFields
     End Function
@@ -823,6 +866,7 @@ Partial Public Class CCISeismic
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elasticity = " & Me.elasticity.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("create_seismic_loads = " & Me.create_seismic_loads.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("user_force_appurtenance = " & Me.user_force_appurtenance.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("design_code = " & Me.design_code.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -873,6 +917,7 @@ Partial Public Class CCISeismic
         Equals = If(Me.elasticity.CheckChange(otherToCompare.elasticity, changes, categoryName, "Elasticity"), Equals, False)
         Equals = If(Me.create_seismic_loads.CheckChange(otherToCompare.create_seismic_loads, changes, categoryName, "Create Seismic Loads"), Equals, False)
         Equals = If(Me.user_force_appurtenance.CheckChange(otherToCompare.user_force_appurtenance, changes, categoryName, "User Force Appurtenance"), Equals, False)
+        Equals = If(Me.design_code.CheckChange(otherToCompare.design_code, changes, categoryName, "Design Code"), Equals, False)
 
         Return Equals
 
