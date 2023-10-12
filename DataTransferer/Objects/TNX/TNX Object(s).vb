@@ -11759,306 +11759,306 @@ Partial Public Class tnxModel
                             If IsSomethingString(.AntennaRedundantHorizontalBoltGrade1) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHorizontalBoltGrade1=" & .AntennaRedundantHorizontalBoltGrade1)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalBoltSize1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltSize1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltSize1))
                             End If
                             newERIList.Add("AntennaRedundantHorizontalNumBolts1=" & .AntennaRedundantHorizontalNumBolts1)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalUFactor1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor1))
+                            If Not IsNothing(.AntennaRedundantHorizontalUFactor1) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalUFactor1=" & .AntennaRedundantHorizontalUFactor1)
                             End If
                             If IsSomethingString(.AntennaRedundantHorizontalBoltGrade2) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHorizontalBoltGrade2=" & .AntennaRedundantHorizontalBoltGrade2)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalBoltSize2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltSize2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltSize2))
                             End If
                             newERIList.Add("AntennaRedundantHorizontalNumBolts2=" & .AntennaRedundantHorizontalNumBolts2)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalUFactor2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor2))
+                            If Not IsNothing(.AntennaRedundantHorizontalUFactor2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalUFactor2=" & .AntennaRedundantHorizontalUFactor2)
                             End If
                             If IsSomethingString(.AntennaRedundantHorizontalBoltGrade3) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHorizontalBoltGrade3=" & .AntennaRedundantHorizontalBoltGrade3)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalBoltSize3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltSize3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltSize3))
                             End If
                             newERIList.Add("AntennaRedundantHorizontalNumBolts3=" & .AntennaRedundantHorizontalNumBolts3)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalUFactor3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor3))
+                            If Not IsNothing(.AntennaRedundantHorizontalUFactor3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalUFactor3=" & .AntennaRedundantHorizontalUFactor3)
                             End If
                             If IsSomethingString(.AntennaRedundantHorizontalBoltGrade4) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHorizontalBoltGrade4=" & .AntennaRedundantHorizontalBoltGrade4)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalBoltSize4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltSize4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltSize4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltSize4))
                             End If
                             newERIList.Add("AntennaRedundantHorizontalNumBolts4=" & .AntennaRedundantHorizontalNumBolts4)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalBoltEdgeDistance4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalGageG1Distance4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHorizontalNetWidthDeduct4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHorizontalUFactor4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHorizontalUFactor4))
+                            If Not IsNothing(.AntennaRedundantHorizontalUFactor4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHorizontalUFactor4=" & .AntennaRedundantHorizontalUFactor4)
                             End If
                             If IsSomethingString(.AntennaRedundantDiagonalBoltGrade1) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantDiagonalBoltGrade1=" & .AntennaRedundantDiagonalBoltGrade1)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalBoltSize1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltSize1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltSize1))
                             End If
                             newERIList.Add("AntennaRedundantDiagonalNumBolts1=" & .AntennaRedundantDiagonalNumBolts1)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalUFactor1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor1))
+                            If Not IsNothing(.AntennaRedundantDiagonalUFactor1) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalUFactor1=" & .AntennaRedundantDiagonalUFactor1)
                             End If
                             If IsSomethingString(.AntennaRedundantDiagonalBoltGrade2) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantDiagonalBoltGrade2=" & .AntennaRedundantDiagonalBoltGrade2)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalBoltSize2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltSize2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltSize2))
                             End If
                             newERIList.Add("AntennaRedundantDiagonalNumBolts2=" & .AntennaRedundantDiagonalNumBolts2)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalUFactor2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor2))
+                            If Not IsNothing(.AntennaRedundantDiagonalUFactor2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalUFactor2=" & .AntennaRedundantDiagonalUFactor2)
                             End If
                             If IsSomethingString(.AntennaRedundantDiagonalBoltGrade3) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantDiagonalBoltGrade3=" & .AntennaRedundantDiagonalBoltGrade3)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalBoltSize3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltSize3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltSize3))
                             End If
                             newERIList.Add("AntennaRedundantDiagonalNumBolts3=" & .AntennaRedundantDiagonalNumBolts3)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalUFactor3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor3))
+                            If Not IsNothing(.AntennaRedundantDiagonalUFactor3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalUFactor3=" & .AntennaRedundantDiagonalUFactor3)
                             End If
                             If IsSomethingString(.AntennaRedundantDiagonalBoltGrade4) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantDiagonalBoltGrade4=" & .AntennaRedundantDiagonalBoltGrade4)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalBoltSize4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltSize4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltSize4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltSize4))
                             End If
                             newERIList.Add("AntennaRedundantDiagonalNumBolts4=" & .AntennaRedundantDiagonalNumBolts4)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalBoltEdgeDistance4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalGageG1Distance4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantDiagonalNetWidthDeduct4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantDiagonalUFactor4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantDiagonalUFactor4))
+                            If Not IsNothing(.AntennaRedundantDiagonalUFactor4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantDiagonalUFactor4=" & .AntennaRedundantDiagonalUFactor4)
                             End If
                             If IsSomethingString(.AntennaRedundantHipBoltGrade1) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHipBoltGrade1=" & .AntennaRedundantHipBoltGrade1)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipBoltSize1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltSize1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltSize1))
                             End If
                             newERIList.Add("AntennaRedundantHipNumBolts1=" & .AntennaRedundantHipNumBolts1)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipGageG1Distance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipGageG1Distance1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipNetWidthDeduct1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipUFactor1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor1))
+                            If Not IsNothing(.AntennaRedundantHipUFactor1) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipUFactor1=" & .AntennaRedundantHipUFactor1)
                             End If
                             If IsSomethingString(.AntennaRedundantHipBoltGrade2) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHipBoltGrade2=" & .AntennaRedundantHipBoltGrade2)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipBoltSize2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltSize2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltSize2))
                             End If
                             newERIList.Add("AntennaRedundantHipNumBolts2=" & .AntennaRedundantHipNumBolts2)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipGageG1Distance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipGageG1Distance2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipNetWidthDeduct2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipUFactor2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor2))
+                            If Not IsNothing(.AntennaRedundantHipUFactor2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipUFactor2=" & .AntennaRedundantHipUFactor2)
                             End If
                             If IsSomethingString(.AntennaRedundantHipBoltGrade3) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHipBoltGrade3=" & .AntennaRedundantHipBoltGrade3)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipBoltSize3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltSize3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltSize3))
                             End If
                             newERIList.Add("AntennaRedundantHipNumBolts3=" & .AntennaRedundantHipNumBolts3)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipGageG1Distance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipGageG1Distance3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipNetWidthDeduct3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipUFactor3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor3))
+                            If Not IsNothing(.AntennaRedundantHipUFactor3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipUFactor3=" & .AntennaRedundantHipUFactor3)
                             End If
                             If IsSomethingString(.AntennaRedundantHipBoltGrade4) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHipBoltGrade4=" & .AntennaRedundantHipBoltGrade4)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipBoltSize4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltSize4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltSize4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltSize4))
                             End If
                             newERIList.Add("AntennaRedundantHipNumBolts4=" & .AntennaRedundantHipNumBolts4)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipBoltEdgeDistance4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipGageG1Distance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipGageG1Distance4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipGageG1Distance4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipNetWidthDeduct4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipNetWidthDeduct4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipUFactor4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipUFactor4))
+                            If Not IsNothing(.AntennaRedundantHipUFactor4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipUFactor4=" & .AntennaRedundantHipUFactor4)
                             End If
                             If IsSomethingString(.AntennaRedundantHipDiagonalBoltGrade1) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHipDiagonalBoltGrade1=" & .AntennaRedundantHipDiagonalBoltGrade1)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize1))
                             End If
                             newERIList.Add("AntennaRedundantHipDiagonalNumBolts1=" & .AntennaRedundantHipDiagonalNumBolts1)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct1))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct1)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct1))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor1)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalUFactor1=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor1))
+                            If Not IsNothing(.AntennaRedundantHipDiagonalUFactor1) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalUFactor1=" & .AntennaRedundantHipDiagonalUFactor1)
                             End If
                             If IsSomethingString(.AntennaRedundantHipDiagonalBoltGrade2) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHipDiagonalBoltGrade2=" & .AntennaRedundantHipDiagonalBoltGrade2)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize2))
                             End If
                             newERIList.Add("AntennaRedundantHipDiagonalNumBolts2=" & .AntennaRedundantHipDiagonalNumBolts2)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct2))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct2)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct2))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor2)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalUFactor2=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor2))
+                            If Not IsNothing(.AntennaRedundantHipDiagonalUFactor2) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalUFactor2=" & .AntennaRedundantHipDiagonalUFactor2)
                             End If
                             If IsSomethingString(.AntennaRedundantHipDiagonalBoltGrade3) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHipDiagonalBoltGrade3=" & .AntennaRedundantHipDiagonalBoltGrade3)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize3))
                             End If
                             newERIList.Add("AntennaRedundantHipDiagonalNumBolts3=" & .AntennaRedundantHipDiagonalNumBolts3)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct3))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct3)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct3))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor3)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalUFactor3=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor3))
+                            If Not IsNothing(.AntennaRedundantHipDiagonalUFactor3) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalUFactor3=" & .AntennaRedundantHipDiagonalUFactor3)
                             End If
                             If IsSomethingString(.AntennaRedundantHipDiagonalBoltGrade4) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantHipDiagonalBoltGrade4=" & .AntennaRedundantHipDiagonalBoltGrade4)
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltSize4))
                             End If
                             newERIList.Add("AntennaRedundantHipDiagonalNumBolts4=" & .AntennaRedundantHipDiagonalNumBolts4)
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalBoltEdgeDistance4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalGageG1Distance4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct4))
+                            If Not IsNothing(Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct4)) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.AntennaRedundantHipDiagonalNetWidthDeduct4))
                             End If
-                            If Not IsNothing(Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor4)) Then 'This field does not get saved when generated from CCIpole
-                                newERIList.Add("AntennaRedundantHipDiagonalUFactor4=" & Me.settings.USUnits.Strength.convertToERIUnits(.AntennaRedundantHipDiagonalUFactor4))
+                            If Not IsNothing(.AntennaRedundantHipDiagonalUFactor4) Then 'This field does not get saved when generated from CCIpole
+                                newERIList.Add("AntennaRedundantHipDiagonalUFactor4=" & .AntennaRedundantHipDiagonalUFactor4)
                             End If
                             If IsSomethingString(.AntennaRedundantDiagonalType) Then 'This field does not get saved when generated from CCIpole
                                 newERIList.Add("AntennaRedundantDiagonalType=" & .AntennaRedundantDiagonalType)
@@ -12385,112 +12385,112 @@ Partial Public Class tnxModel
                             newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltEdgeDistance1))
                             newERIList.Add("TowerRedundantHorizontalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGageG1Distance1))
                             newERIList.Add("TowerRedundantHorizontalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalNetWidthDeduct1))
-                            newERIList.Add("TowerRedundantHorizontalUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalUFactor1))
+                            newERIList.Add("TowerRedundantHorizontalUFactor1=" & .TowerRedundantHorizontalUFactor1)
                             newERIList.Add("TowerRedundantHorizontalBoltGrade2=" & .TowerRedundantHorizontalBoltGrade2)
                             newERIList.Add("TowerRedundantHorizontalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltSize2))
                             newERIList.Add("TowerRedundantHorizontalNumBolts2=" & .TowerRedundantHorizontalNumBolts2)
                             newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltEdgeDistance2))
                             newERIList.Add("TowerRedundantHorizontalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGageG1Distance2))
                             newERIList.Add("TowerRedundantHorizontalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalNetWidthDeduct2))
-                            newERIList.Add("TowerRedundantHorizontalUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalUFactor2))
+                            newERIList.Add("TowerRedundantHorizontalUFactor2=" & .TowerRedundantHorizontalUFactor2)
                             newERIList.Add("TowerRedundantHorizontalBoltGrade3=" & .TowerRedundantHorizontalBoltGrade3)
                             newERIList.Add("TowerRedundantHorizontalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltSize3))
                             newERIList.Add("TowerRedundantHorizontalNumBolts3=" & .TowerRedundantHorizontalNumBolts3)
                             newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltEdgeDistance3))
                             newERIList.Add("TowerRedundantHorizontalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGageG1Distance3))
                             newERIList.Add("TowerRedundantHorizontalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalNetWidthDeduct3))
-                            newERIList.Add("TowerRedundantHorizontalUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalUFactor3))
+                            newERIList.Add("TowerRedundantHorizontalUFactor3=" & .TowerRedundantHorizontalUFactor3)
                             newERIList.Add("TowerRedundantHorizontalBoltGrade4=" & .TowerRedundantHorizontalBoltGrade4)
                             newERIList.Add("TowerRedundantHorizontalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltSize4))
                             newERIList.Add("TowerRedundantHorizontalNumBolts4=" & .TowerRedundantHorizontalNumBolts4)
                             newERIList.Add("TowerRedundantHorizontalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalBoltEdgeDistance4))
                             newERIList.Add("TowerRedundantHorizontalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalGageG1Distance4))
                             newERIList.Add("TowerRedundantHorizontalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalNetWidthDeduct4))
-                            newERIList.Add("TowerRedundantHorizontalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHorizontalUFactor4))
+                            newERIList.Add("TowerRedundantHorizontalUFactor4=" & .TowerRedundantHorizontalUFactor4)
                             newERIList.Add("TowerRedundantDiagonalBoltGrade1=" & .TowerRedundantDiagonalBoltGrade1)
                             newERIList.Add("TowerRedundantDiagonalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltSize1))
                             newERIList.Add("TowerRedundantDiagonalNumBolts1=" & .TowerRedundantDiagonalNumBolts1)
                             newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltEdgeDistance1))
                             newERIList.Add("TowerRedundantDiagonalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGageG1Distance1))
                             newERIList.Add("TowerRedundantDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalNetWidthDeduct1))
-                            newERIList.Add("TowerRedundantDiagonalUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalUFactor1))
+                            newERIList.Add("TowerRedundantDiagonalUFactor1=" & .TowerRedundantDiagonalUFactor1)
                             newERIList.Add("TowerRedundantDiagonalBoltGrade2=" & .TowerRedundantDiagonalBoltGrade2)
                             newERIList.Add("TowerRedundantDiagonalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltSize2))
                             newERIList.Add("TowerRedundantDiagonalNumBolts2=" & .TowerRedundantDiagonalNumBolts2)
                             newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltEdgeDistance2))
                             newERIList.Add("TowerRedundantDiagonalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGageG1Distance2))
                             newERIList.Add("TowerRedundantDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalNetWidthDeduct2))
-                            newERIList.Add("TowerRedundantDiagonalUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalUFactor2))
+                            newERIList.Add("TowerRedundantDiagonalUFactor2=" & .TowerRedundantDiagonalUFactor2)
                             newERIList.Add("TowerRedundantDiagonalBoltGrade3=" & .TowerRedundantDiagonalBoltGrade3)
                             newERIList.Add("TowerRedundantDiagonalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltSize3))
                             newERIList.Add("TowerRedundantDiagonalNumBolts3=" & .TowerRedundantDiagonalNumBolts3)
                             newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltEdgeDistance3))
                             newERIList.Add("TowerRedundantDiagonalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGageG1Distance3))
                             newERIList.Add("TowerRedundantDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalNetWidthDeduct3))
-                            newERIList.Add("TowerRedundantDiagonalUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalUFactor3))
+                            newERIList.Add("TowerRedundantDiagonalUFactor3=" & .TowerRedundantDiagonalUFactor3)
                             newERIList.Add("TowerRedundantDiagonalBoltGrade4=" & .TowerRedundantDiagonalBoltGrade4)
                             newERIList.Add("TowerRedundantDiagonalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltSize4))
                             newERIList.Add("TowerRedundantDiagonalNumBolts4=" & .TowerRedundantDiagonalNumBolts4)
                             newERIList.Add("TowerRedundantDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalBoltEdgeDistance4))
                             newERIList.Add("TowerRedundantDiagonalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalGageG1Distance4))
                             newERIList.Add("TowerRedundantDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalNetWidthDeduct4))
-                            newERIList.Add("TowerRedundantDiagonalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantDiagonalUFactor4))
+                            newERIList.Add("TowerRedundantDiagonalUFactor4=" & .TowerRedundantDiagonalUFactor4)
                             newERIList.Add("TowerRedundantHipBoltGrade1=" & .TowerRedundantHipBoltGrade1)
                             newERIList.Add("TowerRedundantHipBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltSize1))
                             newERIList.Add("TowerRedundantHipNumBolts1=" & .TowerRedundantHipNumBolts1)
                             newERIList.Add("TowerRedundantHipBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltEdgeDistance1))
                             newERIList.Add("TowerRedundantHipGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGageG1Distance1))
                             newERIList.Add("TowerRedundantHipNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipNetWidthDeduct1))
-                            newERIList.Add("TowerRedundantHipUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipUFactor1))
+                            newERIList.Add("TowerRedundantHipUFactor1=" & .TowerRedundantHipUFactor1)
                             newERIList.Add("TowerRedundantHipBoltGrade2=" & .TowerRedundantHipBoltGrade2)
                             newERIList.Add("TowerRedundantHipBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltSize2))
                             newERIList.Add("TowerRedundantHipNumBolts2=" & .TowerRedundantHipNumBolts2)
                             newERIList.Add("TowerRedundantHipBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltEdgeDistance2))
                             newERIList.Add("TowerRedundantHipGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGageG1Distance2))
                             newERIList.Add("TowerRedundantHipNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipNetWidthDeduct2))
-                            newERIList.Add("TowerRedundantHipUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipUFactor2))
+                            newERIList.Add("TowerRedundantHipUFactor2=" & .TowerRedundantHipUFactor2)
                             newERIList.Add("TowerRedundantHipBoltGrade3=" & .TowerRedundantHipBoltGrade3)
                             newERIList.Add("TowerRedundantHipBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltSize3))
                             newERIList.Add("TowerRedundantHipNumBolts3=" & .TowerRedundantHipNumBolts3)
                             newERIList.Add("TowerRedundantHipBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltEdgeDistance3))
                             newERIList.Add("TowerRedundantHipGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGageG1Distance3))
                             newERIList.Add("TowerRedundantHipNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipNetWidthDeduct3))
-                            newERIList.Add("TowerRedundantHipUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipUFactor3))
+                            newERIList.Add("TowerRedundantHipUFactor3=" & .TowerRedundantHipUFactor3)
                             newERIList.Add("TowerRedundantHipBoltGrade4=" & .TowerRedundantHipBoltGrade4)
                             newERIList.Add("TowerRedundantHipBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltSize4))
                             newERIList.Add("TowerRedundantHipNumBolts4=" & .TowerRedundantHipNumBolts4)
                             newERIList.Add("TowerRedundantHipBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipBoltEdgeDistance4))
                             newERIList.Add("TowerRedundantHipGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipGageG1Distance4))
                             newERIList.Add("TowerRedundantHipNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipNetWidthDeduct4))
-                            newERIList.Add("TowerRedundantHipUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipUFactor4))
+                            newERIList.Add("TowerRedundantHipUFactor4=" & .TowerRedundantHipUFactor4)
                             newERIList.Add("TowerRedundantHipDiagonalBoltGrade1=" & .TowerRedundantHipDiagonalBoltGrade1)
                             newERIList.Add("TowerRedundantHipDiagonalBoltSize1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltSize1))
                             newERIList.Add("TowerRedundantHipDiagonalNumBolts1=" & .TowerRedundantHipDiagonalNumBolts1)
                             newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltEdgeDistance1))
                             newERIList.Add("TowerRedundantHipDiagonalGageG1Distance1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGageG1Distance1))
                             newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalNetWidthDeduct1))
-                            newERIList.Add("TowerRedundantHipDiagonalUFactor1=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalUFactor1))
+                            newERIList.Add("TowerRedundantHipDiagonalUFactor1=" & .TowerRedundantHipDiagonalUFactor1)
                             newERIList.Add("TowerRedundantHipDiagonalBoltGrade2=" & .TowerRedundantHipDiagonalBoltGrade2)
                             newERIList.Add("TowerRedundantHipDiagonalBoltSize2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltSize2))
                             newERIList.Add("TowerRedundantHipDiagonalNumBolts2=" & .TowerRedundantHipDiagonalNumBolts2)
                             newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltEdgeDistance2))
                             newERIList.Add("TowerRedundantHipDiagonalGageG1Distance2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGageG1Distance2))
                             newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalNetWidthDeduct2))
-                            newERIList.Add("TowerRedundantHipDiagonalUFactor2=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalUFactor2))
+                            newERIList.Add("TowerRedundantHipDiagonalUFactor2=" & .TowerRedundantHipDiagonalUFactor2)
                             newERIList.Add("TowerRedundantHipDiagonalBoltGrade3=" & .TowerRedundantHipDiagonalBoltGrade3)
                             newERIList.Add("TowerRedundantHipDiagonalBoltSize3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltSize3))
                             newERIList.Add("TowerRedundantHipDiagonalNumBolts3=" & .TowerRedundantHipDiagonalNumBolts3)
                             newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltEdgeDistance3))
                             newERIList.Add("TowerRedundantHipDiagonalGageG1Distance3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGageG1Distance3))
                             newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalNetWidthDeduct3))
-                            newERIList.Add("TowerRedundantHipDiagonalUFactor3=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalUFactor3))
+                            newERIList.Add("TowerRedundantHipDiagonalUFactor3=" & .TowerRedundantHipDiagonalUFactor3)
                             newERIList.Add("TowerRedundantHipDiagonalBoltGrade4=" & .TowerRedundantHipDiagonalBoltGrade4)
                             newERIList.Add("TowerRedundantHipDiagonalBoltSize4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltSize4))
                             newERIList.Add("TowerRedundantHipDiagonalNumBolts4=" & .TowerRedundantHipDiagonalNumBolts4)
                             newERIList.Add("TowerRedundantHipDiagonalBoltEdgeDistance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalBoltEdgeDistance4))
                             newERIList.Add("TowerRedundantHipDiagonalGageG1Distance4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalGageG1Distance4))
                             newERIList.Add("TowerRedundantHipDiagonalNetWidthDeduct4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalNetWidthDeduct4))
-                            newERIList.Add("TowerRedundantHipDiagonalUFactor4=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerRedundantHipDiagonalUFactor4))
+                            newERIList.Add("TowerRedundantHipDiagonalUFactor4=" & .TowerRedundantHipDiagonalUFactor4)
                             newERIList.Add("TowerRedundantDiagonalType=" & .TowerRedundantDiagonalType)
                             newERIList.Add("TowerRedundantDiagonalType2=" & .TowerRedundantDiagonalType2)
                             newERIList.Add("TowerRedundantDiagonalType3=" & .TowerRedundantDiagonalType3)
