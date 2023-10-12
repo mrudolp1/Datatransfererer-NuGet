@@ -454,7 +454,13 @@ Partial Public Class CCISeismic
             Me.sdc = DBtoStr(dr.Item("sdc"))
         Catch ex As Exception
         End Try
-        Me.design_code = DBtoStr(dr.Item("design_code"))
+
+        Try
+            Me.design_code = DBtoStr(dr.Item("design_code"))
+        Catch ex As Exception
+            Me.design_code = Nothing
+        End Try
+
 
     End Sub
 
