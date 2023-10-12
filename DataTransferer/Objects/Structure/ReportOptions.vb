@@ -1744,7 +1744,12 @@ Public Class TableDocument
         Document = doc
         Reference = ref
         Source = src
-        _valid = val
+        Try
+            _valid = val
+        Catch ex As Exception
+            _valid = False
+        End Try
+
 
     End Sub
 
