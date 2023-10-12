@@ -4,6 +4,31 @@ Imports System.ComponentModel
 Imports DevExpress.Spreadsheet
 Imports System.Runtime.Serialization
 
+''Adding fields to Seismic
+''1. Excel
+''  -Add field to Details (Sapi) tab
+''      -take note of new table range since this needs updated in datatransferer
+''  -make sure to update:
+''      -Revision History: notes refer to 'internal database'
+''      -Import Ranges: add additional column associated to version number and then click 'set document properties'
+''2. Datatransferer
+''  -Inheritted: increase table range for ExcelDTParams per Details (Sapi) tab
+''  -Add associated fields to
+''      -Define
+''      -Constructor: make sure to add as a try/catch so older sapi version remain compatible
+''      -Save to Excel: make sure to handle null values since new field won't include data for anything existing in database
+''      -Save to EDS 
+''      -Equals
+''3.Add SQL Column
+''  -Add only to EDS Dev
+''  -Save query in the corresponding folder for the current sprint
+''  - C:\Users\%username%\Crown Castle USA Inc\ECS - Tools\Database Changes
+''      -this will be referenced for updating EDS UAT and EDS PROD
+''***Code change note***
+''  -requires updating Save to Excel section (search code_change) and Excel VBA z_EDS_Connection module
+''  -Goal is to run USGS with default values within the applicable code
+
+
 <DataContractAttribute()>
 Partial Public Class CCISeismic
     Inherits EDSExcelObject
@@ -539,7 +564,7 @@ Partial Public Class CCISeismic
 
             'Check for code change. Code change will invalidate Site Soil and Risk Category and seismic values (Ss, S1 and TL) pulled in from EDS. 
             'When code change occurs, going to assume default values to rerun USGS and continue analysis
-            If Not IsNothing(design_code) Then
+            If IsSomethingString(design_code) Then
                 If design_code <> tia_current Then
                     code_change = True
                     .Worksheets("Details (SAPI)").Range("A4").Value = CType(True, Boolean)
