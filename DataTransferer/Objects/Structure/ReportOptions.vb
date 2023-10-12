@@ -1114,8 +1114,18 @@ Public Class ReportOptions
                 where dim.ctry_id = 'US'
                     and dim.doc_type_num = dtm.doc_type_num
                     and dim.otg_app_num = dtm.otg_app_num
+                    and dim.doc_id=t.doc_id(+)
+                    and dim.bus_unit in ('" & bus_unit & "')
+                    and dtm.doc_type_name IN ('4-GEOTECHNICAL REPORTS', '4-TOWER MANUFACTURER DRAWINGS', '4-TOWER FOUNDATION DRAWINGS/DESIGN/SPECS')
+UNION
+select dtm.doc_type_name doc_name, dim.doc_id doc_id, doc_actvy_status_lkup_code validity
+                from gds_objects.document_indx_mv dim, gds_objects.document_type_mv dtm, aim.document_activity t
+                where dim.ctry_id = 'US'
+                    and dim.doc_type_num = dtm.doc_type_num
+                    and dim.otg_app_num = dtm.otg_app_num
                     and dim.doc_id=t.doc_id
                     and dim.bus_unit in ('" & bus_unit & "')
+                    and dtm.doc_type_name NOT IN ('4-GEOTECHNICAL REPORTS', '4-TOWER MANUFACTURER DRAWINGS', '4-TOWER FOUNDATION DRAWINGS/DESIGN/SPECS') 
                     and dtm.doc_type_name LIKE '4-%'"
         Dim orList As New List(Of TableDocument)
 
