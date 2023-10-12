@@ -533,7 +533,7 @@ Partial Public Class CCISeismic
 
             'Check for code change. Code change will invalidate Site Soil and Risk Category and seismic values (Ss, S1 and TL) pulled in from EDS. 
             'When code change occurs, going to assume default values to rerun USGS and continue analysis
-            If Not IsNothing(design_code) Then
+            If IsSomethingString(design_code) Then
                 If design_code <> tia_current Then
                     code_change = True
                     .Worksheets("Details (SAPI)").Range("A4").Value = CType(True, Boolean)
