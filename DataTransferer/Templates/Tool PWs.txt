@@ -55,6 +55,13 @@ UNLOCK WORKBOOK:
 
 *************CCIPlate*****************
 UNLOCK VBA:
+(Current)
+Crown!
+
+(4.2.9)
+CCIplate!12
+
+(Old)
   x]5qD@{​​7jY.3M19xM>z8]{​​​​​​​​​{​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​ x
  
 UNLOCK WORKBOOK:
