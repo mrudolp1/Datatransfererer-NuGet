@@ -1109,7 +1109,7 @@ Public Class ReportOptions
             "4-TOWER REINFORCEMENT DESIGN/DRAWINGS/DATA",
             "4-POST-MODIFICATION INSPECTION"})
 
-        Dim doc_query = "select dtm.doc_type_name doc_name, dim.doc_id doc_id, doc_actvy_status_lkup_code validity
+        Dim doc_query = "select dtm.doc_type_name doc_name, dim.doc_id doc_id, CASE WHEN doc_actvy_status_lkup_code IS NULL THEN 'NOVAL' ELSE doc_actvy_status_lkup_code END validity
                 from gds_objects.document_indx_mv dim, gds_objects.document_type_mv dtm, aim.document_activity t
                 where dim.ctry_id = 'US'
                     and dim.doc_type_num = dtm.doc_type_num
@@ -1134,7 +1134,7 @@ select dtm.doc_type_name doc_name, dim.doc_id doc_id, doc_actvy_status_lkup_code
 
             For Each item In strDS.Tables("Documents").Rows
                 Dim t As TableDocument =
-                    New TableDocument(item("doc_name"), item("doc_id"), "CCISITES", item("validity") = "VALID")
+                    New TableDocument(item("doc_name"), item("doc_id"), "CCISITES", IIf(IsDBNull(item("validity")), False, item("validity") = "VALID"))
                 If (Golden.Contains(t.Document) And t.Valid) Then
                     t.Enabled = True
                 End If
@@ -1744,12 +1744,20 @@ Public Class TableDocument
         Document = doc
         Reference = ref
         Source = src
+        'Try
+        '    _valid = val
+        'Catch ex As Exception
+        '    _valid = False
+        'End Try
         Try
-            _valid = val
+            If IsDBNull(val) Then
+                _valid = False
+            Else
+                _valid = val
+            End If
         Catch ex As Exception
             _valid = False
         End Try
-
 
     End Sub
 

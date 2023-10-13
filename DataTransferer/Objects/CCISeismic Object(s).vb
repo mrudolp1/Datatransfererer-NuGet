@@ -148,7 +148,7 @@ Partial Public Class CCISeismic
     Private _design_code As String
 
     <Category("Seismic"), Description(""), DisplayName("Lat Sign")>
-     <DataMember()> Public Property lat_sign() As String
+    <DataMember()> Public Property lat_sign() As String
         Get
             Return Me._lat_sign
         End Get
@@ -157,7 +157,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Lat Deg")>
-     <DataMember()> Public Property lat_deg() As Integer?
+    <DataMember()> Public Property lat_deg() As Integer?
         Get
             Return Me._lat_deg
         End Get
@@ -166,7 +166,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Lat Min")>
-     <DataMember()> Public Property lat_min() As Integer?
+    <DataMember()> Public Property lat_min() As Integer?
         Get
             Return Me._lat_min
         End Get
@@ -175,7 +175,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Lat Sec")>
-     <DataMember()> Public Property lat_sec() As Double?
+    <DataMember()> Public Property lat_sec() As Double?
         Get
             Return Me._lat_sec
         End Get
@@ -184,7 +184,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Long Sign")>
-     <DataMember()> Public Property long_sign() As String
+    <DataMember()> Public Property long_sign() As String
         Get
             Return Me._long_sign
         End Get
@@ -193,7 +193,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Long Deg")>
-     <DataMember()> Public Property long_deg() As Integer?
+    <DataMember()> Public Property long_deg() As Integer?
         Get
             Return Me._long_deg
         End Get
@@ -202,7 +202,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Long Min")>
-     <DataMember()> Public Property long_min() As Integer?
+    <DataMember()> Public Property long_min() As Integer?
         Get
             Return Me._long_min
         End Get
@@ -211,7 +211,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Long Sec")>
-     <DataMember()> Public Property long_sec() As Double?
+    <DataMember()> Public Property long_sec() As Double?
         Get
             Return Me._long_sec
         End Get
@@ -220,7 +220,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Use Asce")>
-     <DataMember()> Public Property use_asce() As Boolean?
+    <DataMember()> Public Property use_asce() As Boolean?
         Get
             Return Me._use_asce
         End Get
@@ -229,7 +229,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Site Soil")>
-     <DataMember()> Public Property site_soil() As String
+    <DataMember()> Public Property site_soil() As String
         Get
             Return Me._site_soil
         End Get
@@ -238,7 +238,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Risk Category")>
-     <DataMember()> Public Property risk_category() As String
+    <DataMember()> Public Property risk_category() As String
         Get
             Return Me._risk_category
         End Get
@@ -247,7 +247,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Ss")>
-     <DataMember()> Public Property ss() As Double?
+    <DataMember()> Public Property ss() As Double?
         Get
             Return Me._ss
         End Get
@@ -256,7 +256,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("S1")>
-     <DataMember()> Public Property s1() As Double?
+    <DataMember()> Public Property s1() As Double?
         Get
             Return Me._s1
         End Get
@@ -265,7 +265,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Tl")>
-     <DataMember()> Public Property tl() As Double?
+    <DataMember()> Public Property tl() As Double?
         Get
             Return Me._tl
         End Get
@@ -274,7 +274,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Importance Factor Override")>
-     <DataMember()> Public Property importance_factor_override() As Boolean?
+    <DataMember()> Public Property importance_factor_override() As Boolean?
         Get
             Return Me._importance_factor_override
         End Get
@@ -283,7 +283,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Importance Factor User")>
-     <DataMember()> Public Property importance_factor_user() As Double?
+    <DataMember()> Public Property importance_factor_user() As Double?
         Get
             Return Me._importance_factor_user
         End Get
@@ -292,7 +292,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Response Accel Override")>
-     <DataMember()> Public Property response_accel_override() As Boolean?
+    <DataMember()> Public Property response_accel_override() As Boolean?
         Get
             Return Me._response_accel_override
         End Get
@@ -301,7 +301,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Sds User")>
-     <DataMember()> Public Property sds_user() As Double?
+    <DataMember()> Public Property sds_user() As Double?
         Get
             Return Me._sds_user
         End Get
@@ -310,7 +310,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Sd1 User")>
-     <DataMember()> Public Property sd1_user() As Double?
+    <DataMember()> Public Property sd1_user() As Double?
         Get
             Return Me._sd1_user
         End Get
@@ -319,7 +319,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Amp Factor")>
-     <DataMember()> Public Property amp_factor() As Double?
+    <DataMember()> Public Property amp_factor() As Double?
         Get
             Return Me._amp_factor
         End Get
@@ -328,7 +328,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Tia Approx Period")>
-     <DataMember()> Public Property tia_approx_period() As Boolean?
+    <DataMember()> Public Property tia_approx_period() As Boolean?
         Get
             Return Me._tia_approx_period
         End Get
@@ -337,7 +337,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Fundamental Period User")>
-     <DataMember()> Public Property fundamental_period_user() As Double?
+    <DataMember()> Public Property fundamental_period_user() As Double?
         Get
             Return Me._fundamental_period_user
         End Get
@@ -346,7 +346,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("MP Density Override")>
-     <DataMember()> Public Property mp_density_override() As Boolean?
+    <DataMember()> Public Property mp_density_override() As Boolean?
         Get
             Return Me._mp_density_override
         End Get
@@ -355,7 +355,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Density Tower Material")>
-     <DataMember()> Public Property density_tower_material() As Double?
+    <DataMember()> Public Property density_tower_material() As Double?
         Get
             Return Me._density_tower_material
         End Get
@@ -364,7 +364,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Elasticity")>
-     <DataMember()> Public Property elasticity() As Double?
+    <DataMember()> Public Property elasticity() As Double?
         Get
             Return Me._elasticity
         End Get
@@ -373,7 +373,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Create Seismic Loads")>
-     <DataMember()> Public Property create_seismic_loads() As Boolean?
+    <DataMember()> Public Property create_seismic_loads() As Boolean?
         Get
             Return Me._create_seismic_loads
         End Get
@@ -382,7 +382,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("User Force Appurtenance")>
-     <DataMember()> Public Property user_force_appurtenance() As Boolean?
+    <DataMember()> Public Property user_force_appurtenance() As Boolean?
         Get
             Return Me._user_force_appurtenance
         End Get
