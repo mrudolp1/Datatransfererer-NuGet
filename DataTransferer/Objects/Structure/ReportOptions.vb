@@ -1109,13 +1109,23 @@ Public Class ReportOptions
             "4-TOWER REINFORCEMENT DESIGN/DRAWINGS/DATA",
             "4-POST-MODIFICATION INSPECTION"})
 
-        Dim doc_query = "select dtm.doc_type_name doc_name, dim.doc_id doc_id, doc_actvy_status_lkup_code validity
+        Dim doc_query = "select dtm.doc_type_name doc_name, dim.doc_id doc_id, CASE WHEN doc_actvy_status_lkup_code IS NULL THEN 'NOVAL' ELSE doc_actvy_status_lkup_code END validity
+                from gds_objects.document_indx_mv dim, gds_objects.document_type_mv dtm, aim.document_activity t
+                where dim.ctry_id = 'US'
+                    and dim.doc_type_num = dtm.doc_type_num
+                    and dim.otg_app_num = dtm.otg_app_num
+                    and dim.doc_id=t.doc_id(+)
+                    and dim.bus_unit in ('" & bus_unit & "')
+                    and dtm.doc_type_name IN ('4-GEOTECHNICAL REPORTS', '4-TOWER MANUFACTURER DRAWINGS', '4-TOWER FOUNDATION DRAWINGS/DESIGN/SPECS')
+UNION
+select dtm.doc_type_name doc_name, dim.doc_id doc_id, doc_actvy_status_lkup_code validity
                 from gds_objects.document_indx_mv dim, gds_objects.document_type_mv dtm, aim.document_activity t
                 where dim.ctry_id = 'US'
                     and dim.doc_type_num = dtm.doc_type_num
                     and dim.otg_app_num = dtm.otg_app_num
                     and dim.doc_id=t.doc_id
                     and dim.bus_unit in ('" & bus_unit & "')
+                    and dtm.doc_type_name NOT IN ('4-GEOTECHNICAL REPORTS', '4-TOWER MANUFACTURER DRAWINGS', '4-TOWER FOUNDATION DRAWINGS/DESIGN/SPECS') 
                     and dtm.doc_type_name LIKE '4-%'"
         Dim orList As New List(Of TableDocument)
 
@@ -1124,7 +1134,7 @@ Public Class ReportOptions
 
             For Each item In strDS.Tables("Documents").Rows
                 Dim t As TableDocument =
-                    New TableDocument(item("doc_name"), item("doc_id"), "CCISITES", item("validity") = "VALID")
+                    New TableDocument(item("doc_name"), item("doc_id"), "CCISITES", IIf(IsDBNull(item("validity")), False, item("validity") = "VALID"))
                 If (Golden.Contains(t.Document) And t.Valid) Then
                     t.Enabled = True
                 End If
@@ -1734,7 +1744,20 @@ Public Class TableDocument
         Document = doc
         Reference = ref
         Source = src
-        _valid = val
+        'Try
+        '    _valid = val
+        'Catch ex As Exception
+        '    _valid = False
+        'End Try
+        Try
+            If IsDBNull(val) Then
+                _valid = False
+            Else
+                _valid = val
+            End If
+        Catch ex As Exception
+            _valid = False
+        End Try
 
     End Sub
 
