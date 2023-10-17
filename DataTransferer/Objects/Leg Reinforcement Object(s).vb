@@ -4,6 +4,27 @@ Imports System.ComponentModel
 Imports System.Runtime.Serialization
 Imports DevExpress.Spreadsheet
 
+''Adding fields to Leg Reinforcement
+''1. Excel
+''  -Add field to Sub Tables (Sapi) tab
+''      -take note of new table range since this needs updated in datatransferer
+''  -make sure to update:
+''      -Revision History: notes refer to 'internal database'
+''      -Import Ranges: add additional column associated to version number and then click 'set document properties'
+''2. Datatransferer
+''  -Inheritted: increase table range for ExcelDTParams per Details (Sapi) tab
+''  -Add associated fields to
+''      -Define
+''      -Constructor: make sure to add as a try/catch so older sapi version remain compatible
+''      -Save to Excel: make sure to handle null values since new field won't include data for anything existing in database
+''      -Save to EDS 
+''      -Equals
+''3.Add SQL Column
+''  -Add only to EDS Dev
+''  -Save query in the corresponding folder for the current sprint
+''  - C:\Users\%username%\Crown Castle USA Inc\ECS - Tools\Database Changes
+''      -this will be referenced for updating EDS UAT and EDS PROD
+
 <DataContractAttribute()>
 Partial Public Class LegReinforcement
     Inherits EDSExcelObject
@@ -34,7 +55,7 @@ Partial Public Class LegReinforcement
         'Add additional sub table references here. Table names should be consistent with EDS table names. 
         Get
             Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Leg Reinforcements", "A1:C2", "Details (SAPI)"),
-                                            New EXCELDTParameter("Leg Reinforcement Details", "A1:AX201", "Sub Tables (SAPI)"),
+                                            New EXCELDTParameter("Leg Reinforcement Details", "A1:AY201", "Sub Tables (SAPI)"),
                                             New EXCELDTParameter("Leg Reinforcement Results", "A2:D202", "Results (SAPI)")}
 
             'note: Excel table names are consistent with EDS table names to limit work required within constructors
@@ -93,7 +114,7 @@ Partial Public Class LegReinforcement
             For Each row As LegReinforcementDetail In LegReinforcementDetails
                 If IsSomething(row.ID) Then 'If ID exists within Excel, layer exists in EDS and either update or delete should be performed. Otherwise, insert new record. 
                     'following fields include default values and therefore are removed from check below: end_connection_type, applied_load_type, slenderness_ratio_type, print_bolt_on_connections, reinforcement_type
-                    If IsSomething(row.leg_load_time_mod_option) Or IsSomething(row.leg_crushing) Or IsSomethingString(row.intermeditate_connection_type) Or IsSomething(row.intermeditate_connection_spacing) Or IsSomething(row.ki_override) Or IsSomething(row.leg_diameter) Or IsSomething(row.leg_thickness) Or IsSomething(row.leg_grade) Or IsSomething(row.leg_unbraced_length) Or IsSomething(row.rein_diameter) Or IsSomething(row.rein_thickness) Or IsSomething(row.rein_grade) Or IsSomething(row.leg_length) Or IsSomething(row.rein_length) Or IsSomething(row.set_top_to_bottom) Or IsSomething(row.flange_bolt_quantity_bot) Or IsSomething(row.flange_bolt_circle_bot) Or IsSomething(row.flange_bolt_orientation_bot) Or IsSomething(row.flange_bolt_quantity_top) Or IsSomething(row.flange_bolt_circle_top) Or IsSomething(row.flange_bolt_orientation_top) Or IsSomethingString(row.threaded_rod_size_bot) Or IsSomethingString(row.threaded_rod_mat_bot) Or IsSomething(row.threaded_rod_quantity_bot) Or IsSomething(row.threaded_rod_unbraced_length_bot) Or IsSomethingString(row.threaded_rod_size_top) Or IsSomethingString(row.threaded_rod_mat_top) Or IsSomething(row.threaded_rod_quantity_top) Or IsSomething(row.threaded_rod_unbraced_length_top) Or IsSomething(row.stiffener_height_bot) Or IsSomething(row.stiffener_length_bot) Or IsSomething(row.stiffener_fillet_bot) Or IsSomething(row.stiffener_exx_bot) Or IsSomething(row.flange_thickness_bot) Or IsSomething(row.stiffener_height_top) Or IsSomething(row.stiffener_length_top) Or IsSomething(row.stiffener_fillet_top) Or IsSomething(row.stiffener_exx_top) Or IsSomething(row.flange_thickness_top) Or IsSomethingString(row.structure_ind) Or IsSomethingString(row.leg_reinforcement_name) Or IsSomething(row.top_elev) Or IsSomething(row.bot_elev) Then
+                    If IsSomethingString(row.create_leg) And (IsSomething(row.leg_load_time_mod_option) Or IsSomething(row.leg_crushing) Or IsSomethingString(row.intermeditate_connection_type) Or IsSomething(row.intermeditate_connection_spacing) Or IsSomething(row.ki_override) Or IsSomething(row.leg_diameter) Or IsSomething(row.leg_thickness) Or IsSomething(row.leg_grade) Or IsSomething(row.leg_unbraced_length) Or IsSomething(row.rein_diameter) Or IsSomething(row.rein_thickness) Or IsSomething(row.rein_grade) Or IsSomething(row.leg_length) Or IsSomething(row.rein_length) Or IsSomething(row.set_top_to_bottom) Or IsSomething(row.flange_bolt_quantity_bot) Or IsSomething(row.flange_bolt_circle_bot) Or IsSomething(row.flange_bolt_orientation_bot) Or IsSomething(row.flange_bolt_quantity_top) Or IsSomething(row.flange_bolt_circle_top) Or IsSomething(row.flange_bolt_orientation_top) Or IsSomethingString(row.threaded_rod_size_bot) Or IsSomethingString(row.threaded_rod_mat_bot) Or IsSomething(row.threaded_rod_quantity_bot) Or IsSomething(row.threaded_rod_unbraced_length_bot) Or IsSomethingString(row.threaded_rod_size_top) Or IsSomethingString(row.threaded_rod_mat_top) Or IsSomething(row.threaded_rod_quantity_top) Or IsSomething(row.threaded_rod_unbraced_length_top) Or IsSomething(row.stiffener_height_bot) Or IsSomething(row.stiffener_length_bot) Or IsSomething(row.stiffener_fillet_bot) Or IsSomething(row.stiffener_exx_bot) Or IsSomething(row.flange_thickness_bot) Or IsSomething(row.stiffener_height_top) Or IsSomething(row.stiffener_length_top) Or IsSomething(row.stiffener_fillet_top) Or IsSomething(row.stiffener_exx_top) Or IsSomething(row.flange_thickness_top) Or IsSomethingString(row.structure_ind) Or IsSomethingString(row.leg_reinforcement_name) Or IsSomething(row.top_elev) Or IsSomething(row.bot_elev)) Then
                         SQLUpdate = SQLUpdate.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLUpdate)
                         SQLUpdate = SQLUpdate.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL UPDATE BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL UPDATE BEGIN]")
                         SQLUpdate = SQLUpdate.Replace("--END --[LEG REINFORCEMENT DETAIL UPDATE END]", "END --[LEG REINFORCEMENT DETAIL UPDATE END]")
@@ -807,12 +828,13 @@ Partial Public Class LegReinforcementDetail
     Private _stiffener_fillet_top As Integer?
     Private _stiffener_exx_top As Double?
     Private _flange_thickness_top As Double?
-    Private _structure_ind As String
+    Private _structure_ind As String 'Indicator used to differentiate between upper and lower structure. Currently not implemented. 
     Private _reinforcement_type As String
     Private _leg_reinforcement_name As String
     Private _local_id As Integer?
     Private _top_elev As Double?
     Private _bot_elev As Double?
+    Private _create_leg As String 'excel only field
 
     <Category("Leg Reinforcement Details"), Description(""), DisplayName("Leg Reinforcement Id")>
     <DataMember()> Public Property leg_reinforcement_id() As Integer?
@@ -1264,6 +1286,15 @@ Partial Public Class LegReinforcementDetail
             Me._bot_elev = Value
         End Set
     End Property
+    <Category("Leg Reinforcement Details"), Description(""), DisplayName("Create Leg")>
+    <DataMember()> Public Property create_leg() As String
+        Get
+            Return Me._create_leg
+        End Get
+        Set
+            Me._create_leg = Value
+        End Set
+    End Property
 
 #End Region
 
@@ -1337,6 +1368,13 @@ Partial Public Class LegReinforcementDetail
         Me.top_elev = DBtoNullableDbl(dr.Item("top_elev"))
         Me.bot_elev = DBtoNullableDbl(dr.Item("bot_elev"))
 
+        If EDStruefalse = False Then 'Only Pull in when referencing Excel
+            Try
+                Me.create_leg = DBtoStr(dr.Item("create_leg"))
+            Catch ex As Exception
+                Me.create_leg = Nothing
+            End Try
+        End If
 
         'only store when populating from an Excel sheet
         If EDStruefalse = False Then
