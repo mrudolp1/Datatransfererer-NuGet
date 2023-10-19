@@ -9441,7 +9441,14 @@ Partial Public Class tnxModel
 
         Next
 
-        Me.GetResults()
+        '10/19/2023
+        'Try catch added to this to bypass when there is an error. 
+        'It seems there is only an an error with guyed towers
+        'It throws a collection size error
+        Try
+            Me.GetResults()
+        Catch ex As Exception
+        End Try
 
     End Sub
 
