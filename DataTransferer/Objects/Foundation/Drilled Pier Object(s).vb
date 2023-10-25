@@ -2,6 +2,33 @@
 Imports DevExpress.Spreadsheet
 Imports System.Runtime.Serialization
 
+
+''Adding fields To Drilled Pier
+''1. Internal database - Database Sheet
+''   -Add to bottom of the sheet in both the main values And the copied values
+''   -Adjust import ranges to go to the cells required based on the amount of fields being added
+''2. Add column to appropriate SAPI sheet
+''   -Insert column where ever 
+''   -Adjust ExcelDTParams in Drilled Pier Foundation object according to New columns
+''3. Add corresponding properties to correct object in datatransferer
+''   -define private variable
+''   -define public property
+''   -SQL Insert Values
+''   -SQL Update Fields And Values
+''   -SQL Fields
+''   -Constructor from datarow
+''   -Equals
+''   -Workbookfiller
+''4. Edit the Excel VBA
+''   -Add value to the m_data_transfer.save_to_database function
+''   -Add value to the m_data_transfer.load_from_database function
+''   -Update the CopyRows property in the m_clear_data.clear_database function
+''   -Adjust  m_data_transfer.DPtoEDS function to add data to the sheet properly
+''	   -This could require adding to the tables on the far right of the import ranges sheet
+''5. Add SQL Column
+''   -Save SQL query in the corresponding folder for the current sprint
+''   -C:\Users\%username%\Crown Castle USA Inc\ECS - Tools\Database Changes
+
 <DataContractAttribute()>
 <TypeConverterAttribute(GetType(ExpandableObjectConverter))>
 <KnownType(GetType(DrilledPierFoundation))>
@@ -114,7 +141,7 @@ Partial Public Class DrilledPierFoundation
 
             Return New List(Of EXCELDTParameter) From {
                                                         New EXCELDTParameter(dp.EDSObjectName, "A2:I52", "Profiles"),  'It is slightly confusing but to keep naming issues consistent in the tool a drilled pier = profile and a drilled pier profile = drilled pier details
-                                                        New EXCELDTParameter(dpProf.EDSObjectName, "A2:X52", "Details"),
+                                                        New EXCELDTParameter(dpProf.EDSObjectName, "A2:Y52", "Details"),
                                                         New EXCELDTParameter(dpSec.EDSObjectName, "A2:M252", "Section"),
                                                         New EXCELDTParameter(dpReb.EDSObjectName, "A2:K702", "Rebar"),
                                                         New EXCELDTParameter(dpSProf.EDSObjectName, "A2:F52", "Soil Profile"),
@@ -293,6 +320,7 @@ Partial Public Class DrilledPierFoundation
                 If Not IsNothing(drilledPier.PierProfile.shear_crit_depth_override_uplift) Then .Cells(pierProfileRow + 376, myCol).Value = CType(drilledPier.PierProfile.shear_crit_depth_override_uplift, Double)
                 If Not IsNothing(drilledPier.PierProfile.shear_override_crit_depth) Then .Cells(pierProfileRow + 99, myCol).Value = CType(drilledPier.PierProfile.shear_override_crit_depth, Boolean)
                 If Not IsNothing(drilledPier.PierProfile.tie_yield_strength) Then .Cells(pierProfileRow + 9, myCol).Value = CType(drilledPier.PierProfile.tie_yield_strength, Double)
+                If Not IsNothing(drilledPier.PierProfile.use_non_tapered_moment_capacity) Then .Cells(pierProfileRow + 9, myCol).Value = CType(drilledPier.PierProfile.use_non_tapered_moment_capacity, Boolean)
                 .Cells(pierProfileRow + 18, myCol).Value = drilledPier.SoilProfile.DPSoilLayers.Count
                 If drilledPier.PierProfile.ultimate_gross_bearing Then
                     .Cells(pierProfileRow + 19, myCol).Value = "Ult. Gross Bearing Capacity (ksf)"
@@ -916,6 +944,7 @@ Partial Public Class DrilledPier
     End Function
 
 End Class
+
 <DataContractAttribute()>
 <KnownType(GetType(DrilledPierProfile))>
 Partial Public Class DrilledPierProfile
@@ -1086,6 +1115,7 @@ Partial Public Class DrilledPierProfile
     Private _local_pier_profile_id As Integer?
     Private _local_drilled_pier_id As Integer?
     Private _drilled_pier_id As Integer?
+    Private _use_non_tapered_moment_capacity As Boolean?
 
 
     <Category("Drilled Pier"), Description(""), DisplayName("Foundation Depth")>
@@ -1277,7 +1307,15 @@ Partial Public Class DrilledPierProfile
             Me._drilled_pier_id = Value
         End Set
     End Property
-
+    <Category("Drilled Pier"), Description(""), DisplayName("Utilize Non-Tapered Methodology")>
+    <DataMember()> Public Property use_non_tapered_moment_capacity As Boolean?
+        Get
+            Return _use_non_tapered_moment_capacity
+        End Get
+        Set()
+            Me._use_non_tapered_moment_capacity = Value
+        End Set
+    End Property
 #End Region
 
 #Region "Constructors"
@@ -1305,6 +1343,7 @@ Partial Public Class DrilledPierProfile
         Me.shear_crit_depth_override_uplift = DBtoNullableDbl(dr.Item("shear_crit_depth_override_uplift"))
         Me.shear_override_crit_depth = DBtoNullableBool(dr.Item("shear_override_crit_depth"))
         Me.tie_yield_strength = DBtoNullableDbl(dr.Item("tie_yield_strength"))
+        Me.use_non_tapered_moment_capacity = DBtoNullableDbl(dr.Item("use_non_tapered_moment_capacity"))
         Me.tool_version = DBtoStr(dr.Item("tool_version"))
 
         Dim bearing_option As String = ""
@@ -1356,6 +1395,7 @@ Partial Public Class DrilledPierProfile
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tie_yield_strength.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.tool_version.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.ultimate_gross_bearing.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.use_non_tapered_moment_capacity.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString(Me.drilled_pier_id.ToString.FormatDBValue)
         'SQLInsertValues = SQLInsertValues.AddtoDBString("@TopLevelID")
         Return SQLInsertValues
@@ -1381,6 +1421,7 @@ Partial Public Class DrilledPierProfile
         SQLInsertFields = SQLInsertFields.AddtoDBString("tool_version")
         SQLInsertFields = SQLInsertFields.AddtoDBString("ultimate_gross_bearing")
         'SQLInsertFields = SQLInsertFields.AddtoDBString("drilled_pier_id")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("use_non_tapered_moment_capacity")
         Return SQLInsertFields
     End Function
 
@@ -1404,6 +1445,7 @@ Partial Public Class DrilledPierProfile
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tie_yield_strength = " & Me.tie_yield_strength.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("tool_version = " & Me.tool_version.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("ultimate_gross_bearing = " & Me.ultimate_gross_bearing.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("use_non_tapered_moment_capacity = " & Me.use_non_tapered_moment_capacity.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_id = " & Me.drilled_pier_id.ToString.FormatDBValue)
         'SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("drilled_pier_id = " & "@TopLevelID")
         Return SQLUpdateFieldsandValues
@@ -1438,6 +1480,7 @@ Partial Public Class DrilledPierProfile
         Equals = If(Me.tie_yield_strength.CheckChange(otherToCompare.tie_yield_strength, changes, categoryName, "Tie Yield Strength"), Equals, False)
         Equals = If(Me.tool_version.CheckChange(otherToCompare.tool_version, changes, categoryName, "Tool Version"), Equals, False)
         Equals = If(Me.ultimate_gross_bearing.CheckChange(otherToCompare.ultimate_gross_bearing, changes, categoryName, "Ultimate Bearing"), Equals, False)
+        Equals = If(Me.use_non_tapered_moment_capacity.CheckChange(otherToCompare.use_non_tapered_moment_capacity, changes, categoryName, "Utilize Non-Tapered Moment Capacity"), Equals, False)
         'Equals = If(Me.drilled_pier_id.CheckChange(otherToCompare.drilled_pier_id, changes, categoryName, "Drilled Pier Foreign Key"), Equals, False)
 
         'Sections
@@ -1447,6 +1490,7 @@ Partial Public Class DrilledPierProfile
 
     End Function
 End Class
+
 <DataContractAttribute()>
 <KnownType(GetType(DrilledPierSection))>
 Partial Public Class DrilledPierSection
@@ -1787,6 +1831,7 @@ Partial Public Class DrilledPierSection
 
     End Function
 End Class
+
 <DataContractAttribute()>
 <KnownType(GetType(DrilledPierRebar))>
 Partial Public Class DrilledPierRebar
@@ -2029,6 +2074,7 @@ Partial Public Class DrilledPierRebar
 
     End Function
 End Class
+
 <DataContractAttribute()>
 <KnownType(GetType(EmbeddedPole))>
 Partial Public Class EmbeddedPole
@@ -2370,6 +2416,7 @@ Partial Public Class EmbeddedPole
 
     End Function
 End Class
+
 <DataContractAttribute()>
 <KnownType(GetType(BelledPier))>
 Partial Public Class BelledPier
@@ -2680,6 +2727,7 @@ Partial Public Class BelledPier
 
     End Function
 End Class
+
 <DataContractAttribute()>
 <KnownType(GetType(DrilledPierSoilProfile))>
 Public Class DrilledPierSoilProfile
@@ -2766,6 +2814,7 @@ Public Class DrilledPierSoilProfile
     End Function
 
 End Class
+
 <DataContractAttribute()>
 <KnownType(GetType(DrilledPierSoilLayer))>
 Public Class DrilledPierSoilLayer
@@ -2839,6 +2888,7 @@ Public Class DrilledPierSoilLayer
 
     End Function
 End Class
+
 <DataContractAttribute()>
 <KnownType(GetType(DrilledPierResult))>
 Public Class DrilledPierResult
