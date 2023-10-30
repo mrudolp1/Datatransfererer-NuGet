@@ -1343,7 +1343,12 @@ Partial Public Class DrilledPierProfile
         Me.shear_crit_depth_override_uplift = DBtoNullableDbl(dr.Item("shear_crit_depth_override_uplift"))
         Me.shear_override_crit_depth = DBtoNullableBool(dr.Item("shear_override_crit_depth"))
         Me.tie_yield_strength = DBtoNullableDbl(dr.Item("tie_yield_strength"))
-        Me.use_non_tapered_moment_capacity = DBtoNullableDbl(dr.Item("use_non_tapered_moment_capacity"))
+        Try
+            Me.use_non_tapered_moment_capacity = DBtoNullableDbl(dr.Item("use_non_tapered_moment_capacity"))
+        Catch ex As Exception
+            Me.use_non_tapered_moment_capacity = False
+        End Try
+
         Me.tool_version = DBtoStr(dr.Item("tool_version"))
 
         Dim bearing_option As String = ""
