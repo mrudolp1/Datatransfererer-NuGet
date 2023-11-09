@@ -312,7 +312,7 @@ Namespace UnitTesting
                 For Each file As FileInfo In New DirectoryInfo(fold.FullName).GetFiles
                     If file.Extension.ToLower = ".eri" Then
                         str.LogPath = fold.FullName
-                        str.RunTNX(file.FullName, True)
+                        str.RunTNXAsync(file.FullName, True)
                         Exit For
                     End If
                 Next
@@ -360,7 +360,7 @@ Namespace UnitTesting
 
         Private Sub btnConduct_Click(sender As Object, e As EventArgs) Handles btnConduct.Click
 
-            strcLocal.Conduct(CheckEditDevMode.Checked, CheckEditExcelVisible.Checked)
+            strcLocal.ConductAsync(CheckEditDevMode.Checked, CheckEditExcelVisible.Checked)
 
         End Sub
 #End Region
@@ -530,7 +530,7 @@ Namespace UnitTesting
 
 #Region "Button Process Clicks"
 
-        Private Sub TestSteps(sender As Object, e As EventArgs) Handles _
+        Private Async Sub TestSteps(sender As Object, e As EventArgs) Handles _
                     btnProcess1.Click, btnProcess2.Click, btnProcess3.Click, btnProcess4.Click,
                     btnProcess5.Click, btnProcess6.Click, btnProcess7.Click, btnProcess8.Click,
                     btnProcess9.Click, btnProcess10.Click, btnProcess11.Click, btnProcess12.Click,
@@ -784,13 +784,13 @@ Namespace UnitTesting
                     If myERIs.Count = 0 Then LogActivity("WARNING | No ERI files found to analyze.")
 
                     For Each eri As String In myERIs
-                        If Not tempStrc.RunTNX(eri, True) Then
+                        If Await tempStrc.RunTNXAsync(eri, True) Then 'If successful
+                            LogActivity("DEBUG | ERI: " & eri & " successuflly analyzed")
+                            'tempStrc.AppendLog(Me.TestLogActivityPath)
+                        Else 'If unsuccessful
                             LogActivity("ERROR | Failed to run ERI: " & eri)
                             'tempStrc.AppendLog(Me.TestLogActivityPath)
                             'GoTo finishMe
-                        Else
-                            LogActivity("DEBUG | ERI: " & eri & " successuflly analyzed")
-                            'tempStrc.AppendLog(Me.TestLogActivityPath)
                         End If
                     Next
 #End Region
@@ -812,7 +812,7 @@ Namespace UnitTesting
                     'Conduct it!!!
                     '''This is commented out since Seb is actively working on the conduct function
                     '''Uncommented 4-27-2023
-                    strcLocal.Conduct(CheckEditDevMode.Checked, CheckEditExcelVisible.Checked)
+                    strcLocal.ConductAsync(CheckEditDevMode.Checked, CheckEditExcelVisible.Checked)
                     If DidConductProperly(strcLocal.LogPath) Then
                         Dim serialResult As Tuple(Of Boolean, String)
                         serialResult = ObjectToJson(Of EDSStructure)(strcLocal, conductPath & "\" & "EDSStructure_" & Now.ToString("MM/dd/yyyy HH:mm:ss tt").ToDirectoryString & ".ccistr")

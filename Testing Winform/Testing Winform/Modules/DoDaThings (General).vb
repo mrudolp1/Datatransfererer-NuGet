@@ -14,7 +14,7 @@ Imports System.Text.RegularExpressions
 '------------------------------------------
 '------------------------------------------
 
-Module DoDaThings
+Public Module DoDaThings
     Public toaster As New ToastNotificationsManager
 
     <DebuggerStepThrough()>

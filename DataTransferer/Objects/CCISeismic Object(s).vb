@@ -4,6 +4,31 @@ Imports System.ComponentModel
 Imports DevExpress.Spreadsheet
 Imports System.Runtime.Serialization
 
+''Adding fields to Seismic
+''1. Excel
+''  -Add field to Details (Sapi) tab
+''      -take note of new table range since this needs updated in datatransferer
+''  -make sure to update:
+''      -Revision History: notes refer to 'internal database'
+''      -Import Ranges: add additional column associated to version number and then click 'set document properties'
+''2. Datatransferer
+''  -Inheritted: increase table range for ExcelDTParams per Details (Sapi) tab
+''  -Add associated fields to
+''      -Define
+''      -Constructor: make sure to add as a try/catch so older sapi version remain compatible
+''      -Save to Excel: make sure to handle null values since new field won't include data for anything existing in database
+''      -Save to EDS 
+''      -Equals
+''3.Add SQL Column
+''  -Add only to EDS Dev
+''  -Save query in the corresponding folder for the current sprint
+''  - C:\Users\%username%\Crown Castle USA Inc\ECS - Tools\Database Changes
+''      -this will be referenced for updating EDS UAT and EDS PROD
+''***Code change note***
+''  -requires updating Save to Excel section (search code_change) and Excel VBA z_EDS_Connection module
+''  -Goal is to run USGS with default values within the applicable code
+
+
 <DataContractAttribute()>
 Partial Public Class CCISeismic
     Inherits EDSExcelObject
@@ -33,7 +58,7 @@ Partial Public Class CCISeismic
     Public Overrides ReadOnly Property ExcelDTParams As List(Of EXCELDTParameter)
         'Add additional sub table references here. Table names should be consistent with EDS table names. 
         Get
-            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Seismic Details", "A1:AD2", "Details (SAPI)")}
+            Return New List(Of EXCELDTParameter) From {New EXCELDTParameter("Seismic Details", "A1:AE2", "Details (SAPI)")}
 
             'note: Excel table names are consistent with EDS table names to limit work required within constructors
 
@@ -120,9 +145,10 @@ Partial Public Class CCISeismic
     Private _create_seismic_loads As Boolean?
     Private _user_force_appurtenance As Boolean?
     Private _sdc As String
+    Private _design_code As String
 
     <Category("Seismic"), Description(""), DisplayName("Lat Sign")>
-     <DataMember()> Public Property lat_sign() As String
+    <DataMember()> Public Property lat_sign() As String
         Get
             Return Me._lat_sign
         End Get
@@ -131,7 +157,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Lat Deg")>
-     <DataMember()> Public Property lat_deg() As Integer?
+    <DataMember()> Public Property lat_deg() As Integer?
         Get
             Return Me._lat_deg
         End Get
@@ -140,7 +166,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Lat Min")>
-     <DataMember()> Public Property lat_min() As Integer?
+    <DataMember()> Public Property lat_min() As Integer?
         Get
             Return Me._lat_min
         End Get
@@ -149,7 +175,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Lat Sec")>
-     <DataMember()> Public Property lat_sec() As Double?
+    <DataMember()> Public Property lat_sec() As Double?
         Get
             Return Me._lat_sec
         End Get
@@ -158,7 +184,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Long Sign")>
-     <DataMember()> Public Property long_sign() As String
+    <DataMember()> Public Property long_sign() As String
         Get
             Return Me._long_sign
         End Get
@@ -167,7 +193,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Long Deg")>
-     <DataMember()> Public Property long_deg() As Integer?
+    <DataMember()> Public Property long_deg() As Integer?
         Get
             Return Me._long_deg
         End Get
@@ -176,7 +202,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Long Min")>
-     <DataMember()> Public Property long_min() As Integer?
+    <DataMember()> Public Property long_min() As Integer?
         Get
             Return Me._long_min
         End Get
@@ -185,7 +211,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Long Sec")>
-     <DataMember()> Public Property long_sec() As Double?
+    <DataMember()> Public Property long_sec() As Double?
         Get
             Return Me._long_sec
         End Get
@@ -194,7 +220,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Use Asce")>
-     <DataMember()> Public Property use_asce() As Boolean?
+    <DataMember()> Public Property use_asce() As Boolean?
         Get
             Return Me._use_asce
         End Get
@@ -203,7 +229,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Site Soil")>
-     <DataMember()> Public Property site_soil() As String
+    <DataMember()> Public Property site_soil() As String
         Get
             Return Me._site_soil
         End Get
@@ -212,7 +238,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Risk Category")>
-     <DataMember()> Public Property risk_category() As String
+    <DataMember()> Public Property risk_category() As String
         Get
             Return Me._risk_category
         End Get
@@ -221,7 +247,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Ss")>
-     <DataMember()> Public Property ss() As Double?
+    <DataMember()> Public Property ss() As Double?
         Get
             Return Me._ss
         End Get
@@ -230,7 +256,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("S1")>
-     <DataMember()> Public Property s1() As Double?
+    <DataMember()> Public Property s1() As Double?
         Get
             Return Me._s1
         End Get
@@ -239,7 +265,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Tl")>
-     <DataMember()> Public Property tl() As Double?
+    <DataMember()> Public Property tl() As Double?
         Get
             Return Me._tl
         End Get
@@ -248,7 +274,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Importance Factor Override")>
-     <DataMember()> Public Property importance_factor_override() As Boolean?
+    <DataMember()> Public Property importance_factor_override() As Boolean?
         Get
             Return Me._importance_factor_override
         End Get
@@ -257,7 +283,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Importance Factor User")>
-     <DataMember()> Public Property importance_factor_user() As Double?
+    <DataMember()> Public Property importance_factor_user() As Double?
         Get
             Return Me._importance_factor_user
         End Get
@@ -266,7 +292,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Response Accel Override")>
-     <DataMember()> Public Property response_accel_override() As Boolean?
+    <DataMember()> Public Property response_accel_override() As Boolean?
         Get
             Return Me._response_accel_override
         End Get
@@ -275,7 +301,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Sds User")>
-     <DataMember()> Public Property sds_user() As Double?
+    <DataMember()> Public Property sds_user() As Double?
         Get
             Return Me._sds_user
         End Get
@@ -284,7 +310,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Sd1 User")>
-     <DataMember()> Public Property sd1_user() As Double?
+    <DataMember()> Public Property sd1_user() As Double?
         Get
             Return Me._sd1_user
         End Get
@@ -293,7 +319,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Amp Factor")>
-     <DataMember()> Public Property amp_factor() As Double?
+    <DataMember()> Public Property amp_factor() As Double?
         Get
             Return Me._amp_factor
         End Get
@@ -302,7 +328,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Tia Approx Period")>
-     <DataMember()> Public Property tia_approx_period() As Boolean?
+    <DataMember()> Public Property tia_approx_period() As Boolean?
         Get
             Return Me._tia_approx_period
         End Get
@@ -311,7 +337,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Fundamental Period User")>
-     <DataMember()> Public Property fundamental_period_user() As Double?
+    <DataMember()> Public Property fundamental_period_user() As Double?
         Get
             Return Me._fundamental_period_user
         End Get
@@ -320,7 +346,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("MP Density Override")>
-     <DataMember()> Public Property mp_density_override() As Boolean?
+    <DataMember()> Public Property mp_density_override() As Boolean?
         Get
             Return Me._mp_density_override
         End Get
@@ -329,7 +355,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Density Tower Material")>
-     <DataMember()> Public Property density_tower_material() As Double?
+    <DataMember()> Public Property density_tower_material() As Double?
         Get
             Return Me._density_tower_material
         End Get
@@ -338,7 +364,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Elasticity")>
-     <DataMember()> Public Property elasticity() As Double?
+    <DataMember()> Public Property elasticity() As Double?
         Get
             Return Me._elasticity
         End Get
@@ -347,7 +373,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("Create Seismic Loads")>
-     <DataMember()> Public Property create_seismic_loads() As Boolean?
+    <DataMember()> Public Property create_seismic_loads() As Boolean?
         Get
             Return Me._create_seismic_loads
         End Get
@@ -356,7 +382,7 @@ Partial Public Class CCISeismic
         End Set
     End Property
     <Category("Seismic"), Description(""), DisplayName("User Force Appurtenance")>
-     <DataMember()> Public Property user_force_appurtenance() As Boolean?
+    <DataMember()> Public Property user_force_appurtenance() As Boolean?
         Get
             Return Me._user_force_appurtenance
         End Get
@@ -371,6 +397,15 @@ Partial Public Class CCISeismic
         End Get
         Set
             Me._sdc = Value
+        End Set
+    End Property
+    <Category("Seismic"), Description(""), DisplayName("Design Code")>
+    <DataMember()> Public Property design_code() As String
+        Get
+            Return Me._design_code
+        End Get
+        Set
+            Me._design_code = Value
         End Set
     End Property
 
@@ -445,6 +480,12 @@ Partial Public Class CCISeismic
         Catch ex As Exception
         End Try
 
+        Try
+            Me.design_code = DBtoStr(dr.Item("design_code"))
+        Catch ex As Exception
+            Me.design_code = Nothing
+        End Try
+
 
     End Sub
 
@@ -478,7 +519,9 @@ Partial Public Class CCISeismic
 
     Public Overrides Sub workBookFiller(ByRef wb As Workbook)
         '''''Customize for each excel tool'''''
-        'Dim LegReinRow As Integer
+        Dim code_change As Boolean = False
+        Dim use_asce_d As Boolean
+        Dim site_soil_d, risk_category_d As String
 
         'Site Code Criteria
         Dim tia_current As String
@@ -518,6 +561,25 @@ Partial Public Class CCISeismic
                 tia_current = "TIA-222-H-1"
             End If
             .Worksheets("Site SDC Data").Range("dcode").Value = CType(tia_current, String)
+
+            'Check for code change. Code change will invalidate Site Soil and Risk Category and seismic values (Ss, S1 and TL) pulled in from EDS. 
+            'When code change occurs, going to assume default values to rerun USGS and continue analysis
+            If IsSomethingString(design_code) Then
+                If design_code <> tia_current Then
+                    code_change = True
+                    .Worksheets("Details (SAPI)").Range("A4").Value = CType(True, Boolean)
+                    'Determine default values
+                    If tia_current = "TIA-222-H-1" Then
+                        use_asce_d = False
+                        site_soil_d = "D (Default)"
+                        risk_category_d = "II"
+                    ElseIf tia_current = "TIA-222-G" Or tia_current = "ASCE 7-10" Then
+                        use_asce_d = False
+                        site_soil_d = "D"
+                        risk_category_d = "II"
+                    End If
+                End If
+            End If
 
             'Latitude
             If Not IsNothing(Me.ParentStructure?.structureCodeCriteria?.lat_dec) Then
@@ -621,30 +683,40 @@ Partial Public Class CCISeismic
             'Else
             '    .Worksheets("Site SDC Data").Range("longsec").ClearContents
             'End If
-            If Not IsNothing(Me.use_asce) Then
-                .Worksheets("Reference").Range("Use_ASCE").Value = CType(Me.use_asce, Boolean)
-            End If
-            If Not IsNothing(Me.site_soil) Then
-                .Worksheets("Site SDC Data").Range("soil").Value = CType(Me.site_soil, String)
-            End If
-            If Not IsNothing(Me.risk_category) Then
-                .Worksheets("Site SDC Data").Range("risk").Value = CType(Me.risk_category, String)
-            End If
-            If Not IsNothing(Me.ss) Then
-                .Worksheets("Site SDC Data").Range("ss").Value = CType(Me.ss, Double)
-            Else
+            If code_change Then
+                .Worksheets("Reference").Range("Use_ASCE").Value = CType(use_asce_d, Boolean)
+                .Worksheets("Site SDC Data").Range("soil").Value = CType(site_soil_d, String)
+                .Worksheets("Site SDC Data").Range("risk").Value = CType(risk_category_d, String)
                 .Worksheets("Site SDC Data").Range("ss").ClearContents
-            End If
-            If Not IsNothing(Me.s1) Then
-                .Worksheets("Site SDC Data").Range("suno").Value = CType(Me.s1, Double)
-            Else
                 .Worksheets("Site SDC Data").Range("suno").ClearContents
-            End If
-            If Not IsNothing(Me.tl) Then
-                .Worksheets("Site SDC Data").Range("tl").Value = CType(Me.tl, Double)
-            Else
                 .Worksheets("Site SDC Data").Range("tl").ClearContents
+            Else
+                If Not IsNothing(Me.use_asce) Then
+                    .Worksheets("Reference").Range("Use_ASCE").Value = CType(Me.use_asce, Boolean)
+                End If
+                If Not IsNothing(Me.site_soil) Then
+                    .Worksheets("Site SDC Data").Range("soil").Value = CType(Me.site_soil, String)
+                End If
+                If Not IsNothing(Me.risk_category) Then
+                    .Worksheets("Site SDC Data").Range("risk").Value = CType(Me.risk_category, String)
+                End If
+                If Not IsNothing(Me.ss) Then
+                    .Worksheets("Site SDC Data").Range("ss").Value = CType(Me.ss, Double)
+                Else
+                    .Worksheets("Site SDC Data").Range("ss").ClearContents
+                End If
+                If Not IsNothing(Me.s1) Then
+                    .Worksheets("Site SDC Data").Range("suno").Value = CType(Me.s1, Double)
+                Else
+                    .Worksheets("Site SDC Data").Range("suno").ClearContents
+                End If
+                If Not IsNothing(Me.tl) Then
+                    .Worksheets("Site SDC Data").Range("tl").Value = CType(Me.tl, Double)
+                Else
+                    .Worksheets("Site SDC Data").Range("tl").ClearContents
+                End If
             End If
+
             If Not IsNothing(Me.importance_factor_override) Then
                 .Worksheets("Reference").Range("ie_override").Value = CType(Me.importance_factor_override, Boolean)
             End If
@@ -743,6 +815,7 @@ Partial Public Class CCISeismic
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.elasticity.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.create_seismic_loads.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.user_force_appurtenance.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.design_code.ToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -783,6 +856,7 @@ Partial Public Class CCISeismic
         SQLInsertFields = SQLInsertFields.AddtoDBString("elasticity")
         SQLInsertFields = SQLInsertFields.AddtoDBString("create_seismic_loads")
         SQLInsertFields = SQLInsertFields.AddtoDBString("user_force_appurtenance")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("design_code")
 
         Return SQLInsertFields
     End Function
@@ -823,6 +897,7 @@ Partial Public Class CCISeismic
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("elasticity = " & Me.elasticity.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("create_seismic_loads = " & Me.create_seismic_loads.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("user_force_appurtenance = " & Me.user_force_appurtenance.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("design_code = " & Me.design_code.ToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -873,6 +948,7 @@ Partial Public Class CCISeismic
         Equals = If(Me.elasticity.CheckChange(otherToCompare.elasticity, changes, categoryName, "Elasticity"), Equals, False)
         Equals = If(Me.create_seismic_loads.CheckChange(otherToCompare.create_seismic_loads, changes, categoryName, "Create Seismic Loads"), Equals, False)
         Equals = If(Me.user_force_appurtenance.CheckChange(otherToCompare.user_force_appurtenance, changes, categoryName, "User Force Appurtenance"), Equals, False)
+        Equals = If(Me.design_code.CheckChange(otherToCompare.design_code, changes, categoryName, "Design Code"), Equals, False)
 
         Return Equals
 

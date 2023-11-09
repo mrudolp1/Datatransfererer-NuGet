@@ -308,15 +308,27 @@ Begin
 		AND rs.matl_id = matls.ID
 	
 	--CCIPole Matls
-	SELECT DISTINCT matls.*
-	FROM 
-		gen.pole_matls matls
-		,#TempSection sec
-		,#TempRSection rsec
-		,#TempReinfs reinfs
-	WHERE matls.ID = sec.ID
-		OR matls.ID = rsec.ID
-		Or matls.ID = reinfs.matl_id
+	SELECT * FROM #TempSection
+		UNION
+	SELECT * FROM #TempRSection
+		UNION
+	SELECT DISTINCT matls.* 
+		FROM 
+			gen.pole_matls matls,
+			#TempReinfs reinfs
+		WHERE 
+			matls.ID = reinfs.matl_id
+
+	--Removed this CCIpole MATL query in place of the one above due to ADO Bug #158263 - MRR 10/10/23--
+	--SELECT DISTINCT matls.*
+	--FROM 
+	--	gen.pole_matls matls
+	--	,#TempSection sec
+	--	,#TempRSection rsec
+	--	,#TempReinfs reinfs
+	--WHERE matls.ID = sec.ID
+	--	OR matls.ID = rsec.ID
+	--	Or matls.ID = reinfs.matl_id
 
 	--CCIPole Bolts
 	SELECT DISTINCT bolts.* 
