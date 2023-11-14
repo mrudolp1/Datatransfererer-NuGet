@@ -8,6 +8,7 @@ Imports System.Security.Principal
 Imports System.Runtime.CompilerServices
 Imports System.Data.SqlClient
 Imports System.Runtime.Serialization
+Imports System.Linq
 
 Public Module TNXExtensions
     <Extension()>
@@ -869,11 +870,21 @@ Partial Public Class tnxGeometry
     ''' <param name="SectionNumber">1 as top section.</param>
     ''' <returns></returns>
     Public Function tnxSectionSelector(SectionNumber As Integer) As tnxGeometryRec
-        If SectionNumber <= Me.upperStructure.Count Then
-            Return Me.upperStructure(SectionNumber - 1)
-        Else
-            Return Me.baseStructure(SectionNumber - Me.upperStructure.Count - 1)
-        End If
+        ''DHS 11/14/23
+        ''Rewrote this function to account for TNX recs that represent multiple sections
+        Dim recCount As Integer = 0
+        For Each rec As tnxAntennaRecord In Me.upperStructure
+            recCount += If(rec.AntennaNumSections.HasValue, rec.AntennaNumSections.Value, 1)
+            If recCount >= SectionNumber Then Return rec
+        Next
+
+        For Each rec As tnxTowerRecord In Me.baseStructure
+            recCount += If(rec.TowerNumSections.HasValue, rec.TowerNumSections.Value, 1)
+            If recCount >= SectionNumber Then Return rec
+        Next
+
+        Return Nothing
+
     End Function
 
     Public Overrides Sub Clear()
