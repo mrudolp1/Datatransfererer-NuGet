@@ -765,8 +765,8 @@ Public Module WorkflowHelpers
                 "Guyed Anchor Block Foundation.xlsm",
                 "Input",
                 "M20:X70",
-                "Input",
-                "R5")
+                "Tool (SAPI)",
+                "K3")
         ElseIf file.Name.ToLower.Contains("leg reinforcement") Then
             returner = (
                 CCI_Engineering_Templates.My.Resources.Leg_Reinforcement_Tool__10_0_4_,
