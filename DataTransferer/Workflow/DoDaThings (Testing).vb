@@ -52,7 +52,7 @@ Public Module WorkflowHelpers
             Return False
         End If
 
-        Dim myXL As (myApp As Excel.Application, alreadyOpen As Boolean) = Await GetXlApp(cancelToken, progress)
+        Dim myXL As (myApp As Object, alreadyOpen As Boolean) = Await GetXlApp(cancelToken, progress) 'Object = Microsoft.Office.Interop.Excel.Application
         If ImportingFrom.Extension.ToLower = ".xlsm" Then
 
             Dim macroname As String = "Import_Previous_Version"
@@ -126,7 +126,7 @@ Public Module WorkflowHelpers
     End Function
 
     'Create or get the excel application to use.
-    Public Async Function GetXlApp(Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of (Excel.Application, Boolean))
+    Public Async Function GetXlApp(Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of (Object, Boolean)) 'Microsoft.Office.Interop.Excel.Application, Boolean))
         Try
             Return (GetObject(, "Excel.Appliction"), True)
         Catch ex As Exception
@@ -135,7 +135,7 @@ Public Module WorkflowHelpers
     End Function
 
     'Close the excel application if it was created 
-    Public Function DisposeXlApp(ByRef xlapp As Excel.Application, isOpen As Boolean)
+    Public Function DisposeXlApp(ByRef xlapp As Object, isOpen As Boolean) ' Microsoft.Office.Interop.Excel.Application, isOpen As Boolean)
         If xlapp IsNot Nothing Then
             If Not isOpen Then
                 Try
@@ -151,7 +151,7 @@ Public Module WorkflowHelpers
         End If
     End Function
 
-    Private Async Function SiteDataIntoSheet(ByVal xlWorkbook As Excel.Workbook,
+    Private Async Function SiteDataIntoSheet(ByVal xlWorkbook As Object, ' Microsoft.Office.Interop.Excel.Workbook,
                                                ByVal toolFileName As String,
                                                ByVal orderSheet As String,
                                                ByVal orderRange As String,
@@ -191,7 +191,7 @@ Public Module WorkflowHelpers
 
     'Seb's macro runner adjusted specifically for unit testing
     Public Async Function Import_Previous_Version(
-                                           ByVal xlapp As Excel.Application,
+                                           ByVal xlapp As Object, ' Microsoft.Office.Interop.Excel.Application,
                                            ByVal workbookFile As FileInfo,
                                            ByVal macroName As String,
                                            ByVal params As (filepath As String, version As String, isMaesting As Boolean), 'Item1 = Filepath, Item2 = Version, Item3 = IsMaesting
@@ -205,7 +205,7 @@ Public Module WorkflowHelpers
                                            ) As Task(Of Boolean)
 
         Dim toolFileName As String = Path.GetFileName(workbookFile.Name)
-        Dim xlWorkBook As Excel.Workbook = Nothing
+        Dim xlWorkBook As Object = Nothing 'Microsoft.Office.Interop.Excel.Workbook = Nothing
         Dim errorMessage As String = ""
         Dim isSuccess As Boolean = True
         Dim workbIssue As Boolean = False

@@ -468,8 +468,8 @@ ErrorSkip:
             Return Result
         End If
 
-        Dim xlApp As Excel.Application = Nothing
-        Dim xlWorkBook As Excel.Workbook = Nothing
+        Dim xlApp As Object = Nothing 'Microsoft.Office.Interop.Excel.Application = Nothing
+        Dim xlWorkBook As Object = Nothing 'Microsoft.Office.Interop.Excel.Workbook = Nothing
 
         Dim errorMessage As String = ""
         Dim excelClose As Boolean = True
@@ -579,7 +579,7 @@ ErrorSkip:
         Return Result
     End Function
 
-    Public Async Function AssignBasePlateGrade(ByVal xlWorkBook As Excel.Workbook,
+    Public Async Function AssignBasePlateGrade(ByVal xlWorkBook As Object, 'Microsoft.Office.Interop.Excel.Workbook,
                                       Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
 
         Dim plateGradeAssigned As Boolean = True
@@ -626,9 +626,9 @@ ErrorSkip:
     Public Async Function BarbValuesIntoPole(pole As Pole, excelPath As String, barbCL As Double, plateComp As Double,
                                       plateShear As Double, plateMom As Double, Optional isDevEnv As Boolean = False,
                                       Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
-        Dim xlApp As Excel.Application
-        Dim xlWorkBook As Excel.Workbook
-        Dim xlWorkSheet As Excel.Worksheet = Nothing
+        Dim xlApp As Object ' Microsoft.Office.Interop.Excel.Application
+        Dim xlWorkBook As Object 'Microsoft.Office.Interop.Excel.Workbook
+        Dim xlWorkSheet As Object = Nothing  'Microsoft.Office.Interop.Excel.Worksheet = Nothing
         Dim xlVisibility As Boolean = False
 
         Dim secID As String
@@ -652,7 +652,7 @@ ErrorSkip:
                 xlWorkBook = xlApp.Workbooks.Open(excelPath)
 
                 'replace reactions in all elevations at or below BARB CL
-                For Each ws As Excel.Worksheet In xlWorkBook.Worksheets
+                For Each ws In xlWorkBook.Worksheets ' Microsoft.Office.Interop.Excel.Worksheet In xlWorkBook.Worksheets
                     If ws.Name.ToUpper = "RESULTS" Then
                         ws.Select()
                         xlWorkSheet = ws
