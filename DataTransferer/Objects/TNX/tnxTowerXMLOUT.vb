@@ -25,7 +25,6 @@ Imports System.Runtime.Serialization
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True),
  System.Xml.Serialization.XmlRootAttribute([Namespace]:="", IsNullable:=False)>
@@ -354,7 +353,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputUnitSystem
@@ -398,7 +396,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     Private standardField As String
 
     '''<remarks/>
-     <DataMember()> Public Property Length() As String
+    <DataMember()> Public Property Length() As String
         Get
             Return Me.lengthField
         End Get
@@ -408,7 +406,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Coordinate() As String
+    <DataMember()> Public Property Coordinate() As String
         Get
             Return Me.coordinateField
         End Get
@@ -418,7 +416,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Spacing() As String
+    <DataMember()> Public Property Spacing() As String
         Get
             Return Me.spacingField
         End Get
@@ -428,7 +426,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Force() As String
+    <DataMember()> Public Property Force() As String
         Get
             Return Me.forceField
         End Get
@@ -438,7 +436,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property LineLoad() As String
+    <DataMember()> Public Property LineLoad() As String
         Get
             Return Me.lineLoadField
         End Get
@@ -448,7 +446,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Pressure() As String
+    <DataMember()> Public Property Pressure() As String
         Get
             Return Me.pressureField
         End Get
@@ -458,7 +456,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Moment() As String
+    <DataMember()> Public Property Moment() As String
         Get
             Return Me.momentField
         End Get
@@ -468,7 +466,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Density() As String
+    <DataMember()> Public Property Density() As String
         Get
             Return Me.densityField
         End Get
@@ -478,7 +476,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property UnitWt() As String
+    <DataMember()> Public Property UnitWt() As String
         Get
             Return Me.unitWtField
         End Get
@@ -488,7 +486,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Properties() As String
+    <DataMember()> Public Property Properties() As String
         Get
             Return Me.propertiesField
         End Get
@@ -498,7 +496,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Deflection() As String
+    <DataMember()> Public Property Deflection() As String
         Get
             Return Me.deflectionField
         End Get
@@ -508,7 +506,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Rotation() As String
+    <DataMember()> Public Property Rotation() As String
         Get
             Return Me.rotationField
         End Get
@@ -518,7 +516,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Stress() As String
+    <DataMember()> Public Property Stress() As String
         Get
             Return Me.stressField
         End Get
@@ -528,7 +526,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Strength() As String
+    <DataMember()> Public Property Strength() As String
         Get
             Return Me.strengthField
         End Get
@@ -538,7 +536,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Modulus() As String
+    <DataMember()> Public Property Modulus() As String
         Get
             Return Me.modulusField
         End Get
@@ -548,7 +546,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Velocity() As String
+    <DataMember()> Public Property Velocity() As String
         Get
             Return Me.velocityField
         End Get
@@ -558,7 +556,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Acceleration() As String
+    <DataMember()> Public Property Acceleration() As String
         Get
             Return Me.accelerationField
         End Get
@@ -568,7 +566,7 @@ Partial Public Class tnxTowerOutputUnitSystem
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Temperature() As String
+    <DataMember()> Public Property Temperature() As String
         Get
             Return Me.temperatureField
         End Get
@@ -579,7 +577,7 @@ Partial Public Class tnxTowerOutputUnitSystem
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Standard() As String
+    <DataMember()> Public Property Standard() As String
         Get
             Return Me.standardField
         End Get
@@ -592,7 +590,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerSections
@@ -603,7 +600,7 @@ Partial Public Class tnxTowerOutputTowerSections
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("TowerSection")>
-     <DataMember()> Public Property TowerSection() As tnxTowerOutputTowerSectionsTowerSection()
+    <DataMember()> Public Property TowerSection() As tnxTowerOutputTowerSectionsTowerSection()
         Get
             Return Me.towerSectionField
         End Get
@@ -614,7 +611,7 @@ Partial Public Class tnxTowerOutputTowerSections
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property NumberOfTowerSections() As String
+    <DataMember()> Public Property NumberOfTowerSections() As String
         Get
             Return Me.numberOfTowerSectionsField
         End Get
@@ -627,7 +624,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerSectionsTowerSection
@@ -640,7 +636,7 @@ Partial Public Class tnxTowerOutputTowerSectionsTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -651,7 +647,7 @@ Partial Public Class tnxTowerOutputTowerSectionsTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Name() As String
+    <DataMember()> Public Property Name() As String
         Get
             Return Me.nameField
         End Get
@@ -662,7 +658,7 @@ Partial Public Class tnxTowerOutputTowerSectionsTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Elevation() As String
+    <DataMember()> Public Property Elevation() As String
         Get
             Return Me.elevationField
         End Get
@@ -675,7 +671,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingCondition
@@ -686,7 +681,7 @@ Partial Public Class tnxTowerOutputLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("TowerSection")>
-     <DataMember()> Public Property TowerSection() As tnxTowerOutputLoadingConditionTowerSection()
+    <DataMember()> Public Property TowerSection() As tnxTowerOutputLoadingConditionTowerSection()
         Get
             Return Me.towerSectionField
         End Get
@@ -697,7 +692,7 @@ Partial Public Class tnxTowerOutputLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -710,7 +705,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSection
@@ -738,7 +732,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property z_wind() As Double
+    <DataMember()> Public Property z_wind() As Double
         Get
             Return Me.z_windField
         End Get
@@ -748,7 +742,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property z_ice() As Double
+    <DataMember()> Public Property z_ice() As Double
         Get
             Return Me.z_iceField
         End Get
@@ -758,7 +752,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Kz() As Double
+    <DataMember()> Public Property Kz() As Double
         Get
             Return Me.kzField
         End Get
@@ -768,7 +762,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Kh() As Double
+    <DataMember()> Public Property Kh() As Double
         Get
             Return Me.khField
         End Get
@@ -778,7 +772,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Kzt() As Double
+    <DataMember()> Public Property Kzt() As Double
         Get
             Return Me.kztField
         End Get
@@ -788,7 +782,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property tz() As Double
+    <DataMember()> Public Property tz() As Double
         Get
             Return Me.tzField
         End Get
@@ -799,7 +793,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property tzSpecified() As Boolean
+    <DataMember()> Public Property tzSpecified() As Boolean
         Get
             Return Me.tzFieldSpecified
         End Get
@@ -809,7 +803,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property qz() As Double
+    <DataMember()> Public Property qz() As Double
         Get
             Return Me.qzField
         End Get
@@ -819,7 +813,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property e() As tnxTowerOutputLoadingConditionTowerSectionE
+    <DataMember()> Public Property e() As tnxTowerOutputLoadingConditionTowerSectionE
         Get
             Return Me.eField
         End Get
@@ -829,7 +823,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property ArRr() As tnxTowerOutputLoadingConditionTowerSectionArRr
+    <DataMember()> Public Property ArRr() As tnxTowerOutputLoadingConditionTowerSectionArRr
         Get
             Return Me.arRrField
         End Get
@@ -840,7 +834,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -853,7 +847,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE
@@ -867,7 +860,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -877,7 +870,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -887,7 +880,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -897,7 +890,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -910,7 +903,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionArRr
@@ -924,7 +916,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionArRr
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -934,7 +926,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionArRr
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -944,7 +936,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionArRr
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -954,7 +946,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionArRr
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -967,7 +959,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresData
@@ -981,7 +972,7 @@ Partial Public Class tnxTowerOutputTowerPressuresData
     Private loadingConditionField() As tnxTowerOutputTowerPressuresDataLoadingCondition
 
     '''<remarks/>
-     <DataMember()> Public Property Gh() As tnxTowerOutputTowerPressuresDataGH
+    <DataMember()> Public Property Gh() As tnxTowerOutputTowerPressuresDataGH
         Get
             Return Me.ghField
         End Get
@@ -991,7 +982,7 @@ Partial Public Class tnxTowerOutputTowerPressuresData
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property GhBaseTower() As tnxTowerOutputTowerPressuresDataGhBaseTower
+    <DataMember()> Public Property GhBaseTower() As tnxTowerOutputTowerPressuresDataGhBaseTower
         Get
             Return Me.ghBaseTowerField
         End Get
@@ -1001,7 +992,7 @@ Partial Public Class tnxTowerOutputTowerPressuresData
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property GhUpperStructure() As tnxTowerOutputTowerPressuresDataGhUpperStructure
+    <DataMember()> Public Property GhUpperStructure() As tnxTowerOutputTowerPressuresDataGhUpperStructure
         Get
             Return Me.ghUpperStructureField
         End Get
@@ -1012,7 +1003,7 @@ Partial Public Class tnxTowerOutputTowerPressuresData
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("LoadingCondition")>
-     <DataMember()> Public Property LoadingCondition() As tnxTowerOutputTowerPressuresDataLoadingCondition()
+    <DataMember()> Public Property LoadingCondition() As tnxTowerOutputTowerPressuresDataLoadingCondition()
         Get
             Return Me.loadingConditionField
         End Get
@@ -1025,7 +1016,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresDataGH
@@ -1034,7 +1024,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataGH
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Value() As Double
+    <DataMember()> Public Property Value() As Double
         Get
             Return Me.valueField
         End Get
@@ -1047,7 +1037,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresDataGhBaseTower
@@ -1056,7 +1045,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataGhBaseTower
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Value() As Double
+    <DataMember()> Public Property Value() As Double
         Get
             Return Me.valueField
         End Get
@@ -1068,9 +1057,7 @@ End Class
 
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
- System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
- System.ComponentModel.DesignerCategoryAttribute("code"),
+ System.SerializableAttribute(), System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresDataGhUpperStructure
 
@@ -1078,7 +1065,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataGhUpperStructure
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Value() As Double
+    <DataMember()> Public Property Value() As Double
         Get
             Return Me.valueField
         End Get
@@ -1091,7 +1078,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresDataLoadingCondition
@@ -1102,7 +1088,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("TowerSection")>
-     <DataMember()> Public Property TowerSection() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSection()
+    <DataMember()> Public Property TowerSection() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSection()
         Get
             Return Me.towerSectionField
         End Get
@@ -1113,7 +1099,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -1126,7 +1112,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSection
@@ -1158,7 +1143,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property z() As Double
+    <DataMember()> Public Property z() As Double
         Get
             Return Me.zField
         End Get
@@ -1168,7 +1153,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Kz() As Double
+    <DataMember()> Public Property Kz() As Double
         Get
             Return Me.kzField
         End Get
@@ -1178,7 +1163,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property qz() As Double
+    <DataMember()> Public Property qz() As Double
         Get
             Return Me.qzField
         End Get
@@ -1188,7 +1173,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Ag() As Double
+    <DataMember()> Public Property Ag() As Double
         Get
             Return Me.agField
         End Get
@@ -1198,7 +1183,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Aleg() As Double
+    <DataMember()> Public Property Aleg() As Double
         Get
             Return Me.alegField
         End Get
@@ -1208,7 +1193,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property tz() As Double
+    <DataMember()> Public Property tz() As Double
         Get
             Return Me.tzField
         End Get
@@ -1219,7 +1204,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property tzSpecified() As Boolean
+    <DataMember()> Public Property tzSpecified() As Boolean
         Get
             Return Me.tzFieldSpecified
         End Get
@@ -1229,7 +1214,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Af() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionAF
+    <DataMember()> Public Property Af() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionAF
         Get
             Return Me.afField
         End Get
@@ -1239,7 +1224,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Ar() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionAR
+    <DataMember()> Public Property Ar() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionAR
         Get
             Return Me.arField
         End Get
@@ -1249,7 +1234,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property LegPercent() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionLegPercent
+    <DataMember()> Public Property LegPercent() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionLegPercent
         Get
             Return Me.legPercentField
         End Get
@@ -1259,7 +1244,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property CaAaInFace() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionCaAaInFace
+    <DataMember()> Public Property CaAaInFace() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionCaAaInFace
         Get
             Return Me.caAaInFaceField
         End Get
@@ -1269,7 +1254,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property CaAaOutFace() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionCaAaOutFace
+    <DataMember()> Public Property CaAaOutFace() As tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionCaAaOutFace
         Get
             Return Me.caAaOutFaceField
         End Get
@@ -1280,7 +1265,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -1293,7 +1278,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionAF
@@ -1307,7 +1291,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -1317,7 +1301,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -1327,7 +1311,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -1337,7 +1321,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -1350,7 +1334,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionAR
@@ -1364,7 +1347,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -1374,7 +1357,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -1384,7 +1367,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -1394,7 +1377,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -1407,7 +1390,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionLegPercent
@@ -1421,7 +1403,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -1431,7 +1413,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -1441,7 +1423,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -1451,7 +1433,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -1464,7 +1446,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionCaAaInFace
@@ -1478,7 +1459,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -1488,7 +1469,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -1498,7 +1479,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -1508,7 +1489,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -1521,7 +1502,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectionCaAaOutFace
@@ -1535,7 +1515,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -1545,7 +1525,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -1555,7 +1535,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -1565,7 +1545,7 @@ Partial Public Class tnxTowerOutputTowerPressuresDataLoadingConditionTowerSectio
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -1578,7 +1558,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputForceLoadingCondition
@@ -1593,7 +1572,7 @@ Partial Public Class tnxTowerOutputForceLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlArrayItemAttribute("TowerSection", IsNullable:=False)>
-     <DataMember()> Public Property WindNormalToFace() As tnxTowerOutputForceNormalTowerSection()
+    <DataMember()> Public Property WindNormalToFace() As tnxTowerOutputForceNormalTowerSection()
         Get
             Return Me.windNormalToFaceField
         End Get
@@ -1604,7 +1583,7 @@ Partial Public Class tnxTowerOutputForceLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlArrayItemAttribute("TowerSection", IsNullable:=False)>
-     <DataMember()> Public Property Wind60ToFace() As tnxTowerOutputForce60TowerSection()
+    <DataMember()> Public Property Wind60ToFace() As tnxTowerOutputForce60TowerSection()
         Get
             Return Me.wind60ToFaceField
         End Get
@@ -1615,7 +1594,7 @@ Partial Public Class tnxTowerOutputForceLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlArrayItemAttribute("TowerSection", IsNullable:=False)>
-     <DataMember()> Public Property Wind90ToFace() As tnxTowerOutputForce90TowerSection()
+    <DataMember()> Public Property Wind90ToFace() As tnxTowerOutputForce90TowerSection()
         Get
             Return Me.wind90ToFaceField
         End Get
@@ -1626,7 +1605,7 @@ Partial Public Class tnxTowerOutputForceLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -1639,7 +1618,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputForceNormalTowerSection
@@ -1669,7 +1647,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property AddWeight() As Double
+    <DataMember()> Public Property AddWeight() As Double
         Get
             Return Me.addWeightField
         End Get
@@ -1679,7 +1657,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property SelfWeight() As Double
+    <DataMember()> Public Property SelfWeight() As Double
         Get
             Return Me.selfWeightField
         End Get
@@ -1689,7 +1667,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property qz() As Double
+    <DataMember()> Public Property qz() As Double
         Get
             Return Me.qzField
         End Get
@@ -1699,7 +1677,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property F() As Double
+    <DataMember()> Public Property F() As Double
         Get
             Return Me.fField
         End Get
@@ -1709,7 +1687,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property w() As Double
+    <DataMember()> Public Property w() As Double
         Get
             Return Me.wField
         End Get
@@ -1719,7 +1697,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property ControllingFace() As String
+    <DataMember()> Public Property ControllingFace() As String
         Get
             Return Me.controllingFaceField
         End Get
@@ -1729,7 +1707,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property e() As tnxTowerOutputLoadingConditionTowerSectionE1
+    <DataMember()> Public Property e() As tnxTowerOutputLoadingConditionTowerSectionE1
         Get
             Return Me.eField
         End Get
@@ -1739,7 +1717,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Cf() As tnxTowerOutputLoadingConditionTowerSectionCF
+    <DataMember()> Public Property Cf() As tnxTowerOutputLoadingConditionTowerSectionCF
         Get
             Return Me.cfField
         End Get
@@ -1749,7 +1727,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Df() As tnxTowerOutputLoadingConditionTowerSectionDF
+    <DataMember()> Public Property Df() As tnxTowerOutputLoadingConditionTowerSectionDF
         Get
             Return Me.dfField
         End Get
@@ -1759,7 +1737,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Dr() As tnxTowerOutputLoadingConditionTowerSectionDR
+    <DataMember()> Public Property Dr() As tnxTowerOutputLoadingConditionTowerSectionDR
         Get
             Return Me.drField
         End Get
@@ -1769,7 +1747,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Ae() As tnxTowerOutputLoadingConditionTowerSectionAE
+    <DataMember()> Public Property Ae() As tnxTowerOutputLoadingConditionTowerSectionAE
         Get
             Return Me.aeField
         End Get
@@ -1780,7 +1758,7 @@ Partial Public Class tnxTowerOutputForceNormalTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -1793,7 +1771,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE1
@@ -1807,7 +1784,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE1
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -1817,7 +1794,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -1827,7 +1804,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -1837,7 +1814,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -1850,7 +1827,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF
@@ -1864,7 +1840,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -1874,7 +1850,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -1884,7 +1860,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -1894,7 +1870,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -1907,7 +1883,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF
@@ -1921,7 +1896,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -1931,7 +1906,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -1941,7 +1916,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -1951,7 +1926,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -1964,7 +1939,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR
@@ -1978,7 +1952,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -1988,7 +1962,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -1998,7 +1972,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2008,7 +1982,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2021,7 +1995,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE
@@ -2035,7 +2008,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2045,7 +2018,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2055,7 +2028,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2065,7 +2038,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2078,7 +2051,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputForce60TowerSection
@@ -2108,7 +2080,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property AddWeight() As Double
+    <DataMember()> Public Property AddWeight() As Double
         Get
             Return Me.addWeightField
         End Get
@@ -2118,7 +2090,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property SelfWeight() As Double
+    <DataMember()> Public Property SelfWeight() As Double
         Get
             Return Me.selfWeightField
         End Get
@@ -2128,7 +2100,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property qz() As Double
+    <DataMember()> Public Property qz() As Double
         Get
             Return Me.qzField
         End Get
@@ -2138,7 +2110,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property F() As Double
+    <DataMember()> Public Property F() As Double
         Get
             Return Me.fField
         End Get
@@ -2148,7 +2120,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property w() As Double
+    <DataMember()> Public Property w() As Double
         Get
             Return Me.wField
         End Get
@@ -2158,7 +2130,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property ControllingFace() As String
+    <DataMember()> Public Property ControllingFace() As String
         Get
             Return Me.controllingFaceField
         End Get
@@ -2168,7 +2140,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property e() As tnxTowerOutputLoadingConditionTowerSectionE2
+    <DataMember()> Public Property e() As tnxTowerOutputLoadingConditionTowerSectionE2
         Get
             Return Me.eField
         End Get
@@ -2178,7 +2150,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Cf() As tnxTowerOutputLoadingConditionTowerSectionCF1
+    <DataMember()> Public Property Cf() As tnxTowerOutputLoadingConditionTowerSectionCF1
         Get
             Return Me.cfField
         End Get
@@ -2188,7 +2160,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Df() As tnxTowerOutputLoadingConditionTowerSectionDF1
+    <DataMember()> Public Property Df() As tnxTowerOutputLoadingConditionTowerSectionDF1
         Get
             Return Me.dfField
         End Get
@@ -2198,7 +2170,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Dr() As tnxTowerOutputLoadingConditionTowerSectionDR1
+    <DataMember()> Public Property Dr() As tnxTowerOutputLoadingConditionTowerSectionDR1
         Get
             Return Me.drField
         End Get
@@ -2208,7 +2180,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Ae() As tnxTowerOutputLoadingConditionTowerSectionAE1
+    <DataMember()> Public Property Ae() As tnxTowerOutputLoadingConditionTowerSectionAE1
         Get
             Return Me.aeField
         End Get
@@ -2219,7 +2191,7 @@ Partial Public Class tnxTowerOutputForce60TowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -2232,7 +2204,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE2
@@ -2246,7 +2217,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE2
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2256,7 +2227,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2266,7 +2237,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2276,7 +2247,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2289,7 +2260,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF1
@@ -2303,7 +2273,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF1
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2313,7 +2283,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2323,7 +2293,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2333,7 +2303,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2346,7 +2316,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF1
@@ -2360,7 +2329,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF1
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2370,7 +2339,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2380,7 +2349,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2390,7 +2359,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2403,7 +2372,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR1
@@ -2417,7 +2385,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR1
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2427,7 +2395,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2437,7 +2405,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2447,7 +2415,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2460,7 +2428,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE1
@@ -2474,7 +2441,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE1
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2484,7 +2451,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2494,7 +2461,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2504,7 +2471,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE1
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2517,7 +2484,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputForce90TowerSection
@@ -2547,7 +2513,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property AddWeight() As Double
+    <DataMember()> Public Property AddWeight() As Double
         Get
             Return Me.addWeightField
         End Get
@@ -2557,7 +2523,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property SelfWeight() As Double
+    <DataMember()> Public Property SelfWeight() As Double
         Get
             Return Me.selfWeightField
         End Get
@@ -2567,7 +2533,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property qz() As Double
+    <DataMember()> Public Property qz() As Double
         Get
             Return Me.qzField
         End Get
@@ -2577,7 +2543,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property F() As Double
+    <DataMember()> Public Property F() As Double
         Get
             Return Me.fField
         End Get
@@ -2587,7 +2553,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property w() As Double
+    <DataMember()> Public Property w() As Double
         Get
             Return Me.wField
         End Get
@@ -2597,7 +2563,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property ControllingFace() As String
+    <DataMember()> Public Property ControllingFace() As String
         Get
             Return Me.controllingFaceField
         End Get
@@ -2607,7 +2573,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property e() As tnxTowerOutputLoadingConditionTowerSectionE3
+    <DataMember()> Public Property e() As tnxTowerOutputLoadingConditionTowerSectionE3
         Get
             Return Me.eField
         End Get
@@ -2617,7 +2583,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Cf() As tnxTowerOutputLoadingConditionTowerSectionCF2
+    <DataMember()> Public Property Cf() As tnxTowerOutputLoadingConditionTowerSectionCF2
         Get
             Return Me.cfField
         End Get
@@ -2627,7 +2593,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Df() As tnxTowerOutputLoadingConditionTowerSectionDF2
+    <DataMember()> Public Property Df() As tnxTowerOutputLoadingConditionTowerSectionDF2
         Get
             Return Me.dfField
         End Get
@@ -2637,7 +2603,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Dr() As tnxTowerOutputLoadingConditionTowerSectionDR2
+    <DataMember()> Public Property Dr() As tnxTowerOutputLoadingConditionTowerSectionDR2
         Get
             Return Me.drField
         End Get
@@ -2647,7 +2613,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Ae() As tnxTowerOutputLoadingConditionTowerSectionAE2
+    <DataMember()> Public Property Ae() As tnxTowerOutputLoadingConditionTowerSectionAE2
         Get
             Return Me.aeField
         End Get
@@ -2658,7 +2624,7 @@ Partial Public Class tnxTowerOutputForce90TowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -2671,7 +2637,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE3
@@ -2685,7 +2650,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE3
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2695,7 +2660,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE3
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2705,7 +2670,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE3
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2715,7 +2680,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionE3
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2728,7 +2693,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF2
@@ -2742,7 +2706,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF2
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2752,7 +2716,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2762,7 +2726,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2772,7 +2736,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCF2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2785,7 +2749,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF2
@@ -2799,7 +2762,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF2
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2809,7 +2772,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2819,7 +2782,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2829,7 +2792,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDF2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2842,7 +2805,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR2
@@ -2856,7 +2818,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR2
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2866,7 +2828,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2876,7 +2838,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2886,7 +2848,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionDR2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2899,7 +2861,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE2
@@ -2913,7 +2874,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE2
     Private faceDField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As String
+    <DataMember()> Public Property FaceA() As String
         Get
             Return Me.faceAField
         End Get
@@ -2923,7 +2884,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As String
+    <DataMember()> Public Property FaceB() As String
         Get
             Return Me.faceBField
         End Get
@@ -2933,7 +2894,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As String
+    <DataMember()> Public Property FaceC() As String
         Get
             Return Me.faceCField
         End Get
@@ -2943,7 +2904,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAE2
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As String
+    <DataMember()> Public Property FaceD() As String
         Get
             Return Me.faceDField
         End Get
@@ -2956,7 +2917,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMastVectorLoadingCondition
@@ -2967,7 +2927,7 @@ Partial Public Class tnxTowerOutputMastVectorLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("TowerSection")>
-     <DataMember()> Public Property TowerSection() As tnxTowerOutputMastVectorTowerSection()
+    <DataMember()> Public Property TowerSection() As tnxTowerOutputMastVectorTowerSection()
         Get
             Return Me.towerSectionField
         End Get
@@ -2978,7 +2938,7 @@ Partial Public Class tnxTowerOutputMastVectorLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -2991,7 +2951,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMastVectorTowerSection
@@ -3002,7 +2961,7 @@ Partial Public Class tnxTowerOutputMastVectorTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("WindAzimuth")>
-     <DataMember()> Public Property WindAzimuth() As tnxTowerOutputLoadingConditionTowerSectionWindAzimuth()
+    <DataMember()> Public Property WindAzimuth() As tnxTowerOutputLoadingConditionTowerSectionWindAzimuth()
         Get
             Return Me.windAzimuthField
         End Get
@@ -3013,7 +2972,7 @@ Partial Public Class tnxTowerOutputMastVectorTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -3026,7 +2985,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWindAzimuth
@@ -3048,7 +3006,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWindAzimuth
     Private valueField As Double
 
     '''<remarks/>
-     <DataMember()> Public Property Directionality() As String
+    <DataMember()> Public Property Directionality() As String
         Get
             Return Me.directionalityField
         End Get
@@ -3058,7 +3016,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property F() As Double
+    <DataMember()> Public Property F() As Double
         Get
             Return Me.fField
         End Get
@@ -3068,7 +3026,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Vx() As Double
+    <DataMember()> Public Property Vx() As Double
         Get
             Return Me.vxField
         End Get
@@ -3078,7 +3036,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Vz() As Double
+    <DataMember()> Public Property Vz() As Double
         Get
             Return Me.vzField
         End Get
@@ -3088,7 +3046,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property OTMx() As Double
+    <DataMember()> Public Property OTMx() As Double
         Get
             Return Me.oTMxField
         End Get
@@ -3098,7 +3056,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property OTMz() As Double
+    <DataMember()> Public Property OTMz() As Double
         Get
             Return Me.oTMzField
         End Get
@@ -3108,7 +3066,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Torque() As Double
+    <DataMember()> Public Property Torque() As Double
         Get
             Return Me.torqueField
         End Get
@@ -3119,7 +3077,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWindAzimuth
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Value() As Double
+    <DataMember()> Public Property Value() As Double
         Get
             Return Me.valueField
         End Get
@@ -3132,7 +3090,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLinearAppurtenanceLoadingCondition
@@ -3143,7 +3100,7 @@ Partial Public Class tnxTowerOutputLinearAppurtenanceLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("TowerSection")>
-     <DataMember()> Public Property TowerSection() As tnxTowerOutputLoadingConditionTowerSection5()
+    <DataMember()> Public Property TowerSection() As tnxTowerOutputLoadingConditionTowerSection5()
         Get
             Return Me.towerSectionField
         End Get
@@ -3154,7 +3111,7 @@ Partial Public Class tnxTowerOutputLinearAppurtenanceLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -3167,7 +3124,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSection5
@@ -3189,7 +3145,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection5
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property tz() As Double
+    <DataMember()> Public Property tz() As Double
         Get
             Return Me.tzField
         End Get
@@ -3200,7 +3156,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection5
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property tzSpecified() As Boolean
+    <DataMember()> Public Property tzSpecified() As Boolean
         Get
             Return Me.tzFieldSpecified
         End Get
@@ -3210,7 +3166,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection5
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Ar() As tnxTowerOutputLoadingConditionTowerSectionAR
+    <DataMember()> Public Property Ar() As tnxTowerOutputLoadingConditionTowerSectionAR
         Get
             Return Me.arField
         End Get
@@ -3220,7 +3176,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection5
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Af() As tnxTowerOutputLoadingConditionTowerSectionAF
+    <DataMember()> Public Property Af() As tnxTowerOutputLoadingConditionTowerSectionAF
         Get
             Return Me.afField
         End Get
@@ -3230,7 +3186,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection5
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property CaAaInFace() As tnxTowerOutputLoadingConditionTowerSectionCaAaInFace
+    <DataMember()> Public Property CaAaInFace() As tnxTowerOutputLoadingConditionTowerSectionCaAaInFace
         Get
             Return Me.caAaInFaceField
         End Get
@@ -3240,7 +3196,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection5
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property CaAaOutFace() As tnxTowerOutputLoadingConditionTowerSectionCaAaOutFace
+    <DataMember()> Public Property CaAaOutFace() As tnxTowerOutputLoadingConditionTowerSectionCaAaOutFace
         Get
             Return Me.caAaOutFaceField
         End Get
@@ -3250,7 +3206,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection5
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Weight() As tnxTowerOutputLoadingConditionTowerSectionWeight
+    <DataMember()> Public Property Weight() As tnxTowerOutputLoadingConditionTowerSectionWeight
         Get
             Return Me.weightField
         End Get
@@ -3261,7 +3217,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection5
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -3274,7 +3230,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAR
@@ -3290,7 +3245,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAR
     Private faceDFieldSpecified As Boolean
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As Double
+    <DataMember()> Public Property FaceA() As Double
         Get
             Return Me.faceAField
         End Get
@@ -3300,7 +3255,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAR
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As Double
+    <DataMember()> Public Property FaceB() As Double
         Get
             Return Me.faceBField
         End Get
@@ -3310,7 +3265,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAR
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As Double
+    <DataMember()> Public Property FaceC() As Double
         Get
             Return Me.faceCField
         End Get
@@ -3320,7 +3275,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAR
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As Double
+    <DataMember()> Public Property FaceD() As Double
         Get
             Return Me.faceDField
         End Get
@@ -3331,7 +3286,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAR
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property FaceDSpecified() As Boolean
+    <DataMember()> Public Property FaceDSpecified() As Boolean
         Get
             Return Me.faceDFieldSpecified
         End Get
@@ -3344,7 +3299,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAF
@@ -3360,7 +3314,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAF
     Private faceDFieldSpecified As Boolean
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As Double
+    <DataMember()> Public Property FaceA() As Double
         Get
             Return Me.faceAField
         End Get
@@ -3370,7 +3324,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAF
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As Double
+    <DataMember()> Public Property FaceB() As Double
         Get
             Return Me.faceBField
         End Get
@@ -3380,7 +3334,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAF
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As Double
+    <DataMember()> Public Property FaceC() As Double
         Get
             Return Me.faceCField
         End Get
@@ -3390,7 +3344,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAF
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As Double
+    <DataMember()> Public Property FaceD() As Double
         Get
             Return Me.faceDField
         End Get
@@ -3401,7 +3355,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionAF
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property FaceDSpecified() As Boolean
+    <DataMember()> Public Property FaceDSpecified() As Boolean
         Get
             Return Me.faceDFieldSpecified
         End Get
@@ -3414,7 +3368,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaInFace
@@ -3430,7 +3383,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaInFace
     Private faceDFieldSpecified As Boolean
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As Double
+    <DataMember()> Public Property FaceA() As Double
         Get
             Return Me.faceAField
         End Get
@@ -3440,7 +3393,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaInFace
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As Double
+    <DataMember()> Public Property FaceB() As Double
         Get
             Return Me.faceBField
         End Get
@@ -3450,7 +3403,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaInFace
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As Double
+    <DataMember()> Public Property FaceC() As Double
         Get
             Return Me.faceCField
         End Get
@@ -3460,7 +3413,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaInFace
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As Double
+    <DataMember()> Public Property FaceD() As Double
         Get
             Return Me.faceDField
         End Get
@@ -3471,7 +3424,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaInFace
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property FaceDSpecified() As Boolean
+    <DataMember()> Public Property FaceDSpecified() As Boolean
         Get
             Return Me.faceDFieldSpecified
         End Get
@@ -3484,7 +3437,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaOutFace
@@ -3500,7 +3452,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaOutFace
     Private faceDFieldSpecified As Boolean
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As Double
+    <DataMember()> Public Property FaceA() As Double
         Get
             Return Me.faceAField
         End Get
@@ -3510,7 +3462,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaOutFace
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As Double
+    <DataMember()> Public Property FaceB() As Double
         Get
             Return Me.faceBField
         End Get
@@ -3520,7 +3472,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaOutFace
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As Double
+    <DataMember()> Public Property FaceC() As Double
         Get
             Return Me.faceCField
         End Get
@@ -3530,7 +3482,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaOutFace
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As Double
+    <DataMember()> Public Property FaceD() As Double
         Get
             Return Me.faceDField
         End Get
@@ -3541,7 +3493,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionCaAaOutFace
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property FaceDSpecified() As Boolean
+    <DataMember()> Public Property FaceDSpecified() As Boolean
         Get
             Return Me.faceDFieldSpecified
         End Get
@@ -3554,7 +3506,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWeight
@@ -3570,7 +3521,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWeight
     Private faceDFieldSpecified As Boolean
 
     '''<remarks/>
-     <DataMember()> Public Property FaceA() As Double
+    <DataMember()> Public Property FaceA() As Double
         Get
             Return Me.faceAField
         End Get
@@ -3580,7 +3531,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWeight
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceB() As Double
+    <DataMember()> Public Property FaceB() As Double
         Get
             Return Me.faceBField
         End Get
@@ -3590,7 +3541,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWeight
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceC() As Double
+    <DataMember()> Public Property FaceC() As Double
         Get
             Return Me.faceCField
         End Get
@@ -3600,7 +3551,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWeight
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FaceD() As Double
+    <DataMember()> Public Property FaceD() As Double
         Get
             Return Me.faceDField
         End Get
@@ -3611,7 +3562,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionWeight
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property FaceDSpecified() As Boolean
+    <DataMember()> Public Property FaceDSpecified() As Boolean
         Get
             Return Me.faceDFieldSpecified
         End Get
@@ -3624,7 +3575,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputFeedLinePressureLoadingCondition
@@ -3633,7 +3583,7 @@ Partial Public Class tnxTowerOutputFeedLinePressureLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -3646,7 +3596,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputFeedLineKaLoadingCondition
@@ -3657,7 +3606,7 @@ Partial Public Class tnxTowerOutputFeedLineKaLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("TowerSection")>
-     <DataMember()> Public Property TowerSection() As tnxTowerOutputLoadingConditionTowerSection6()
+    <DataMember()> Public Property TowerSection() As tnxTowerOutputLoadingConditionTowerSection6()
         Get
             Return Me.towerSectionField
         End Get
@@ -3668,7 +3617,7 @@ Partial Public Class tnxTowerOutputFeedLineKaLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -3681,7 +3630,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSection6
@@ -3692,7 +3640,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection6
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("FLSegRec")>
-     <DataMember()> Public Property FLSegRec() As tnxTowerOutputLoadingConditionTowerSectionFLSegRec()
+    <DataMember()> Public Property FLSegRec() As tnxTowerOutputLoadingConditionTowerSectionFLSegRec()
         Get
             Return Me.fLSegRecField
         End Get
@@ -3703,7 +3651,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSection6
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -3716,7 +3664,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionTowerSectionFLSegRec
@@ -3732,7 +3679,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionFLSegRec
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FLSegElev() As String
+    <DataMember()> Public Property FLSegElev() As String
         Get
             Return Me.fLSegElevField
         End Get
@@ -3742,7 +3689,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionFLSegRec
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FLDB() As String
+    <DataMember()> Public Property FLDB() As String
         Get
             Return Me.fLDBField
         End Get
@@ -3752,7 +3699,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionFLSegRec
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FLName() As String
+    <DataMember()> Public Property FLName() As String
         Get
             Return Me.fLNameField
         End Get
@@ -3762,7 +3709,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionFLSegRec
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Ka() As Double
+    <DataMember()> Public Property Ka() As Double
         Get
             Return Me.kaField
         End Get
@@ -3773,7 +3720,7 @@ Partial Public Class tnxTowerOutputLoadingConditionTowerSectionFLSegRec
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -3786,7 +3733,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputSectionVerificationConstants
@@ -3838,7 +3784,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     Private standardField As String
 
     '''<remarks/>
-     <DataMember()> Public Property WindImportanceNoIce() As Double
+    <DataMember()> Public Property WindImportanceNoIce() As Double
         Get
             Return Me.windImportanceNoIceField
         End Get
@@ -3849,7 +3795,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property WindImportanceNoIceSpecified() As Boolean
+    <DataMember()> Public Property WindImportanceNoIceSpecified() As Boolean
         Get
             Return Me.windImportanceNoIceFieldSpecified
         End Get
@@ -3859,7 +3805,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property WindImportanceIce() As Double
+    <DataMember()> Public Property WindImportanceIce() As Double
         Get
             Return Me.windImportanceIceField
         End Get
@@ -3870,7 +3816,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property WindImportanceIceSpecified() As Boolean
+    <DataMember()> Public Property WindImportanceIceSpecified() As Boolean
         Get
             Return Me.windImportanceIceFieldSpecified
         End Get
@@ -3880,7 +3826,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property IceImportance() As Double
+    <DataMember()> Public Property IceImportance() As Double
         Get
             Return Me.iceImportanceField
         End Get
@@ -3891,7 +3837,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property IceImportanceSpecified() As Boolean
+    <DataMember()> Public Property IceImportanceSpecified() As Boolean
         Get
             Return Me.iceImportanceFieldSpecified
         End Get
@@ -3901,7 +3847,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Kd() As Double
+    <DataMember()> Public Property Kd() As Double
         Get
             Return Me.kdField
         End Get
@@ -3912,7 +3858,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property KdSpecified() As Boolean
+    <DataMember()> Public Property KdSpecified() As Boolean
         Get
             Return Me.kdFieldSpecified
         End Get
@@ -3922,7 +3868,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Zg() As Double
+    <DataMember()> Public Property Zg() As Double
         Get
             Return Me.zgField
         End Get
@@ -3933,7 +3879,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property ZgSpecified() As Boolean
+    <DataMember()> Public Property ZgSpecified() As Boolean
         Get
             Return Me.zgFieldSpecified
         End Get
@@ -3943,7 +3889,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property alpha() As Double
+    <DataMember()> Public Property alpha() As Double
         Get
             Return Me.alphaField
         End Get
@@ -3954,7 +3900,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property alphaSpecified() As Boolean
+    <DataMember()> Public Property alphaSpecified() As Boolean
         Get
             Return Me.alphaFieldSpecified
         End Get
@@ -3964,7 +3910,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Kzmin() As Double
+    <DataMember()> Public Property Kzmin() As Double
         Get
             Return Me.kzminField
         End Get
@@ -3975,7 +3921,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property KzminSpecified() As Boolean
+    <DataMember()> Public Property KzminSpecified() As Boolean
         Get
             Return Me.kzminFieldSpecified
         End Get
@@ -3985,7 +3931,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Ke() As Double
+    <DataMember()> Public Property Ke() As Double
         Get
             Return Me.keField
         End Get
@@ -3996,7 +3942,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property KeSpecified() As Boolean
+    <DataMember()> Public Property KeSpecified() As Boolean
         Get
             Return Me.keFieldSpecified
         End Get
@@ -4006,7 +3952,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Kt() As Double
+    <DataMember()> Public Property Kt() As Double
         Get
             Return Me.ktField
         End Get
@@ -4017,7 +3963,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property KtSpecified() As Boolean
+    <DataMember()> Public Property KtSpecified() As Boolean
         Get
             Return Me.ktFieldSpecified
         End Get
@@ -4027,7 +3973,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property f() As Double
+    <DataMember()> Public Property f() As Double
         Get
             Return Me.fField
         End Get
@@ -4038,7 +3984,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property fSpecified() As Boolean
+    <DataMember()> Public Property fSpecified() As Boolean
         Get
             Return Me.fFieldSpecified
         End Get
@@ -4048,7 +3994,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Kc() As Double
+    <DataMember()> Public Property Kc() As Double
         Get
             Return Me.kcField
         End Get
@@ -4059,7 +4005,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property KcSpecified() As Boolean
+    <DataMember()> Public Property KcSpecified() As Boolean
         Get
             Return Me.kcFieldSpecified
         End Get
@@ -4070,7 +4016,7 @@ Partial Public Class tnxTowerOutputSectionVerificationConstants
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Standard() As String
+    <DataMember()> Public Property Standard() As String
         Get
             Return Me.standardField
         End Get
@@ -4083,7 +4029,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputDiscreteAppurtenancePressureLoadingCondition
@@ -4094,7 +4039,7 @@ Partial Public Class tnxTowerOutputDiscreteAppurtenancePressureLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("DiscreteLoad")>
-     <DataMember()> Public Property DiscreteLoad() As tnxTowerOutputLoadingConditionDiscreteLoad()
+    <DataMember()> Public Property DiscreteLoad() As tnxTowerOutputLoadingConditionDiscreteLoad()
         Get
             Return Me.discreteLoadField
         End Get
@@ -4105,7 +4050,7 @@ Partial Public Class tnxTowerOutputDiscreteAppurtenancePressureLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -4118,7 +4063,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
@@ -4150,7 +4094,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
     Private descriptionField As String
 
     '''<remarks/>
-     <DataMember()> Public Property AimingAzimuth() As Double
+    <DataMember()> Public Property AimingAzimuth() As Double
         Get
             Return Me.aimingAzimuthField
         End Get
@@ -4160,7 +4104,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Weight() As Double
+    <DataMember()> Public Property Weight() As Double
         Get
             Return Me.weightField
         End Get
@@ -4170,7 +4114,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Offset_x() As Double
+    <DataMember()> Public Property Offset_x() As Double
         Get
             Return Me.offset_xField
         End Get
@@ -4180,7 +4124,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Offset_z() As Double
+    <DataMember()> Public Property Offset_z() As Double
         Get
             Return Me.offset_zField
         End Get
@@ -4190,7 +4134,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property z() As Double
+    <DataMember()> Public Property z() As Double
         Get
             Return Me.zField
         End Get
@@ -4200,7 +4144,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Kz() As Double
+    <DataMember()> Public Property Kz() As Double
         Get
             Return Me.kzField
         End Get
@@ -4210,7 +4154,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property tz() As Double
+    <DataMember()> Public Property tz() As Double
         Get
             Return Me.tzField
         End Get
@@ -4221,7 +4165,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property tzSpecified() As Boolean
+    <DataMember()> Public Property tzSpecified() As Boolean
         Get
             Return Me.tzFieldSpecified
         End Get
@@ -4231,7 +4175,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property qz() As Double
+    <DataMember()> Public Property qz() As Double
         Get
             Return Me.qzField
         End Get
@@ -4241,7 +4185,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property CaAaFront() As Double
+    <DataMember()> Public Property CaAaFront() As Double
         Get
             Return Me.caAaFrontField
         End Get
@@ -4251,7 +4195,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property CaAaSide() As Double
+    <DataMember()> Public Property CaAaSide() As Double
         Get
             Return Me.caAaSideField
         End Get
@@ -4262,7 +4206,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -4273,7 +4217,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteLoad
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Description() As String
+    <DataMember()> Public Property Description() As String
         Get
             Return Me.descriptionField
         End Get
@@ -4286,7 +4230,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputDiscreteAppurtenanceVectorLoadingCondition
@@ -4297,7 +4240,7 @@ Partial Public Class tnxTowerOutputDiscreteAppurtenanceVectorLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("DiscreteAppurtenance")>
-     <DataMember()> Public Property DiscreteAppurtenance() As tnxTowerOutputLoadingConditionDiscreteAppurtenance()
+    <DataMember()> Public Property DiscreteAppurtenance() As tnxTowerOutputLoadingConditionDiscreteAppurtenance()
         Get
             Return Me.discreteAppurtenanceField
         End Get
@@ -4308,7 +4251,7 @@ Partial Public Class tnxTowerOutputDiscreteAppurtenanceVectorLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -4321,7 +4264,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenance
@@ -4335,7 +4277,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenance
     Private descriptionField As String
 
     '''<remarks/>
-     <DataMember()> Public Property OffsetType() As String
+    <DataMember()> Public Property OffsetType() As String
         Get
             Return Me.offsetTypeField
         End Get
@@ -4346,7 +4288,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenance
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("WindAzimuth")>
-     <DataMember()> Public Property WindAzimuth() As tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimuth()
+    <DataMember()> Public Property WindAzimuth() As tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimuth()
         Get
             Return Me.windAzimuthField
         End Get
@@ -4357,7 +4299,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenance
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -4368,7 +4310,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenance
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Description() As String
+    <DataMember()> Public Property Description() As String
         Get
             Return Me.descriptionField
         End Get
@@ -4381,7 +4323,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimuth
@@ -4403,7 +4344,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimu
     Private valueField As Double
 
     '''<remarks/>
-     <DataMember()> Public Property Fa() As Double
+    <DataMember()> Public Property Fa() As Double
         Get
             Return Me.faField
         End Get
@@ -4413,7 +4354,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimu
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Fs() As Double
+    <DataMember()> Public Property Fs() As Double
         Get
             Return Me.fsField
         End Get
@@ -4423,7 +4364,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimu
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Vx() As Double
+    <DataMember()> Public Property Vx() As Double
         Get
             Return Me.vxField
         End Get
@@ -4433,7 +4374,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimu
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Vz() As Double
+    <DataMember()> Public Property Vz() As Double
         Get
             Return Me.vzField
         End Get
@@ -4443,7 +4384,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimu
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property OTMx() As Double
+    <DataMember()> Public Property OTMx() As Double
         Get
             Return Me.oTMxField
         End Get
@@ -4453,7 +4394,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimu
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property OTMz() As Double
+    <DataMember()> Public Property OTMz() As Double
         Get
             Return Me.oTMzField
         End Get
@@ -4463,7 +4404,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimu
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Torque() As Double
+    <DataMember()> Public Property Torque() As Double
         Get
             Return Me.torqueField
         End Get
@@ -4474,7 +4415,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDiscreteAppurtenanceWindAzimu
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Value() As Double
+    <DataMember()> Public Property Value() As Double
         Get
             Return Me.valueField
         End Get
@@ -4487,7 +4428,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputDishPressureLoadingCondition
@@ -4498,7 +4438,7 @@ Partial Public Class tnxTowerOutputDishPressureLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("Dish")>
-     <DataMember()> Public Property Dish() As tnxTowerOutputLoadingConditionDish()
+    <DataMember()> Public Property Dish() As tnxTowerOutputLoadingConditionDish()
         Get
             Return Me.dishField
         End Get
@@ -4509,7 +4449,7 @@ Partial Public Class tnxTowerOutputDishPressureLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -4522,7 +4462,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionDish
@@ -4552,7 +4491,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
     Private descriptionField As String
 
     '''<remarks/>
-     <DataMember()> Public Property Elevation() As Double
+    <DataMember()> Public Property Elevation() As Double
         Get
             Return Me.elevationField
         End Get
@@ -4562,7 +4501,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property AimingAzimuth() As Double
+    <DataMember()> Public Property AimingAzimuth() As Double
         Get
             Return Me.aimingAzimuthField
         End Get
@@ -4572,7 +4511,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Weight() As Double
+    <DataMember()> Public Property Weight() As Double
         Get
             Return Me.weightField
         End Get
@@ -4582,7 +4521,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Offset_x() As Double
+    <DataMember()> Public Property Offset_x() As Double
         Get
             Return Me.offset_xField
         End Get
@@ -4592,7 +4531,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Offset_z() As Double
+    <DataMember()> Public Property Offset_z() As Double
         Get
             Return Me.offset_zField
         End Get
@@ -4602,7 +4541,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Kz() As Double
+    <DataMember()> Public Property Kz() As Double
         Get
             Return Me.kzField
         End Get
@@ -4612,7 +4551,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Aa() As Double
+    <DataMember()> Public Property Aa() As Double
         Get
             Return Me.aaField
         End Get
@@ -4622,7 +4561,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property tz() As Double
+    <DataMember()> Public Property tz() As Double
         Get
             Return Me.tzField
         End Get
@@ -4633,7 +4572,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
 
     '''<remarks/>
     <System.Xml.Serialization.XmlIgnoreAttribute()>
-     <DataMember()> Public Property tzSpecified() As Boolean
+    <DataMember()> Public Property tzSpecified() As Boolean
         Get
             Return Me.tzFieldSpecified
         End Get
@@ -4643,7 +4582,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property qz() As Double
+    <DataMember()> Public Property qz() As Double
         Get
             Return Me.qzField
         End Get
@@ -4654,7 +4593,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -4665,7 +4604,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Description() As String
+    <DataMember()> Public Property Description() As String
         Get
             Return Me.descriptionField
         End Get
@@ -4678,7 +4617,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputDishVectorLoadingCondition
@@ -4689,7 +4627,7 @@ Partial Public Class tnxTowerOutputDishVectorLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("Dish")>
-     <DataMember()> Public Property Dish() As tnxTowerOutputLoadingConditionDish1()
+    <DataMember()> Public Property Dish() As tnxTowerOutputLoadingConditionDish1()
         Get
             Return Me.dishField
         End Get
@@ -4700,7 +4638,7 @@ Partial Public Class tnxTowerOutputDishVectorLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -4713,7 +4651,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionDish1
@@ -4727,7 +4664,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish1
     Private descriptionField As String
 
     '''<remarks/>
-     <DataMember()> Public Property OffsetType() As String
+    <DataMember()> Public Property OffsetType() As String
         Get
             Return Me.offsetTypeField
         End Get
@@ -4738,7 +4675,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish1
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("WindAzimuth")>
-     <DataMember()> Public Property WindAzimuth() As tnxTowerOutputLoadingConditionDishWindAzimuth()
+    <DataMember()> Public Property WindAzimuth() As tnxTowerOutputLoadingConditionDishWindAzimuth()
         Get
             Return Me.windAzimuthField
         End Get
@@ -4749,7 +4686,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish1
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -4760,7 +4697,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDish1
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Description() As String
+    <DataMember()> Public Property Description() As String
         Get
             Return Me.descriptionField
         End Get
@@ -4773,7 +4710,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
@@ -4801,7 +4737,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
     Private valueField As Double
 
     '''<remarks/>
-     <DataMember()> Public Property Ca() As Double
+    <DataMember()> Public Property Ca() As Double
         Get
             Return Me.caField
         End Get
@@ -4811,7 +4747,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Cs() As Double
+    <DataMember()> Public Property Cs() As Double
         Get
             Return Me.csField
         End Get
@@ -4821,7 +4757,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Cm() As Double
+    <DataMember()> Public Property Cm() As Double
         Get
             Return Me.cmField
         End Get
@@ -4831,7 +4767,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Fa() As Double
+    <DataMember()> Public Property Fa() As Double
         Get
             Return Me.faField
         End Get
@@ -4841,7 +4777,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Fs() As Double
+    <DataMember()> Public Property Fs() As Double
         Get
             Return Me.fsField
         End Get
@@ -4851,7 +4787,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Vx() As Double
+    <DataMember()> Public Property Vx() As Double
         Get
             Return Me.vxField
         End Get
@@ -4861,7 +4797,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Vz() As Double
+    <DataMember()> Public Property Vz() As Double
         Get
             Return Me.vzField
         End Get
@@ -4871,7 +4807,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property OTMx() As Double
+    <DataMember()> Public Property OTMx() As Double
         Get
             Return Me.oTMxField
         End Get
@@ -4881,7 +4817,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property OTMz() As Double
+    <DataMember()> Public Property OTMz() As Double
         Get
             Return Me.oTMzField
         End Get
@@ -4891,7 +4827,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Torque() As Double
+    <DataMember()> Public Property Torque() As Double
         Get
             Return Me.torqueField
         End Get
@@ -4902,7 +4838,7 @@ Partial Public Class tnxTowerOutputLoadingConditionDishWindAzimuth
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Value() As Double
+    <DataMember()> Public Property Value() As Double
         Get
             Return Me.valueField
         End Get
@@ -4915,7 +4851,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputUserLoadVectorLoadingCondition
@@ -4926,7 +4861,7 @@ Partial Public Class tnxTowerOutputUserLoadVectorLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("UserLoad")>
-     <DataMember()> Public Property UserLoad() As tnxTowerOutputLoadingConditionUserLoad()
+    <DataMember()> Public Property UserLoad() As tnxTowerOutputLoadingConditionUserLoad()
         Get
             Return Me.userLoadField
         End Get
@@ -4937,7 +4872,7 @@ Partial Public Class tnxTowerOutputUserLoadVectorLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -4950,7 +4885,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionUserLoad
@@ -4965,7 +4899,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoad
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("WindAzimuth")>
-     <DataMember()> Public Property WindAzimuth() As tnxTowerOutputLoadingConditionUserLoadWindAzimuth()
+    <DataMember()> Public Property WindAzimuth() As tnxTowerOutputLoadingConditionUserLoadWindAzimuth()
         Get
             Return Me.windAzimuthField
         End Get
@@ -4976,7 +4910,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoad
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -4987,7 +4921,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoad
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Description() As String
+    <DataMember()> Public Property Description() As String
         Get
             Return Me.descriptionField
         End Get
@@ -4998,7 +4932,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoad
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Elevation() As Double
+    <DataMember()> Public Property Elevation() As Double
         Get
             Return Me.elevationField
         End Get
@@ -5011,7 +4945,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionUserLoadWindAzimuth
@@ -5035,7 +4968,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoadWindAzimuth
     Private valueField As Double
 
     '''<remarks/>
-     <DataMember()> Public Property Offset_x() As Double
+    <DataMember()> Public Property Offset_x() As Double
         Get
             Return Me.offset_xField
         End Get
@@ -5045,7 +4978,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoadWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Offset_z() As Double
+    <DataMember()> Public Property Offset_z() As Double
         Get
             Return Me.offset_zField
         End Get
@@ -5055,7 +4988,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoadWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property F() As Double
+    <DataMember()> Public Property F() As Double
         Get
             Return Me.fField
         End Get
@@ -5065,7 +4998,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoadWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Vx() As Double
+    <DataMember()> Public Property Vx() As Double
         Get
             Return Me.vxField
         End Get
@@ -5075,7 +5008,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoadWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Vz() As Double
+    <DataMember()> Public Property Vz() As Double
         Get
             Return Me.vzField
         End Get
@@ -5085,7 +5018,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoadWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property OTMx() As Double
+    <DataMember()> Public Property OTMx() As Double
         Get
             Return Me.oTMxField
         End Get
@@ -5095,7 +5028,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoadWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property OTMz() As Double
+    <DataMember()> Public Property OTMz() As Double
         Get
             Return Me.oTMzField
         End Get
@@ -5105,7 +5038,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoadWindAzimuth
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Torque() As Double
+    <DataMember()> Public Property Torque() As Double
         Get
             Return Me.torqueField
         End Get
@@ -5116,7 +5049,7 @@ Partial Public Class tnxTowerOutputLoadingConditionUserLoadWindAzimuth
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Value() As Double
+    <DataMember()> Public Property Value() As Double
         Get
             Return Me.valueField
         End Get
@@ -5129,7 +5062,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadCombinations
@@ -5140,7 +5072,7 @@ Partial Public Class tnxTowerOutputLoadCombinations
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("LoadCombination")>
-     <DataMember()> Public Property LoadCombination() As tnxTowerOutputLoadCombinationsLoadCombination()
+    <DataMember()> Public Property LoadCombination() As tnxTowerOutputLoadCombinationsLoadCombination()
         Get
             Return Me.loadCombinationField
         End Get
@@ -5151,7 +5083,7 @@ Partial Public Class tnxTowerOutputLoadCombinations
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property NumberOfLoadCombinations() As String
+    <DataMember()> Public Property NumberOfLoadCombinations() As String
         Get
             Return Me.numberOfLoadCombinationsField
         End Get
@@ -5164,7 +5096,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadCombinationsLoadCombination
@@ -5175,7 +5106,7 @@ Partial Public Class tnxTowerOutputLoadCombinationsLoadCombination
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -5186,7 +5117,7 @@ Partial Public Class tnxTowerOutputLoadCombinationsLoadCombination
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Description() As String
+    <DataMember()> Public Property Description() As String
         Get
             Return Me.descriptionField
         End Get
@@ -5199,7 +5130,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputReactionNode
@@ -5222,7 +5152,7 @@ Partial Public Class tnxTowerOutputReactionNode
 
     '''<remarks/>
     <System.Xml.Serialization.XmlArrayItemAttribute("Guy", IsNullable:=False)>
-     <DataMember()> Public Property AssociatedGuys() As tnxTowerOutputNodeGuy()
+    <DataMember()> Public Property AssociatedGuys() As tnxTowerOutputNodeGuy()
         Get
             Return Me.associatedGuysField
         End Get
@@ -5232,7 +5162,7 @@ Partial Public Class tnxTowerOutputReactionNode
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property AssociatedLeg() As tnxTowerOutputNodeAssociatedLeg
+    <DataMember()> Public Property AssociatedLeg() As tnxTowerOutputNodeAssociatedLeg
         Get
             Return Me.associatedLegField
         End Get
@@ -5243,7 +5173,7 @@ Partial Public Class tnxTowerOutputReactionNode
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("LoadCombination")>
-     <DataMember()> Public Property LoadCombination() As tnxTowerOutputNodeLoadCombination()
+    <DataMember()> Public Property LoadCombination() As tnxTowerOutputNodeLoadCombination()
         Get
             Return Me.loadCombinationField
         End Get
@@ -5254,7 +5184,7 @@ Partial Public Class tnxTowerOutputReactionNode
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -5265,7 +5195,7 @@ Partial Public Class tnxTowerOutputReactionNode
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property X() As Double
+    <DataMember()> Public Property X() As Double
         Get
             Return Me.xField
         End Get
@@ -5276,7 +5206,7 @@ Partial Public Class tnxTowerOutputReactionNode
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Y() As Double
+    <DataMember()> Public Property Y() As Double
         Get
             Return Me.yField
         End Get
@@ -5287,7 +5217,7 @@ Partial Public Class tnxTowerOutputReactionNode
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Z() As Double
+    <DataMember()> Public Property Z() As Double
         Get
             Return Me.zField
         End Get
@@ -5298,7 +5228,7 @@ Partial Public Class tnxTowerOutputReactionNode
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Location() As String
+    <DataMember()> Public Property Location() As String
         Get
             Return Me.locationField
         End Get
@@ -5311,7 +5241,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputNodeGuy
@@ -5326,7 +5255,7 @@ Partial Public Class tnxTowerOutputNodeGuy
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property MemberNo() As String
+    <DataMember()> Public Property MemberNo() As String
         Get
             Return Me.memberNoField
         End Get
@@ -5337,7 +5266,7 @@ Partial Public Class tnxTowerOutputNodeGuy
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Designation() As String
+    <DataMember()> Public Property Designation() As String
         Get
             Return Me.designationField
         End Get
@@ -5348,7 +5277,7 @@ Partial Public Class tnxTowerOutputNodeGuy
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property AttachmentElev() As Double
+    <DataMember()> Public Property AttachmentElev() As Double
         Get
             Return Me.attachmentElevField
         End Get
@@ -5359,7 +5288,7 @@ Partial Public Class tnxTowerOutputNodeGuy
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property AzimuthAdj() As Double
+    <DataMember()> Public Property AzimuthAdj() As Double
         Get
             Return Me.azimuthAdjField
         End Get
@@ -5372,7 +5301,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputNodeAssociatedLeg
@@ -5381,7 +5309,7 @@ Partial Public Class tnxTowerOutputNodeAssociatedLeg
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Designation() As String
+    <DataMember()> Public Property Designation() As String
         Get
             Return Me.designationField
         End Get
@@ -5394,7 +5322,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputNodeLoadCombination
@@ -5414,7 +5341,7 @@ Partial Public Class tnxTowerOutputNodeLoadCombination
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property FX() As Double
+    <DataMember()> Public Property FX() As Double
         Get
             Return Me.fxField
         End Get
@@ -5424,7 +5351,7 @@ Partial Public Class tnxTowerOutputNodeLoadCombination
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FY() As Double
+    <DataMember()> Public Property FY() As Double
         Get
             Return Me.fyField
         End Get
@@ -5434,7 +5361,7 @@ Partial Public Class tnxTowerOutputNodeLoadCombination
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property FZ() As Double
+    <DataMember()> Public Property FZ() As Double
         Get
             Return Me.fzField
         End Get
@@ -5444,7 +5371,7 @@ Partial Public Class tnxTowerOutputNodeLoadCombination
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property MX() As Double
+    <DataMember()> Public Property MX() As Double
         Get
             Return Me.mxField
         End Get
@@ -5454,7 +5381,7 @@ Partial Public Class tnxTowerOutputNodeLoadCombination
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property MY() As Double
+    <DataMember()> Public Property MY() As Double
         Get
             Return Me.myField
         End Get
@@ -5464,7 +5391,7 @@ Partial Public Class tnxTowerOutputNodeLoadCombination
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property MZ() As Double
+    <DataMember()> Public Property MZ() As Double
         Get
             Return Me.mzField
         End Get
@@ -5475,7 +5402,7 @@ Partial Public Class tnxTowerOutputNodeLoadCombination
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -5488,7 +5415,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputDisplacementTowerSection
@@ -5499,7 +5425,7 @@ Partial Public Class tnxTowerOutputDisplacementTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("LoadCombination")>
-     <DataMember()> Public Property LoadCombination() As tnxTowerOutputTowerSectionLoadCombination()
+    <DataMember()> Public Property LoadCombination() As tnxTowerOutputTowerSectionLoadCombination()
         Get
             Return Me.loadCombinationField
         End Get
@@ -5510,7 +5436,7 @@ Partial Public Class tnxTowerOutputDisplacementTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -5523,7 +5449,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerSectionLoadCombination
@@ -5537,7 +5462,7 @@ Partial Public Class tnxTowerOutputTowerSectionLoadCombination
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property Sway() As Double
+    <DataMember()> Public Property Sway() As Double
         Get
             Return Me.swayField
         End Get
@@ -5547,7 +5472,7 @@ Partial Public Class tnxTowerOutputTowerSectionLoadCombination
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Tilt() As Double
+    <DataMember()> Public Property Tilt() As Double
         Get
             Return Me.tiltField
         End Get
@@ -5557,7 +5482,7 @@ Partial Public Class tnxTowerOutputTowerSectionLoadCombination
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Twist() As Double
+    <DataMember()> Public Property Twist() As Double
         Get
             Return Me.twistField
         End Get
@@ -5568,7 +5493,7 @@ Partial Public Class tnxTowerOutputTowerSectionLoadCombination
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -5581,7 +5506,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputCriticalDeflectionLoadingCondition
@@ -5592,7 +5516,7 @@ Partial Public Class tnxTowerOutputCriticalDeflectionLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("Elevation")>
-     <DataMember()> Public Property Elevation() As tnxTowerOutputLoadingConditionElevation()
+    <DataMember()> Public Property Elevation() As tnxTowerOutputLoadingConditionElevation()
         Get
             Return Me.elevationField
         End Get
@@ -5603,7 +5527,7 @@ Partial Public Class tnxTowerOutputCriticalDeflectionLoadingCondition
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Type() As String
+    <DataMember()> Public Property Type() As String
         Get
             Return Me.typeField
         End Get
@@ -5616,7 +5540,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputLoadingConditionElevation
@@ -5636,7 +5559,7 @@ Partial Public Class tnxTowerOutputLoadingConditionElevation
     Private valueField As Double
 
     '''<remarks/>
-     <DataMember()> Public Property Appurtenance() As String
+    <DataMember()> Public Property Appurtenance() As String
         Get
             Return Me.appurtenanceField
         End Get
@@ -5647,7 +5570,7 @@ Partial Public Class tnxTowerOutputLoadingConditionElevation
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute(DataType:="integer")>
-     <DataMember()> Public Property GovLComb() As String
+    <DataMember()> Public Property GovLComb() As String
         Get
             Return Me.govLCombField
         End Get
@@ -5657,7 +5580,7 @@ Partial Public Class tnxTowerOutputLoadingConditionElevation
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Deflection() As Double
+    <DataMember()> Public Property Deflection() As Double
         Get
             Return Me.deflectionField
         End Get
@@ -5667,7 +5590,7 @@ Partial Public Class tnxTowerOutputLoadingConditionElevation
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Tilt() As Double
+    <DataMember()> Public Property Tilt() As Double
         Get
             Return Me.tiltField
         End Get
@@ -5677,7 +5600,7 @@ Partial Public Class tnxTowerOutputLoadingConditionElevation
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Twist() As Double
+    <DataMember()> Public Property Twist() As Double
         Get
             Return Me.twistField
         End Get
@@ -5687,7 +5610,7 @@ Partial Public Class tnxTowerOutputLoadingConditionElevation
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property CurvRad() As Double
+    <DataMember()> Public Property CurvRad() As Double
         Get
             Return Me.curvRadField
         End Get
@@ -5698,7 +5621,7 @@ Partial Public Class tnxTowerOutputLoadingConditionElevation
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Value() As Double
+    <DataMember()> Public Property Value() As Double
         Get
             Return Me.valueField
         End Get
@@ -5711,7 +5634,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberForceTowerSection
@@ -5722,7 +5644,7 @@ Partial Public Class tnxTowerOutputMemberForceTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("ComponentType")>
-     <DataMember()> Public Property ComponentType() As tnxTowerOutputTowerSectionComponentType()
+    <DataMember()> Public Property ComponentType() As tnxTowerOutputTowerSectionComponentType()
         Get
             Return Me.componentTypeField
         End Get
@@ -5733,7 +5655,7 @@ Partial Public Class tnxTowerOutputMemberForceTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -5746,7 +5668,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerSectionComponentType
@@ -5757,7 +5678,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentType
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("Member")>
-     <DataMember()> Public Property Member() As tnxTowerOutputTowerSectionComponentTypeMember()
+    <DataMember()> Public Property Member() As tnxTowerOutputTowerSectionComponentTypeMember()
         Get
             Return Me.memberField
         End Get
@@ -5768,7 +5689,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentType
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Name() As String
+    <DataMember()> Public Property Name() As String
         Get
             Return Me.nameField
         End Get
@@ -5781,7 +5702,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerSectionComponentTypeMember
@@ -5792,7 +5712,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMember
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("Span")>
-     <DataMember()> Public Property Span() As tnxTowerOutputTowerSectionComponentTypeMemberSpan()
+    <DataMember()> Public Property Span() As tnxTowerOutputTowerSectionComponentTypeMemberSpan()
         Get
             Return Me.spanField
         End Get
@@ -5803,7 +5723,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMember
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -5816,7 +5736,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpan
@@ -5829,7 +5748,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpan
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("LoadCombination")>
-     <DataMember()> Public Property LoadCombination() As tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombination()
+    <DataMember()> Public Property LoadCombination() As tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombination()
         Get
             Return Me.loadCombinationField
         End Get
@@ -5840,7 +5759,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpan
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property NodeStart() As String
+    <DataMember()> Public Property NodeStart() As String
         Get
             Return Me.nodeStartField
         End Get
@@ -5851,7 +5770,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpan
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property NodeEnd() As String
+    <DataMember()> Public Property NodeEnd() As String
         Get
             Return Me.nodeEndField
         End Get
@@ -5864,7 +5783,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombination
@@ -5875,7 +5793,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombin
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("AtNode")>
-     <DataMember()> Public Property AtNode() As tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombinationAtNode()
+    <DataMember()> Public Property AtNode() As tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombinationAtNode()
         Get
             Return Me.atNodeField
         End Get
@@ -5886,7 +5804,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombin
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -5899,7 +5817,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombinationAtNode
@@ -5919,7 +5836,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombin
     Private numberField As String
 
     '''<remarks/>
-     <DataMember()> Public Property Axial() As Double
+    <DataMember()> Public Property Axial() As Double
         Get
             Return Me.axialField
         End Get
@@ -5929,7 +5846,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombin
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property ShearX() As Double
+    <DataMember()> Public Property ShearX() As Double
         Get
             Return Me.shearXField
         End Get
@@ -5939,7 +5856,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombin
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property ShearY() As Double
+    <DataMember()> Public Property ShearY() As Double
         Get
             Return Me.shearYField
         End Get
@@ -5949,7 +5866,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombin
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property MomentX() As Double
+    <DataMember()> Public Property MomentX() As Double
         Get
             Return Me.momentXField
         End Get
@@ -5959,7 +5876,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombin
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property MomentY() As Double
+    <DataMember()> Public Property MomentY() As Double
         Get
             Return Me.momentYField
         End Get
@@ -5969,7 +5886,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombin
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Torsion() As Double
+    <DataMember()> Public Property Torsion() As Double
         Get
             Return Me.torsionField
         End Get
@@ -5980,7 +5897,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberSpanLoadCombin
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -5993,7 +5910,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberCompressionTowerSection
@@ -6004,7 +5920,7 @@ Partial Public Class tnxTowerOutputMemberCompressionTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("ComponentType")>
-     <DataMember()> Public Property ComponentType() As tnxTowerOutputMemberCompressionComponentType()
+    <DataMember()> Public Property ComponentType() As tnxTowerOutputMemberCompressionComponentType()
         Get
             Return Me.componentTypeField
         End Get
@@ -6015,7 +5931,7 @@ Partial Public Class tnxTowerOutputMemberCompressionTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -6028,7 +5944,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberCompressionComponentType
@@ -6040,7 +5955,7 @@ Partial Public Class tnxTowerOutputMemberCompressionComponentType
     Private nameField As String
 
     '''<remarks/>
-     <DataMember()> Public Property ComponentDesignParameters() As tnxTowerOutputMemberCompressionDesignParameters
+    <DataMember()> Public Property ComponentDesignParameters() As tnxTowerOutputMemberCompressionDesignParameters
         Get
             Return Me.componentDesignParametersField
         End Get
@@ -6051,7 +5966,7 @@ Partial Public Class tnxTowerOutputMemberCompressionComponentType
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("Member")>
-     <DataMember()> Public Property Member() As tnxTowerOutputMemberCompressionMember()
+    <DataMember()> Public Property Member() As tnxTowerOutputMemberCompressionMember()
         Get
             Return Me.memberField
         End Get
@@ -6062,7 +5977,7 @@ Partial Public Class tnxTowerOutputMemberCompressionComponentType
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Name() As String
+    <DataMember()> Public Property Name() As String
         Get
             Return Me.nameField
         End Get
@@ -6075,7 +5990,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberCompressionDesignParameters
@@ -6090,7 +6004,7 @@ Partial Public Class tnxTowerOutputMemberCompressionDesignParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property ShapeDesignation() As String
+    <DataMember()> Public Property ShapeDesignation() As String
         Get
             Return Me.shapeDesignationField
         End Get
@@ -6101,7 +6015,7 @@ Partial Public Class tnxTowerOutputMemberCompressionDesignParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Area() As Double
+    <DataMember()> Public Property Area() As Double
         Get
             Return Me.areaField
         End Get
@@ -6112,7 +6026,7 @@ Partial Public Class tnxTowerOutputMemberCompressionDesignParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property L() As Double
+    <DataMember()> Public Property L() As Double
         Get
             Return Me.lField
         End Get
@@ -6123,7 +6037,7 @@ Partial Public Class tnxTowerOutputMemberCompressionDesignParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property DCRatioLimit() As Double
+    <DataMember()> Public Property DCRatioLimit() As Double
         Get
             Return Me.dCRatioLimitField
         End Get
@@ -6136,7 +6050,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberCompressionMember
@@ -6157,7 +6070,7 @@ Partial Public Class tnxTowerOutputMemberCompressionMember
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute(DataType:="integer")>
-     <DataMember()> Public Property ControllingLoadCombination() As String
+    <DataMember()> Public Property ControllingLoadCombination() As String
         Get
             Return Me.controllingLoadCombinationField
         End Get
@@ -6168,7 +6081,7 @@ Partial Public Class tnxTowerOutputMemberCompressionMember
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute(DataType:="integer")>
-     <DataMember()> Public Property ControllingSpan() As String
+    <DataMember()> Public Property ControllingSpan() As String
         Get
             Return Me.controllingSpanField
         End Get
@@ -6178,7 +6091,7 @@ Partial Public Class tnxTowerOutputMemberCompressionMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Compression() As tnxTowerOutputMemberCompression
+    <DataMember()> Public Property Compression() As tnxTowerOutputMemberCompression
         Get
             Return Me.compressionField
         End Get
@@ -6188,7 +6101,7 @@ Partial Public Class tnxTowerOutputMemberCompressionMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Bending() As tnxTowerOutputMemberBending
+    <DataMember()> Public Property Bending() As tnxTowerOutputMemberBending
         Get
             Return Me.bendingField
         End Get
@@ -6198,7 +6111,7 @@ Partial Public Class tnxTowerOutputMemberCompressionMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Shear() As tnxTowerOutputMemberShear
+    <DataMember()> Public Property Shear() As tnxTowerOutputMemberShear
         Get
             Return Me.shearField
         End Get
@@ -6208,7 +6121,7 @@ Partial Public Class tnxTowerOutputMemberCompressionMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Interaction() As tnxTowerOutputMemberInteraction
+    <DataMember()> Public Property Interaction() As tnxTowerOutputMemberInteraction
         Get
             Return Me.interactionField
         End Get
@@ -6219,7 +6132,7 @@ Partial Public Class tnxTowerOutputMemberCompressionMember
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -6232,7 +6145,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberCompression
@@ -6248,7 +6160,7 @@ Partial Public Class tnxTowerOutputMemberCompression
     Private pDCRatioField As Double
 
     '''<remarks/>
-     <DataMember()> Public Property Lu() As Double
+    <DataMember()> Public Property Lu() As Double
         Get
             Return Me.luField
         End Get
@@ -6258,7 +6170,7 @@ Partial Public Class tnxTowerOutputMemberCompression
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property KLr() As Double
+    <DataMember()> Public Property KLr() As Double
         Get
             Return Me.kLrField
         End Get
@@ -6268,7 +6180,7 @@ Partial Public Class tnxTowerOutputMemberCompression
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Pu() As Double
+    <DataMember()> Public Property Pu() As Double
         Get
             Return Me.puField
         End Get
@@ -6278,7 +6190,7 @@ Partial Public Class tnxTowerOutputMemberCompression
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property phiPn() As Double
+    <DataMember()> Public Property phiPn() As Double
         Get
             Return Me.phiPnField
         End Get
@@ -6288,7 +6200,7 @@ Partial Public Class tnxTowerOutputMemberCompression
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property PDCRatio() As Double
+    <DataMember()> Public Property PDCRatio() As Double
         Get
             Return Me.pDCRatioField
         End Get
@@ -6301,7 +6213,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberBending
@@ -6319,7 +6230,7 @@ Partial Public Class tnxTowerOutputMemberBending
     Private myDCRatioField As Double
 
     '''<remarks/>
-     <DataMember()> Public Property Mux() As Double
+    <DataMember()> Public Property Mux() As Double
         Get
             Return Me.muxField
         End Get
@@ -6329,7 +6240,7 @@ Partial Public Class tnxTowerOutputMemberBending
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property phiMnx() As Double
+    <DataMember()> Public Property phiMnx() As Double
         Get
             Return Me.phiMnxField
         End Get
@@ -6339,7 +6250,7 @@ Partial Public Class tnxTowerOutputMemberBending
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property MxDCRatio() As Double
+    <DataMember()> Public Property MxDCRatio() As Double
         Get
             Return Me.mxDCRatioField
         End Get
@@ -6349,7 +6260,7 @@ Partial Public Class tnxTowerOutputMemberBending
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Muy() As Double
+    <DataMember()> Public Property Muy() As Double
         Get
             Return Me.muyField
         End Get
@@ -6359,7 +6270,7 @@ Partial Public Class tnxTowerOutputMemberBending
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property phiMny() As Double
+    <DataMember()> Public Property phiMny() As Double
         Get
             Return Me.phiMnyField
         End Get
@@ -6369,7 +6280,7 @@ Partial Public Class tnxTowerOutputMemberBending
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property MyDCRatio() As Double
+    <DataMember()> Public Property MyDCRatio() As Double
         Get
             Return Me.myDCRatioField
         End Get
@@ -6382,7 +6293,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberShear
@@ -6400,7 +6310,7 @@ Partial Public Class tnxTowerOutputMemberShear
     Private tDCRatioField As Double
 
     '''<remarks/>
-     <DataMember()> Public Property Vu() As Double
+    <DataMember()> Public Property Vu() As Double
         Get
             Return Me.vuField
         End Get
@@ -6410,7 +6320,7 @@ Partial Public Class tnxTowerOutputMemberShear
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property phiVn() As Double
+    <DataMember()> Public Property phiVn() As Double
         Get
             Return Me.phiVnField
         End Get
@@ -6420,7 +6330,7 @@ Partial Public Class tnxTowerOutputMemberShear
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property VDCRatio() As Double
+    <DataMember()> Public Property VDCRatio() As Double
         Get
             Return Me.vDCRatioField
         End Get
@@ -6430,7 +6340,7 @@ Partial Public Class tnxTowerOutputMemberShear
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Tu() As Double
+    <DataMember()> Public Property Tu() As Double
         Get
             Return Me.tuField
         End Get
@@ -6440,7 +6350,7 @@ Partial Public Class tnxTowerOutputMemberShear
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property phiTn() As Double
+    <DataMember()> Public Property phiTn() As Double
         Get
             Return Me.phiTnField
         End Get
@@ -6450,7 +6360,7 @@ Partial Public Class tnxTowerOutputMemberShear
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property TDCRatio() As Double
+    <DataMember()> Public Property TDCRatio() As Double
         Get
             Return Me.tDCRatioField
         End Get
@@ -6463,7 +6373,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberInteraction
@@ -6473,7 +6382,7 @@ Partial Public Class tnxTowerOutputMemberInteraction
     Private criteriaField As String
 
     '''<remarks/>
-     <DataMember()> Public Property CombinedDCRatio() As Double
+    <DataMember()> Public Property CombinedDCRatio() As Double
         Get
             Return Me.combinedDCRatioField
         End Get
@@ -6483,7 +6392,7 @@ Partial Public Class tnxTowerOutputMemberInteraction
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Criteria() As String
+    <DataMember()> Public Property Criteria() As String
         Get
             Return Me.criteriaField
         End Get
@@ -6496,7 +6405,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberTensionTowerSection
@@ -6507,7 +6415,7 @@ Partial Public Class tnxTowerOutputMemberTensionTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("ComponentType")>
-     <DataMember()> Public Property ComponentType() As tnxTowerOutputMemberTensionComponentType()
+    <DataMember()> Public Property ComponentType() As tnxTowerOutputMemberTensionComponentType()
         Get
             Return Me.componentTypeField
         End Get
@@ -6518,7 +6426,7 @@ Partial Public Class tnxTowerOutputMemberTensionTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -6531,7 +6439,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberTensionComponentType
@@ -6543,7 +6450,7 @@ Partial Public Class tnxTowerOutputMemberTensionComponentType
     Private nameField As String
 
     '''<remarks/>
-     <DataMember()> Public Property ComponentDesignParameters() As tnxTowerOutputMemberTensionDesignParameters
+    <DataMember()> Public Property ComponentDesignParameters() As tnxTowerOutputMemberTensionDesignParameters
         Get
             Return Me.componentDesignParametersField
         End Get
@@ -6554,7 +6461,7 @@ Partial Public Class tnxTowerOutputMemberTensionComponentType
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("Member")>
-     <DataMember()> Public Property Member() As tnxTowerOutputMemberTensionMember()
+    <DataMember()> Public Property Member() As tnxTowerOutputMemberTensionMember()
         Get
             Return Me.memberField
         End Get
@@ -6565,7 +6472,7 @@ Partial Public Class tnxTowerOutputMemberTensionComponentType
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Name() As String
+    <DataMember()> Public Property Name() As String
         Get
             Return Me.nameField
         End Get
@@ -6578,7 +6485,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberTensionDesignParameters
@@ -6593,7 +6499,7 @@ Partial Public Class tnxTowerOutputMemberTensionDesignParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property ShapeDesignation() As String
+    <DataMember()> Public Property ShapeDesignation() As String
         Get
             Return Me.shapeDesignationField
         End Get
@@ -6604,7 +6510,7 @@ Partial Public Class tnxTowerOutputMemberTensionDesignParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Area() As Double
+    <DataMember()> Public Property Area() As Double
         Get
             Return Me.areaField
         End Get
@@ -6615,7 +6521,7 @@ Partial Public Class tnxTowerOutputMemberTensionDesignParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property L() As Double
+    <DataMember()> Public Property L() As Double
         Get
             Return Me.lField
         End Get
@@ -6626,7 +6532,7 @@ Partial Public Class tnxTowerOutputMemberTensionDesignParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property DCRatioLimit() As Double
+    <DataMember()> Public Property DCRatioLimit() As Double
         Get
             Return Me.dCRatioLimitField
         End Get
@@ -6639,7 +6545,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberTensionMember
@@ -6660,7 +6565,7 @@ Partial Public Class tnxTowerOutputMemberTensionMember
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute(DataType:="integer")>
-     <DataMember()> Public Property ControllingLoadCombination() As String
+    <DataMember()> Public Property ControllingLoadCombination() As String
         Get
             Return Me.controllingLoadCombinationField
         End Get
@@ -6671,7 +6576,7 @@ Partial Public Class tnxTowerOutputMemberTensionMember
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute(DataType:="integer")>
-     <DataMember()> Public Property ControllingSpan() As String
+    <DataMember()> Public Property ControllingSpan() As String
         Get
             Return Me.controllingSpanField
         End Get
@@ -6681,7 +6586,7 @@ Partial Public Class tnxTowerOutputMemberTensionMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Tension() As tnxTowerOutputMemberTension
+    <DataMember()> Public Property Tension() As tnxTowerOutputMemberTension
         Get
             Return Me.tensionField
         End Get
@@ -6691,7 +6596,7 @@ Partial Public Class tnxTowerOutputMemberTensionMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Bending() As tnxTowerOutputMemberBending
+    <DataMember()> Public Property Bending() As tnxTowerOutputMemberBending
         Get
             Return Me.bendingField
         End Get
@@ -6701,7 +6606,7 @@ Partial Public Class tnxTowerOutputMemberTensionMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Shear() As tnxTowerOutputMemberShear
+    <DataMember()> Public Property Shear() As tnxTowerOutputMemberShear
         Get
             Return Me.shearField
         End Get
@@ -6711,7 +6616,7 @@ Partial Public Class tnxTowerOutputMemberTensionMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Interaction() As tnxTowerOutputMemberInteraction
+    <DataMember()> Public Property Interaction() As tnxTowerOutputMemberInteraction
         Get
             Return Me.interactionField
         End Get
@@ -6722,7 +6627,7 @@ Partial Public Class tnxTowerOutputMemberTensionMember
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -6735,7 +6640,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputMemberTension
@@ -6751,7 +6655,7 @@ Partial Public Class tnxTowerOutputMemberTension
     Private pDCRatioField As Double
 
     '''<remarks/>
-     <DataMember()> Public Property Lu() As Double
+    <DataMember()> Public Property Lu() As Double
         Get
             Return Me.luField
         End Get
@@ -6761,7 +6665,7 @@ Partial Public Class tnxTowerOutputMemberTension
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property KLr() As Double
+    <DataMember()> Public Property KLr() As Double
         Get
             Return Me.kLrField
         End Get
@@ -6771,7 +6675,7 @@ Partial Public Class tnxTowerOutputMemberTension
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Pu() As Double
+    <DataMember()> Public Property Pu() As Double
         Get
             Return Me.puField
         End Get
@@ -6781,7 +6685,7 @@ Partial Public Class tnxTowerOutputMemberTension
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property phiPn() As Double
+    <DataMember()> Public Property phiPn() As Double
         Get
             Return Me.phiPnField
         End Get
@@ -6791,7 +6695,7 @@ Partial Public Class tnxTowerOutputMemberTension
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property PDCRatio() As Double
+    <DataMember()> Public Property PDCRatio() As Double
         Get
             Return Me.pDCRatioField
         End Get
@@ -6804,7 +6708,7 @@ End Class
 ''''<remarks/>
 '<System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
 ' System.SerializableAttribute(),
-' System.Diagnostics.DebuggerStepThroughAttribute(),
+' 
 ' System.ComponentModel.DesignerCategoryAttribute("code"),
 ' System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 'Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberBending1
@@ -6885,7 +6789,7 @@ End Class
 ''''<remarks/>
 '<System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
 ' System.SerializableAttribute(),
-' System.Diagnostics.DebuggerStepThroughAttribute(),
+' 
 ' System.ComponentModel.DesignerCategoryAttribute("code"),
 ' System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 'Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberShear1
@@ -6966,7 +6870,7 @@ End Class
 ''''<remarks/>
 '<System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
 ' System.SerializableAttribute(),
-' System.Diagnostics.DebuggerStepThroughAttribute(),
+' 
 ' System.ComponentModel.DesignerCategoryAttribute("code"),
 ' System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 'Partial Public Class tnxTowerOutputTowerSectionComponentTypeMemberInteraction1
@@ -6999,7 +6903,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputGuysTowerSection
@@ -7010,7 +6913,7 @@ Partial Public Class tnxTowerOutputGuysTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("Member")>
-     <DataMember()> Public Property Member() As tnxTowerOutputGuyMember()
+    <DataMember()> Public Property Member() As tnxTowerOutputGuyMember()
         Get
             Return Me.memberField
         End Get
@@ -7021,7 +6924,7 @@ Partial Public Class tnxTowerOutputGuysTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -7034,7 +6937,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputGuyMember
@@ -7084,7 +6986,7 @@ Partial Public Class tnxTowerOutputGuyMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property SizeDesignation() As String
+    <DataMember()> Public Property SizeDesignation() As String
         Get
             Return Me.sizeDesignationField
         End Get
@@ -7094,7 +6996,7 @@ Partial Public Class tnxTowerOutputGuyMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property InitTension() As Double
+    <DataMember()> Public Property InitTension() As Double
         Get
             Return Me.initTensionField
         End Get
@@ -7104,7 +7006,7 @@ Partial Public Class tnxTowerOutputGuyMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property BreakingLoad() As Double
+    <DataMember()> Public Property BreakingLoad() As Double
         Get
             Return Me.breakingLoadField
         End Get
@@ -7114,7 +7016,7 @@ Partial Public Class tnxTowerOutputGuyMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property Tu() As Double
+    <DataMember()> Public Property Tu() As Double
         Get
             Return Me.tuField
         End Get
@@ -7124,7 +7026,7 @@ Partial Public Class tnxTowerOutputGuyMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property phiTn() As Double
+    <DataMember()> Public Property phiTn() As Double
         Get
             Return Me.phiTnField
         End Get
@@ -7134,7 +7036,7 @@ Partial Public Class tnxTowerOutputGuyMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property RequiredSF() As Double
+    <DataMember()> Public Property RequiredSF() As Double
         Get
             Return Me.requiredSFField
         End Get
@@ -7144,7 +7046,7 @@ Partial Public Class tnxTowerOutputGuyMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property ActualSF() As Double
+    <DataMember()> Public Property ActualSF() As Double
         Get
             Return Me.actualSFField
         End Get
@@ -7154,7 +7056,7 @@ Partial Public Class tnxTowerOutputGuyMember
     End Property
 
     '''<remarks/>
-     <DataMember()> Public Property InputGuySF() As Double
+    <DataMember()> Public Property InputGuySF() As Double
         Get
             Return Me.inputGuySFField
         End Get
@@ -7165,7 +7067,7 @@ Partial Public Class tnxTowerOutputGuyMember
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute(DataType:="integer")>
-     <DataMember()> Public Property ControllingLoadCombination() As String
+    <DataMember()> Public Property ControllingLoadCombination() As String
         Get
             Return Me.controllingLoadCombinationField
         End Get
@@ -7176,7 +7078,7 @@ Partial Public Class tnxTowerOutputGuyMember
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -7189,7 +7091,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputBoltDesignTowerSection
@@ -7200,7 +7101,7 @@ Partial Public Class tnxTowerOutputBoltDesignTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("ComponentType")>
-     <DataMember()> Public Property ComponentType() As tnxTowerOutputBoltDesignComponentType()
+    <DataMember()> Public Property ComponentType() As tnxTowerOutputBoltDesignComponentType()
         Get
             Return Me.componentTypeField
         End Get
@@ -7211,7 +7112,7 @@ Partial Public Class tnxTowerOutputBoltDesignTowerSection
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property Number() As String
+    <DataMember()> Public Property Number() As String
         Get
             Return Me.numberField
         End Get
@@ -7224,7 +7125,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputBoltDesignComponentType
@@ -7236,7 +7136,7 @@ Partial Public Class tnxTowerOutputBoltDesignComponentType
     Private nameField As String
 
     '''<remarks/>
-     <DataMember()> Public Property BoltParameters() As tnxTowerOutputTowerSectionComponentTypeBoltParameters
+    <DataMember()> Public Property BoltParameters() As tnxTowerOutputTowerSectionComponentTypeBoltParameters
         Get
             Return Me.boltParametersField
         End Get
@@ -7247,7 +7147,7 @@ Partial Public Class tnxTowerOutputBoltDesignComponentType
 
     '''<remarks/>
     <System.Xml.Serialization.XmlElementAttribute("Member")>
-     <DataMember()> Public Property Member() As tnxTowerOutputBoltDesignMember()
+    <DataMember()> Public Property Member() As tnxTowerOutputBoltDesignMember()
         Get
             Return Me.memberField
         End Get
@@ -7258,7 +7158,7 @@ Partial Public Class tnxTowerOutputBoltDesignComponentType
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property Name() As String
+    <DataMember()> Public Property Name() As String
         Get
             Return Me.nameField
         End Get
@@ -7271,7 +7171,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputTowerSectionComponentTypeBoltParameters
@@ -7284,7 +7183,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeBoltParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property BoltGrade() As String
+    <DataMember()> Public Property BoltGrade() As String
         Get
             Return Me.boltGradeField
         End Get
@@ -7295,7 +7194,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeBoltParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute()>
-     <DataMember()> Public Property BoltSize() As Double
+    <DataMember()> Public Property BoltSize() As Double
         Get
             Return Me.boltSizeField
         End Get
@@ -7306,7 +7205,7 @@ Partial Public Class tnxTowerOutputTowerSectionComponentTypeBoltParameters
 
     '''<remarks/>
     <System.Xml.Serialization.XmlAttributeAttribute(DataType:="integer")>
-     <DataMember()> Public Property NumberOfBolts() As String
+    <DataMember()> Public Property NumberOfBolts() As String
         Get
             Return Me.numberOfBoltsField
         End Get
@@ -7319,7 +7218,6 @@ End Class
 '''<remarks/>
 <System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0"),
  System.SerializableAttribute(),
- System.Diagnostics.DebuggerStepThroughAttribute(),
  System.ComponentModel.DesignerCategoryAttribute("code"),
  System.Xml.Serialization.XmlTypeAttribute(AnonymousType:=True)>
 Partial Public Class tnxTowerOutputBoltDesignMember

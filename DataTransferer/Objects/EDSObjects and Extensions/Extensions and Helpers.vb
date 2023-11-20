@@ -301,7 +301,7 @@ Public Module Extensions
         'Try to compare values directly
         Try
             If value1 Is Nothing Xor value2 Is Nothing Then
-                changes.Add(New AnalysisChange(categoryName, fieldName, value1.ToString, value2.ToString))
+                changes.Add(New AnalysisChange(categoryName, fieldName, value1?.ToString, value2?.ToString))
                 Return False
             ElseIf Not value1.Equals(value2) Then
                 changes.Add(New AnalysisChange(categoryName, fieldName, value1.ToString, value2.ToString))
