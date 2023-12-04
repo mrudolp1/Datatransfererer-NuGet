@@ -83,9 +83,11 @@ Partial Public Class LegReinforcement
             'SQLInsert = SQLInsert.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]")
             'SQLInsert = SQLInsert.Replace("--END --[LEG REINFORCEMENT DETAIL INSERT END]", "END --[LEG REINFORCEMENT DETAIL INSERT END]")
             For Each row As LegReinforcementDetail In LegReinforcementDetails
-                SQLInsert = SQLInsert.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLInsert)
-                SQLInsert = SQLInsert.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]")
-                SQLInsert = SQLInsert.Replace("--END --[LEG REINFORCEMENT DETAIL INSERT END]", "END --[LEG REINFORCEMENT DETAIL INSERT END]")
+                If IsSomethingString(row.create_leg) Then
+                    SQLInsert = SQLInsert.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLInsert)
+                    SQLInsert = SQLInsert.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]")
+                    SQLInsert = SQLInsert.Replace("--END --[LEG REINFORCEMENT DETAIL INSERT END]", "END --[LEG REINFORCEMENT DETAIL INSERT END]")
+                End If
             Next
         End If
 
@@ -122,9 +124,11 @@ Partial Public Class LegReinforcement
                         SQLUpdate = SQLUpdate.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLDelete)
                     End If
                 Else
-                    SQLUpdate = SQLUpdate.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLInsert)
-                    SQLUpdate = SQLUpdate.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]")
-                    SQLUpdate = SQLUpdate.Replace("--END --[LEG REINFORCEMENT DETAIL INSERT END]", "END --[LEG REINFORCEMENT DETAIL INSERT END]")
+                    If IsSomethingString(row.create_leg) Then
+                        SQLUpdate = SQLUpdate.Replace("--[LEG REINFORCEMENT DETAIL INSERT]", row.SQLInsert)
+                        SQLUpdate = SQLUpdate.Replace("--BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]", "BEGIN --[LEG REINFORCEMENT DETAIL INSERT BEGIN]")
+                        SQLUpdate = SQLUpdate.Replace("--END --[LEG REINFORCEMENT DETAIL INSERT END]", "END --[LEG REINFORCEMENT DETAIL INSERT END]")
+                    End If
                 End If
             Next
         End If

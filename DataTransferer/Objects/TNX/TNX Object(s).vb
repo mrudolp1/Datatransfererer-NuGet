@@ -657,6 +657,12 @@ Partial Public Class tnxModel
         Me.options.windDirections.WindDir2_14 = DBtoNullableBool(Data.Item("WindDir2_14"))
         Me.options.windDirections.WindDir2_15 = DBtoNullableBool(Data.Item("WindDir2_15"))
         Me.options.windDirections.SuppressWindPatternLoading = DBtoNullableBool(Data.Item("SuppressWindPatternLoading"))
+
+        Try
+            Me.options.UseAlternativeAppurtEPACalculation = DBtoNullableBool(Data.Item("UseAlternativeAppurtEPACalculation"))
+        Catch ex As Exception
+            Me.options.UseAlternativeAppurtEPACalculation = Nothing
+        End Try
     End Sub
 
 
@@ -2345,6 +2351,12 @@ Partial Public Class tnxModel
                         Case tnxVar.Equals("SuppressWindPatternLoading")
                             Try
                                 Me.options.windDirections.SuppressWindPatternLoading = trueFalseYesNo(tnxValue)
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("UseAlternativeAppurtEPACalculation")
+                            Try
+                                Me.options.UseAlternativeAppurtEPACalculation = trueFalseYesNo(tnxValue)
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
@@ -5763,7 +5775,19 @@ Partial Public Class tnxModel
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
+                        Case tnxVar.Equals("TowerLegGradeOverwrite")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegGrade = Me.settings.USUnits.Strength.convertToEDSDefaultUnits(tnxValue)
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
                         Case tnxVar.Equals("TowerLegMatlGrade")
+                            Try
+                                Me.geometry.baseStructure(recIndex).TowerLegMatlGrade = tnxValue
+                            Catch ex As Exception
+                                Debug.Print("Error parsing TNX variable: " & tnxVar)
+                            End Try
+                        Case tnxVar.Equals("TowerLegMatlGradeOverwrite")
                             Try
                                 Me.geometry.baseStructure(recIndex).TowerLegMatlGrade = tnxValue
                             Catch ex As Exception
@@ -9923,6 +9947,7 @@ Partial Public Class tnxModel
         SQLInsertFields = SQLInsertFields.AddtoDBString("SuppressWindPatternLoading")
         SQLInsertFields = SQLInsertFields.AddtoDBString("modified_person_id")
         SQLInsertFields = SQLInsertFields.AddtoDBString("process_stage")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("UseAlternativeAppurtEPACalculation")
 
         Return SQLInsertFields
     End Function
@@ -10272,6 +10297,7 @@ Partial Public Class tnxModel
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.options.windDirections.SuppressWindPatternLoading.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.modified_person_id.ToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.process_stage.ToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.options.UseAlternativeAppurtEPACalculation.NullableToString.FormatDBValue)
 
         Return SQLInsertValues
     End Function
@@ -10622,6 +10648,7 @@ Partial Public Class tnxModel
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("SuppressWindPatternLoading = " & Me.options.windDirections.SuppressWindPatternLoading.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("modified_person_id = " & Me.modified_person_id.ToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("process_stage = " & Me.process_stage.ToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("UseAlternativeAppurtEPACalculation = " & Me.options.UseAlternativeAppurtEPACalculation.NullableToString.FormatDBValue)
 
         Return SQLUpdateFieldsandValues
     End Function
@@ -11198,6 +11225,8 @@ Partial Public Class tnxModel
                     newERIList.Add("UseWindProjection=" & trueFalseYesNo(Me.options.UseWindProjection))
                     newERIList.Add("UseDishCoeff=" & trueFalseYesNo(Me.options.UseDishCoeff))
                     newERIList.Add("AutoCalcTorqArmArea=" & trueFalseYesNo(Me.options.AutoCalcTorqArmArea))
+                    newERIList.Add("UseAlternativeAppurtEPACalculation=" & trueFalseYesNo(Me.options.UseAlternativeAppurtEPACalculation))
+
 #End Region
 #Region "Options - Foundations"
                     newERIList.Add("MastVert=" & Me.settings.USUnits.convertForcePerUnitLengthtoERISpecified(Me.options.foundationStiffness.MastVert))
@@ -13324,6 +13353,7 @@ Partial Public Class tnxModel
         TNXEquals = If(Me.options.windDirections.WindDir2_14 = other.options.windDirections.WindDir2_14, TNXEquals, False)
         TNXEquals = If(Me.options.windDirections.WindDir2_15 = other.options.windDirections.WindDir2_15, TNXEquals, False)
         TNXEquals = If(Me.options.windDirections.SuppressWindPatternLoading = other.options.windDirections.SuppressWindPatternLoading, TNXEquals, False)
+        TNXEquals = If(Me.options.UseAlternativeAppurtEPACalculation = other.options.UseAlternativeAppurtEPACalculation, TNXEquals, False)
 
         Return TNXEquals
     End Function
