@@ -1068,6 +1068,7 @@ Partial Public Class tnxOptions
     Private _cantileverPoles As New tnxCantileverPoles()
     Private _windDirections As New tnxWindDirections()
     Private _misclOptions As New tnxMisclOptions()
+    Private _UseAlternativeAppurtEPACalculation As Boolean?
 
     <Category("TNX Options"), Description(""), DisplayName("UseClearSpans")>
      <DataMember()> Public Property UseClearSpans() As Boolean?
@@ -1390,12 +1391,21 @@ Partial Public Class tnxOptions
     End Property
 
     <Category("TNX Options"), Description(""), DisplayName("Miscellaneous Options")>
-     <DataMember()> Public Property misclOptions() As tnxMisclOptions
+    <DataMember()> Public Property misclOptions() As tnxMisclOptions
         Get
             Return Me._misclOptions
         End Get
         Set
             Me._misclOptions = Value
+        End Set
+    End Property
+    <Category("TNX Options"), Description(""), DisplayName("UseAlternativeAppurtEPACalculation")>
+    <DataMember()> Public Property UseAlternativeAppurtEPACalculation() As Boolean?
+        Get
+            Return Me._UseAlternativeAppurtEPACalculation
+        End Get
+        Set
+            Me._UseAlternativeAppurtEPACalculation = Value
         End Set
     End Property
 #End Region
@@ -1453,6 +1463,7 @@ Partial Public Class tnxOptions
         Equals = If(Me.cantileverPoles.CheckChange(otherToCompare.cantileverPoles, changes, categoryName, "Cantilever Poles"), Equals, False)
         Equals = If(Me.windDirections.CheckChange(otherToCompare.windDirections, changes, categoryName, "Wind Directions"), Equals, False)
         Equals = If(Me.misclOptions.CheckChange(otherToCompare.misclOptions, changes, categoryName, "Miscl"), Equals, False)
+        Equals = If(Me.UseAlternativeAppurtEPACalculation.CheckChange(otherToCompare.UseAlternativeAppurtEPACalculation, changes, categoryName, "Use Alternative Appurt EPA Calculation"), Equals, False)
 
         Return Equals
     End Function
