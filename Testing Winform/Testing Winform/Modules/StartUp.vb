@@ -9,7 +9,7 @@ Imports System.Security.Principal
 Namespace UnitTesting
 
 
-    Module StartUp
+    Public Module StartUp
         Public deployVer As String
 
         Public Function StartEverything() As Boolean

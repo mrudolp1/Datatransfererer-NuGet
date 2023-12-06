@@ -2,7 +2,7 @@
 Imports System.Security.Principal
 Imports Oracle.ManagedDataAccess.Client
 
-Module DoDaSQL
+Public Module DoDaSQL
     Public Declare Auto Function LogonUser Lib "advapi32.dll" (ByVal nToken As String, ByVal domain As String, ByVal wToken As String, ByVal lType As Integer, ByVal lProvider As Integer, ByRef Token As IntPtr) As Boolean
     Public Declare Auto Function CloseHandle Lib "kernel32.dll" (ByVal handle As IntPtr) As Boolean
     Public tokenHandle As New IntPtr(0)

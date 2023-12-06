@@ -8,7 +8,7 @@ Imports System.Security.Principal
 '------------------------------------------
 '------------------------------------------
 
-Module IDoDeclare
+Public Module IDoDeclare
 
     'Current Highest SQL Error codes (Starts with 2000 & 1000)
     ''''''Loader --> 1001

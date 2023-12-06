@@ -747,6 +747,7 @@ ErrorSkip:
 
     Public Async Function RunTNXAsync(tnxFilePath As String, Optional isDevMode As Boolean = False, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
         'tnx vars
+        Debug.WriteLine("In RunTNXAsync")
         Dim tnxAppLocation As String = "C:\Program Files (x86)\TNX\tnxTower 8.1.5.0 BETA\tnxtower.exe"
         Dim tnxLogFilePath As String = tnxFilePath & ".APIRun.log"
         Dim tnxProdVersion As String = ""
@@ -801,6 +802,7 @@ ErrorSkip:
             Try
                 'delete tnx log file if it exist
                 If File.Exists(tnxLogFilePath) Then
+                    Debug.WriteLine("Deleting TNX log file")
                     File.Delete(tnxLogFilePath)
                 End If
             Catch ex As Exception
@@ -836,7 +838,7 @@ ErrorSkip:
 
             With cmdProcess
                 If Version821OrLater(tnxProdVersion) Then
-                    .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport GenerateE1PDF SaveInputFileOnCompletion") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
+                    .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport SaveInputFileOnCompletion") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
                 Else
                     .StartInfo = New ProcessStartInfo(tnxAppLocation, Chr(34) & tnxFilePath & Chr(34) & " RunAnalysis SilentAnalysisRun GenerateDesignReport") 'GenerateCCIReport 'RunAnalysis 'SilentAnalysisRun 'GenerateDesignReport
                 End If
@@ -847,8 +849,10 @@ ErrorSkip:
                 End With
                 .Start()
 
-
+                Debug.WriteLine("Starting process: Checking log file for finished async")
                 tnxSuccess = Await CheckLogFileForFinishedAsync(tnxLogFilePath, timeOutCounter, True, cancelToken, progress)
+
+                Debug.WriteLine("Done Checking")
                 Dim tnxDead As Boolean = True
                 Dim tnxDeadError As String = ""
                 Try
@@ -1043,7 +1047,6 @@ ErrorSkip:
     ''' <param name="logFilePath"></param>
     ''' <param name="maxTimeout"></param>
     Private Async Function CheckLogFileForFinishedAsync(logFilePath As String, maxTimeout As Integer, generateReport As Boolean, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
-
         ' Set the time interval to check the log file
         Dim checkInterval As Integer = 2000 ' 2 seconds
         ' Set the phrase to look for in the log file
@@ -1059,7 +1062,7 @@ ErrorSkip:
         Dim logReader As StreamReader
 
         If generateReport Then
-            finishedPhrase = "CROWN CASTLE REPORT END" '"ANALYSIS AND DESIGN REPORT END"
+            finishedPhrase = "ANALYSIS AND DESIGN REPORT END" '"CROWN CASTLE REPORT END"' Switched these
         Else
             finishedPhrase = "DESIGN END"
         End If
@@ -1086,10 +1089,12 @@ ErrorSkip:
         Try
             ' Loop until the "Finished" line is found or the maximum timeout is reached
             While True
+                Debug.WriteLine("check iteration")
                 ' Read last line from the log file
                 Dim line As String = logReader.ReadToEnd()
                 ' If the line is null, wait for the check interval and continue
                 If line Is Nothing Then
+                    Debug.WriteLine("delay")
                     Await Task.Delay(checkInterval)
                 Else
                     ' If the line contains "Finished", exit the loop
@@ -1109,6 +1114,7 @@ ErrorSkip:
                 ' Wait for the check interval before checking again
                 Await Task.Delay(checkInterval)
             End While
+            Debug.WriteLine("done checking")
 
             ' Close the StreamReader
             fs.Close()

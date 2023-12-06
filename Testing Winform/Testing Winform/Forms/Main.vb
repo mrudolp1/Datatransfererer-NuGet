@@ -27,6 +27,7 @@ Namespace UnitTesting
 
         'Unit Testing
         Public unitTestCases As New List(Of TestCase)
+        'If ART enabled, rFolder =  
         Public rFolder As String = "\\netapp4\cad\Development\SAPI Testing\Unit Testing"
         Public lFolder As String
         Public thr1 As Thread
@@ -2001,6 +2002,37 @@ StopLookingAtMeSwan:
                 Next
             End If
         End Sub
+
+        Private Sub RegressionTest()
+            btnProcess1.PerformClick()
+            btnProcess2.PerformClick()
+            btnProcess3.PerformClick()
+            btnProcess4.PerformClick()
+            btnProcess5.PerformClick()
+            btnProcess6.PerformClick()
+            btnProcess7.PerformClick()
+            btnProcess8.PerformClick()
+            btnProcess9.PerformClick()
+            btnProcess10.PerformClick()
+            btnProcess11.PerformClick()
+            btnProcess12.PerformClick()
+            btnProcess13.PerformClick()
+            btnProcess14.PerformClick()
+            btnProcess15.PerformClick()
+            btnProcess16.PerformClick()
+            btnProcess17.PerformClick()
+            btnProcess18.PerformClick()
+            btnProcess19.PerformClick()
+            btnProcess20.PerformClick()
+            btnProcess21.PerformClick()
+            btnProcess22.PerformClick()
+            btnProcess23.PerformClick()
+            btnProcess24.PerformClick()
+            btnProcess25.PerformClick()
+            btnProcess26.PerformClick()
+            btnProcess27.PerformClick()
+        End Sub
+
 #End Region
 #End Region
 
