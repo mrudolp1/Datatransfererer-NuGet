@@ -702,6 +702,10 @@ Partial Public Class tnxModel
             If Not line.Contains("=") Then
                 tnxVar = line
                 tnxValue = ""
+            ElseIf line.Contains("Overwrite") Then
+                'Check if 'Overwrite' exists for variable and update original field. Commonly occurs for grade and material grade.
+                tnxVar = Left(line, line.IndexOf("Overwrite"))
+                tnxValue = Right(line, Len(line) - line.IndexOf("=") - 1)
             Else
                 tnxVar = Left(line, line.IndexOf("="))
                 tnxValue = Right(line, Len(line) - line.IndexOf("=") - 1)
@@ -763,42 +767,6 @@ Partial Public Class tnxModel
                 Case Else
                     caseFilter = ""
             End Select
-
-            'Check if 'Overwrite' exists for variable. Commonly occurs for grade and material grade. Exists in Tower, Antenna, Guy sections.
-            'Since code below requires rerunning line by line through eri file, filtering to only perform for fields that contain grade. 
-            If line.Contains("Grade") And (caseFilter = "Tower" Or caseFilter = "Antenna" Or caseFilter = "Guy") Then
-                'Find correct recIndex to update
-                For Each lineO In File.ReadLines(tnxPath)
-                    If caseFilter = "Tower" Then
-                        If lineO.Contains("TowerRec=" & recIndex + 1) Then
-                            secOverwrite = True
-                        ElseIf lineO.Contains("TowerRec=" & recIndex + 2) Then
-                            secOverwrite = False
-                            Exit For
-                        End If
-                    ElseIf caseFilter = "Antenna" Then
-                        If lineO.Contains("AntennaRec=" & recIndex + 1) Then
-                            secOverwrite = True
-                        ElseIf lineO.Contains("AntennaRec=" & recIndex + 2) Then
-                            secOverwrite = False
-                            Exit For
-                        End If
-                    ElseIf caseFilter = "Guy" Then
-                        If lineO.Contains("GuyRec=" & recIndex + 1) Then
-                            secOverwrite = True
-                        ElseIf lineO.Contains("GuyRec=" & recIndex + 2) Then
-                            secOverwrite = False
-                            Exit For
-                        End If
-                    End If
-                    'Update tnxValue if Overwrite exists
-                    If lineO.Contains(tnxVar & "Overwrite") And secOverwrite Then
-                        tnxValue = Right(lineO, Len(lineO) - lineO.IndexOf("=") - 1)
-                        secOverwrite = False
-                        Exit For
-                    End If
-                Next
-            End If
 
             Select Case True
                 ''''Check for main file sections and activate corresponding filter''''
