@@ -7774,6 +7774,7 @@ Partial Public Class tnxTowerRecord
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerBotGirtOffset.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHasKBraceEndPanels.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerHasHorizontals.NullableToString.FormatDBValue)
+        SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerhashorizontalsString.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegType.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegSize.NullableToString.FormatDBValue)
         SQLInsertValues = SQLInsertValues.AddtoDBString(Me.TowerLegGrade.NullableToString.FormatDBValue)
@@ -8195,6 +8196,7 @@ Partial Public Class tnxTowerRecord
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerBotGirtOffset")
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHasKBraceEndPanels")
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHasHorizontals")
+        SQLInsertFields = SQLInsertFields.AddtoDBString("TowerHasHorizontalsString")
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegType")
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegSize")
         SQLInsertFields = SQLInsertFields.AddtoDBString("TowerLegGrade")
@@ -8614,6 +8616,7 @@ Partial Public Class tnxTowerRecord
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerBotGirtOffset = " & Me.TowerBotGirtOffset.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerHasKBraceEndPanels = " & Me.TowerHasKBraceEndPanels.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerHasHorizontals = " & Me.TowerHasHorizontals.NullableToString.FormatDBValue)
+        SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerHasHorizontalsString = " & Me.TowerhashorizontalsString.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerLegType = " & Me.TowerLegType.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerLegSize = " & Me.TowerLegSize.NullableToString.FormatDBValue)
         SQLUpdateFieldsandValues = SQLUpdateFieldsandValues.AddtoDBString("TowerLegGrade = " & Me.TowerLegGrade.NullableToString.FormatDBValue)
@@ -9032,6 +9035,7 @@ Partial Public Class tnxTowerRecord
     Private _TowerBotGirtOffset As Decimal?
     Private _TowerHasKBraceEndPanels As Boolean?
     Private _TowerHasHorizontals As Boolean?
+    Private _TowerHasHorizontalsString As String
     Private _TowerLegType As String
     Private _TowerLegSize As String
     Private _TowerLegGrade As Decimal?
@@ -9564,6 +9568,15 @@ Partial Public Class tnxTowerRecord
         End Get
         Set
             Me._TowerHasHorizontals = Value
+        End Set
+    End Property
+    <Category("TNX Tower Record"), Description(""), DisplayName("TowerhashorizontalsString")>
+    <DataMember()> Public Property TowerHasHorizontalsString() As String
+        Get
+            Return Me._TowerHasHorizontalsString
+        End Get
+        Set
+            Me._TowerHasHorizontalsString = Value
         End Set
     End Property
     <Category("TNX Tower Record"), Description(""), DisplayName("Towerlegtype")>
@@ -13166,6 +13179,7 @@ Partial Public Class tnxTowerRecord
         Me.TowerBotGirtOffset = DBtoNullableDec(data.Item("TowerBotGirtOffset"), 6)
         Me.TowerHasKBraceEndPanels = DBtoNullableBool(data.Item("TowerHasKBraceEndPanels"))
         Me.TowerHasHorizontals = DBtoNullableBool(data.Item("TowerHasHorizontals"))
+        Me.TowerhashorizontalsString = DBtoStr(data.Item("TowerHasHorizontalsString"))
         Me.TowerLegType = DBtoStr(data.Item("TowerLegType"))
         Me.TowerLegSize = DBtoStr(data.Item("TowerLegSize"))
         Me.TowerLegGrade = DBtoNullableDec(data.Item("TowerLegGrade"), 6)
@@ -13592,6 +13606,7 @@ Partial Public Class tnxTowerRecord
         Equals = If(Me.TowerBotGirtOffset.CheckChange(otherToCompare.TowerBotGirtOffset, changes, categoryName, "Tower Bot Girt Offset"), Equals, False)
         Equals = If(Me.TowerHasKBraceEndPanels.CheckChange(otherToCompare.TowerHasKBraceEndPanels, changes, categoryName, "Tower Has KBrace End Panels"), Equals, False)
         Equals = If(Me.TowerHasHorizontals.CheckChange(otherToCompare.TowerHasHorizontals, changes, categoryName, "Tower Has Horizontals"), Equals, False)
+        Equals = If(Me.TowerhashorizontalsString.CheckChange(otherToCompare.TowerhashorizontalsString, changes, categoryName, "Tower Has Horizontals String"), Equals, False)
         Equals = If(Me.TowerLegType.CheckChange(otherToCompare.TowerLegType, changes, categoryName, "Tower Leg Type"), Equals, False)
         Equals = If(Me.TowerLegSize.CheckChange(otherToCompare.TowerLegSize, changes, categoryName, "Tower Leg Size"), Equals, False)
         Equals = If(Me.TowerLegGrade.CheckChange(otherToCompare.TowerLegGrade, changes, categoryName, "Tower Leg Grade"), Equals, False)
