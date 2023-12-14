@@ -59,7 +59,7 @@ Partial Public Class EDSStructure
 
         Dim excelResult As OpenExcelRunMacroResult = New OpenExcelRunMacroResult()
 
-        Dim strType As String = Me.SiteInfo.tower_type.ToUpper
+        Dim strType As String ' = Me.SiteInfo.tower_type.ToUpper
         Dim poleWeUsin As Pole = Nothing
         Dim plateWeUsin As CCIplate = Nothing
         Dim seismicWeUsin As CCISeismic = Nothing
@@ -77,6 +77,8 @@ Partial Public Class EDSStructure
         CreateLogFile()
 
         Await WriteLineLogLine("INFO | Beginning Maestro process..", progress)
+
+        strType = Await DetermineTowerType(cancelToken:=cancelToken, progress:=progress)
 
         Select Case strType
             Case "MONOPOLE"
@@ -147,9 +149,12 @@ Partial Public Class EDSStructure
                 If CCIPoleExists And Not IsNothing(poleWeUsin) Then
                     excelResult = Await OpenExcelRunMacroAsync(poleWeUsin, poleMacRunAnalysis, xlVisibility, toolName:="CCIPole - Step 3", cancelToken:=cancelToken, progress:=progress)
                     If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
+
+                    'add pole rating as a note in ERI file
+                    If Not Await SetEriOutputVariables(tnxFullPath, poleWeUsin, cancelToken:=cancelToken, progress:=progress) Then
+                        Await WriteLineLogLine("WARNING | Could not add CCIPole capacity to TNX Notes. Please add manually", progress)
+                    End If
                 End If
-
-
 
                 'get compression, sheer, and moment from TNX
                 'GetCompSheerMomFromTNX(comp, sheer, mom)
@@ -170,8 +175,6 @@ Partial Public Class EDSStructure
                     Await WriteLineLogLine("INFO | " & Me.PierandPads.Count & " Pier & Pad Fnd(s) found..", progress)
                     'For Each pierPad As PierAndPad In Me.PierandPads
                     For i As Integer = 0 To PierandPads.Count - 1
-                        'Dim tempPath As String = Path.Combine("C:\Users\stanley\Crown Castle USA Inc\ECS - Tools\SAPI Test Cases\808466\2199162", "808466 Pier and Pad Foundation.xlsm")
-                        'OpenExcelRunMacro(tempPath, pierPadMac, isDevMode)
                         excelResult = Await OpenExcelRunMacroAsync(PierandPads(i), pierPadMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
                         If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
@@ -189,18 +192,15 @@ Partial Public Class EDSStructure
 
                 If Me.GuyAnchorBlockTools.Count > 0 Then
                     Await WriteLineLogLine("INFO | " & Me.GuyAnchorBlockTools.Count & " Guy Anchor Block Fnd(s) found..", progress)
-                    'For Each guyAnc As AnchorBlockFoundation In Me.GuyAnchorBlockTools
                     For i As Integer = 0 To GuyAnchorBlockTools.Count - 1
                         excelResult = Await OpenExcelRunMacroAsync(GuyAnchorBlockTools(i), guyAnchorMac, xlVisibility, cancelToken:=cancelToken, progress:=progress)
                         If Not excelResult.Success OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
                     Next
                 End If
 
-            Case "GUYED", "SELF SUPPORT"
+            Case "LATTICE" '"GUYED", "SELF SUPPORT"
 
                 'Check if TNX has been ran. if not, run it
-                'Dan will provide a file path to check for in the working directory
-
                 If RunTNX Then
                     '/run tnx
                     If Not Await RunTNXAsync(tnxFullPath, isDevMode, cancelToken, progress) OrElse (cancelToken <> CancellationToken.None AndAlso cancelToken.IsCancellationRequested) Then GoTo ErrorSkip
@@ -823,7 +823,7 @@ ErrorSkip:
             'End Try
 
             'Make sure ReportPrintReactions=Yes in eri file
-            If Not Await SetEriOutputVariables(tnxFilePath, cancelToken, progress) Then
+            If Not Await SetEriOutputVariables(tnxFilePath, Nothing, cancelToken, progress) Then
                 Await WriteLineLogLine("WARNING | Could not verify ReportPrintReactions=Yes in ERI output variables", progress)
             End If
 
@@ -899,6 +899,27 @@ ErrorSkip:
             Return False
         End If
     End Function
+
+    Public Async Function DetermineTowerType(Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of String)
+        Dim err As String
+
+        Try
+            If Me.tnx.geometry.baseStructure.Count > 0 Then
+                'lattice
+                Return "LATTICE"
+            Else
+                'pole
+                Return "MONOPOLE"
+            End If
+        Catch ex As Exception
+            err = ex.Message
+        End Try
+
+        'if we get here, there was an issue
+        Await WriteLineLogLine("ERROR | Exception determining tower type: " & err, progress)
+        Return "UNKNOWN"
+
+    End Function
     ''' <summary>
     ''' Checks registry settings to see if Architectural Notation is set
     ''' Returns True if Yes
@@ -935,20 +956,28 @@ ErrorSkip:
     End Function
 
     ''' <summary>
-    ''' Sets ReportPrintReactions=Yes in eri file prior to running
+    ''' Sets various settings in the ERI file
+    ''' added ability to add CCIPole rating as a note - poleWeUsin should be nothing if changing regular settings
     ''' </summary>
     ''' <param name="tnxFilePath"></param>
+    ''' <param name="poleWeUsin"></param>
+    ''' <param name="cancelToken"></param>
+    ''' <param name="progress"></param>
     ''' <returns></returns>
-    Public Async Function SetEriOutputVariables(tnxFilePath As String, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
+    Public Async Function SetEriOutputVariables(tnxFilePath As String, poleWeUsin As Pole, Optional cancelToken As CancellationToken = Nothing, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of Boolean)
         Dim eriAllText As String
 
         If Not File.Exists(tnxFilePath) Then Return False
         Dim varsSet As Boolean = True
         Dim varsSetError As String = ""
+        Dim replaceArray() As String
+        Dim poleRating As String = Me.Poles(0).MaxResult.ToString
+
         Try
 
             Using fs As FileStream = New FileStream(tnxFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
-                Dim replaceArray() As String = {"ReportPrintReactions=No|ReportPrintReactions=Yes",
+                If IsNothing(poleWeUsin) Then
+                    replaceArray = {"ReportPrintReactions=No|ReportPrintReactions=Yes",
                 "ReportMaxForces=No|ReportMaxForces=Yes",
                 "ReportPrintReactions=No|ReportPrintReactions=Yes",
                 "ReportPrintDeflection=No|ReportPrintDeflection=Yes",
@@ -959,7 +988,9 @@ ErrorSkip:
                 "CapacityReportOutputType=No Capacity Output|CapacityReportOutputType=Capacity Summary",
                 "CapacityReportOutputType=Capacity Details|CapacityReportOutputType=Capacity Summary",
                 "PrintInputGeometry=No|PrintInputGeometry=Yes"}
-
+                Else
+                    replaceArray = {"NumAntennaRecs|Notes=TOWER RATING: " & poleRating & "%" & vbCrLf & "NumAntennaRecs"} 'add CCIPole rating to notes
+                End If
                 Using r As StreamReader = New StreamReader(fs)
                     'make sure we're at the beginning
                     r.DiscardBufferedData()
