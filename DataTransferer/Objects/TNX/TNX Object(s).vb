@@ -5758,7 +5758,8 @@ Partial Public Class tnxModel
                             End Try
                         Case tnxVar.Equals("TowerHasHorizontals")
                             Try
-                                Me.geometry.baseStructure(recIndex).TowerHasHorizontals = trueFalseYesNo(tnxValue)
+                                'Me.geometry.baseStructure(recIndex).TowerHasHorizontals = trueFalseYesNo(tnxValue)
+                                Me.geometry.baseStructure(recIndex).TowerHasHorizontalsString = tnxValue
                             Catch ex As Exception
                                 Debug.Print("Error parsing TNX variable: " & tnxVar)
                             End Try
@@ -12119,7 +12120,8 @@ Partial Public Class tnxModel
                             newERIList.Add("TowerTopGirtOffset=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerTopGirtOffset))
                             newERIList.Add("TowerBotGirtOffset=" & Me.settings.USUnits.Properties.convertToERIUnits(.TowerBotGirtOffset))
                             newERIList.Add("TowerHasKBraceEndPanels=" & trueFalseYesNo(.TowerHasKBraceEndPanels))
-                            newERIList.Add("TowerHasHorizontals=" & trueFalseYesNo(.TowerHasHorizontals))
+                            'newERIList.Add("TowerHasHorizontals=" & trueFalseYesNo(.TowerHasHorizontals))
+                            newERIList.Add("TowerHasHorizontals=" & If(IsSomethingString(.TowerHasHorizontalsString), .TowerHasHorizontalsString, trueFalseYesNo(.TowerHasHorizontals)))
                             newERIList.Add("TowerLegType=" & .TowerLegType)
                             newERIList.Add("TowerLegSize=" & .TowerLegSize)
                             newERIList.Add("TowerLegGrade=" & Me.settings.USUnits.Strength.convertToERIUnits(.TowerLegGrade))
