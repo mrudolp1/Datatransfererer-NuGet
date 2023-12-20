@@ -971,7 +971,9 @@ ErrorSkip:
         Dim varsSet As Boolean = True
         Dim varsSetError As String = ""
         Dim replaceArray() As String
-        Dim poleRating As String = Me.Poles(0).MaxResult.ToString
+        Dim poleRating As String = Me.Poles(0).MaxResult.rating.ToString
+        Dim note As String = ""
+        Dim skipReplace As Boolean = False
 
         Try
 
@@ -989,7 +991,9 @@ ErrorSkip:
                 "CapacityReportOutputType=Capacity Details|CapacityReportOutputType=Capacity Summary",
                 "PrintInputGeometry=No|PrintInputGeometry=Yes"}
                 Else
-                    replaceArray = {"NumAntennaRecs|Notes=TOWER RATING: " & poleRating & "%" & vbCrLf & "NumAntennaRecs"} 'add CCIPole rating to notes
+                    poleRating = Await FormatDecAsPercent(poleRating, progress)
+                    note = "Notes=TOWER RATING: " & poleRating & "%"
+                    replaceArray = {"NumAntennaRecs|" & note & vbCrLf & "NumAntennaRecs"} 'add CCIPole rating to notes
                 End If
                 Using r As StreamReader = New StreamReader(fs)
                     'make sure we're at the beginning
@@ -997,11 +1001,34 @@ ErrorSkip:
                     r.BaseStream.Seek(0, SeekOrigin.Begin)
                     eriAllText = r.ReadToEnd
 
-                    For Each setting As String In replaceArray
-                        Dim settingSplt() As String = setting.Split("|")
-                        eriAllText = eriAllText.Replace(settingSplt(0), settingSplt(1))
-                    Next
+                    'if CCI pole, check if there's a tower rating note
 
+                    If Not IsNothing(poleWeUsin) Then
+                        'if there is, we have to replace it
+                        'if not, we can leave the replaceArray alone
+                        If eriAllText.ToUpper.Contains("TOWER RATING:") Then
+                            Dim eriList() = eriAllText.Split(vbLf)
+
+                            For i = 0 To eriList.Count - 1
+                                If eriList(i).ToUpper.Contains("TOWER RATING:") Then
+                                    eriList(i) = note
+                                    Exit For
+                                End If
+                            Next
+                            'flatten list
+                            eriAllText = String.Join(Environment.NewLine, eriList)
+                            'dont replace keywords
+                            skipReplace = True
+                        End If
+
+                    End If
+
+                    If Not skipReplace Then
+                        For Each setting As String In replaceArray
+                            Dim settingSplt() As String = setting.Split("|")
+                            eriAllText = eriAllText.Replace(settingSplt(0), settingSplt(1))
+                        Next
+                    End If
 
                     Using w As StreamWriter = New StreamWriter(tnxFilePath, False)
                         w.Write(eriAllText)
@@ -1019,6 +1046,17 @@ ErrorSkip:
         End If
 
         Return True
+    End Function
+    Public Async Function FormatDecAsPercent(decRating As String, Optional progress As IProgress(Of LogMessage) = Nothing) As Task(Of String)
+        Dim rateDble As Double
+
+        If Double.TryParse(decRating, rateDble) Then
+            rateDble = Math.Round(rateDble * 100, 1)
+            Return rateDble
+        End If
+        Await WriteLineLogLine("ERROR | Could not convert CCIPole Rating to percentage. Rating: " & decRating, progress)
+        Return decRating
+
     End Function
 
     'Close an RTF file based on a tnx file
