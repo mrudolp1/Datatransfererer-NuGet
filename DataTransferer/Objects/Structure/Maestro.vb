@@ -971,9 +971,15 @@ ErrorSkip:
         Dim varsSet As Boolean = True
         Dim varsSetError As String = ""
         Dim replaceArray() As String
-        Dim poleRating As String = Me.Poles(0).MaxResult.rating.ToString
+        Dim poleRating As String
         Dim note As String = ""
         Dim skipReplace As Boolean = False
+
+        Try
+            poleRating = Me.Poles(0).MaxResult.rating.ToString
+        Catch ex As Exception
+            poleRating = ""
+        End Try
 
         Try
 
