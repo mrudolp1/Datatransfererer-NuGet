@@ -98,6 +98,7 @@
             Me.SplitterControl1 = New DevExpress.XtraEditors.SplitterControl()
             Me.pgcUnitTesting = New System.Windows.Forms.PropertyGrid()
             Me.PanelControl1 = New DevExpress.XtraEditors.PanelControl()
+            Me.btnProcess27 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess26 = New DevExpress.XtraEditors.SimpleButton()
             Me.btnProcess25 = New DevExpress.XtraEditors.SimpleButton()
             Me.toggleDevUat = New DevExpress.XtraEditors.ToggleSwitch()
@@ -163,7 +164,6 @@
             Me.LabelControl3 = New DevExpress.XtraEditors.LabelControl()
             Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
             Me.verLabel = New System.Windows.Forms.ToolStripStatusLabel()
-            Me.btnProcess27 = New DevExpress.XtraEditors.SimpleButton()
             Me.pgStructure.SuspendLayout()
             CType(Me.SplitContainer3, System.ComponentModel.ISupportInitialize).BeginInit()
             Me.SplitContainer3.Panel1.SuspendLayout()
@@ -1117,6 +1117,19 @@
             Me.PanelControl1.Size = New System.Drawing.Size(1924, 126)
             Me.PanelControl1.TabIndex = 16
             '
+            'btnProcess27
+            '
+            Me.btnProcess27.Appearance.Options.UseTextOptions = True
+            Me.btnProcess27.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+            Me.btnProcess27.Enabled = False
+            Me.btnProcess27.Location = New System.Drawing.Point(1538, 34)
+            Me.btnProcess27.Name = "btnProcess27"
+            Me.btnProcess27.Size = New System.Drawing.Size(114, 23)
+            Me.btnProcess27.TabIndex = 85
+            Me.btnProcess27.Tag = "STEP14|Create the EDS Query"
+            Me.btnProcess27.Text = "14. Create Query"
+            Me.btnProcess27.ToolTip = "CREATE QUERY"
+            '
             'btnProcess26
             '
             Me.btnProcess26.Appearance.Options.UseTextOptions = True
@@ -1815,19 +1828,6 @@
             Me.verLabel.Size = New System.Drawing.Size(1923, 17)
             Me.verLabel.Spring = True
             Me.verLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight
-            '
-            'btnProcess27
-            '
-            Me.btnProcess27.Appearance.Options.UseTextOptions = True
-            Me.btnProcess27.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
-            Me.btnProcess27.Enabled = False
-            Me.btnProcess27.Location = New System.Drawing.Point(1538, 34)
-            Me.btnProcess27.Name = "btnProcess27"
-            Me.btnProcess27.Size = New System.Drawing.Size(114, 23)
-            Me.btnProcess27.TabIndex = 85
-            Me.btnProcess27.Tag = "STEP14|Create the EDS Query"
-            Me.btnProcess27.Text = "14. Create Query"
-            Me.btnProcess27.ToolTip = "CREATE QUERY"
             '
             'frmMain
             '

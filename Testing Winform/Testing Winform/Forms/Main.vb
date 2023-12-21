@@ -1876,7 +1876,7 @@ StopLookingAtMeSwan:
             ofd.Dispose()
         End Sub
 
-        Private Function DetermineFolder(ByVal stopping As String) As String
+        Public Function DetermineFolder(ByVal stopping As String) As String
             Dim edsExists As Boolean = Directory.Exists(EDSFolder)
             Dim whichFolder As New DialogResult
             Dim maeOption As String = "YES = '\Maestro' Folder" & vbCrLf & vbCrLf
